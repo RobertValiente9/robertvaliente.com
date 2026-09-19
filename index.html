@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roberto Valiente</title>
+<meta name="description" content="Estudio Ingeniería Comercial y Ciencias de la Computación en la UC. Forward-Deploy Engineer en Vita.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Roberto Valiente">
+<meta property="og:description" content="Estudio Ingeniería Comercial y Ciencias de la Computación en la UC. Forward-Deploy Engineer en Vita.">
+<meta property="og:url" content="https://robertvaliente.com/">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2034%2034%27%3E%3Crect%20width%3D%2734%27%20height%3D%2734%27%20fill%3D%27%23F0EEE6%27%2F%3E%3Ctext%20x%3D%2717%27%20y%3D%2725%27%20font-family%3D%27Georgia%2Cserif%27%20font-size%3D%2722%27%20fill%3D%27%231A1714%27%20text-anchor%3D%27middle%27%3ERV%3Ctspan%20fill%3D%27%23954900%27%3E.%3C%2Ftspan%3E%3C%2Ftext%3E%3C%2Fsvg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --papel:   #F0EEE6;
+    --tinta:   #1A1714;
+    --cuerpo:  #2A2622;
+    --apagado: #6E675E;
+    --meta:    #8A8175;
+    --filete:  #DCD8CC;
+    --acento:  oklch(0.49 0.13 58);
+  }
+
+  * { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--papel);
+    font-family: 'Newsreader', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: inherit; text-decoration: none; }
+  ::selection { background: oklch(0.49 0.13 58 / 0.18); }
+
+  .wrap { max-width: 620px; margin: 0 auto; padding: 36px 28px 60px; }
+
+  /* cabecera */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+
+  .sello {
+    font-size: 21px;
+    line-height: 1;
+    color: var(--tinta);
+    flex-shrink: 0;
+  }
+  .sello span { color: var(--acento); margin-left: -1px; }
+
+  nav { display: flex; gap: 22px; font-size: 15px; color: var(--apagado); }
+  nav a:hover { color: var(--acento); }
+
+  h1 {
+    font-family: 'Newsreader', serif;
+    font-weight: 400;
+    font-size: 44px;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: var(--tinta);
+    margin: 0;
+  }
+
+  /* secciones */
+  section { scroll-margin-top: 32px; }
+
+  .filete { height: 1px; background: var(--filete); margin: 44px 0 26px; }
+  section:first-of-type .filete { margin-top: 28px; }
+
+  .rotulo {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--meta);
+    margin-bottom: 18px;
+  }
+
+  /* bio */
+  .bio {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    font-size: 19px;
+    line-height: 1.65;
+    color: var(--cuerpo);
+    text-wrap: pretty;
+  }
+  .bio p { margin: 0; }
+  .bio em { font-style: italic; }
+  .bio a { color: var(--acento); }
+  .bio a:hover { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
+
+  /* nota de seccion vacia */
+  .aviso { font-size: 17px; line-height: 1.65; color: var(--meta); margin: 0; }
+
+  /* filas con fecha */
+  .fila { display: flex; gap: 18px; align-items: baseline; }
+  .fila .fecha {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--meta);
+    flex-shrink: 0;
+  }
+  .fila a { font-size: 18px; line-height: 1.5; color: var(--tinta); }
+  .fila a:hover { color: var(--acento); }
+  .fila .medio { color: var(--meta); }
+
+  /* contacto */
+  .contacto { display: flex; flex-wrap: wrap; gap: 18px; font-size: 16px; color: var(--apagado); }
+  .contacto a { border-bottom: 1px solid #DAD5CB; }
+  .contacto a:hover { color: var(--acento); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
+
+  @media (max-width: 520px) {
+    .wrap { padding: 40px 22px 72px; }
+    header { margin-bottom: 40px; }
+    nav { gap: 16px; font-size: 13px; }
+    h1 { font-size: 36px; }
+    .filete { margin: 36px 0 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <a href="/" class="sello" aria-label="Inicio">RV<span>.</span></a>
+    <nav>
+      <a href="#bio">Bio</a>
+      <a href="#escritos">Notas</a>
+      <a href="#prensa">Menciones</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <h1>Roberto Valiente</h1>
+
+  <section id="bio">
+    <div class="filete"></div>
+    <div class="rotulo">Bio</div>
+    <div class="bio">
+      <p>Estudio Ingeniería Comercial y Ciencias de la Computación en la Universidad Católica de Chile. Trabajo como Forward-Deploy Engineer en <a href="https://vita.lat/en/" target="_blank" rel="noopener">Vita</a> (PV 26-1), una startup chilena que construye agentes de IA para operar gimnasios de manera autónoma.</p>
+      <p>Me interesa mucho la pregunta: ¿cómo podemos lograr mucho con poco? Es difícil de aplicar, pero me gusta dónde me ha llevado.</p>
+      <p>De ahí salieron hartas cosas. Me interesé por la psicología y la economía, leyendo libros como <em>Misbehaving</em>, de Richard Thaler (mi libro favorito). Después trabajé en <a href="https://kairos-project.org" target="_blank" rel="noopener">Kairos</a>, una organización sin fines de lucro dedicada a la seguridad en IA. Y me comprometí a <a href="https://www.givingwhatwecan.org/how-rich-am-i?income=&amp;countryCode=USA&amp;numAdults=1&amp;numChildren=0" target="_blank" rel="noopener">donar el 5% de mis ingresos</a> durante cinco años, a organizaciones donde con poco dinero se puede tener mucho impacto.</p>
+    </div>
+  </section>
+
+  <section id="escritos">
+    <div class="filete"></div>
+    <div class="rotulo">Notas</div>
+    <p class="aviso">Iré sumando notas aquí.</p>
+  </section>
+
+  <section id="prensa">
+    <div class="filete"></div>
+    <div class="rotulo">Menciones</div>
+    <div class="fila">
+      <span class="fecha">Nov 2023</span>
+      <a href="https://economiayadministracion.uc.cl/noticia/tres-estudiantes-de-ingenieria-comercial-uc-seran-parte-de-the-bridge-emprendimiento-2024/" target="_blank" rel="noopener">Tres estudiantes de Ingeniería Comercial UC serán parte de The Bridge Emprendimiento 2024 <span class="medio">— Economía y Administración UC</span></a>
+    </div>
+  </section>
+
+  <section id="contacto">
+    <div class="filete"></div>
+    <div class="rotulo">Contacto</div>
+    <div class="contacto">
+      <a href="mailto:hola@robertvaliente.com">hola@robertvaliente.com</a>
+      <a href="https://www.linkedin.com/in/robertovaliente/" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
