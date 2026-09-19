@@ -98,8 +98,6 @@
   }
   .sello span { color: var(--acento); margin-left: -1px; }
 
-  nav { display: flex; gap: 22px; font-size: 15px; color: var(--apagado); }
-
   h1 {
     font-family: 'Newsreader', serif;
     font-weight: 400;
@@ -199,7 +197,6 @@
   /* solo en dispositivos con puntero real: en tactil el :hover queda
      pegado tras el tap y el link se ve activo al volver a subir */
   @media (hover: hover) {
-    nav a:hover      { color: var(--acento); }
     .prosa a:hover   { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .enlace a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .indice a:hover  { color: var(--acento); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
@@ -216,7 +213,6 @@
   @media (max-width: 520px) {
     .wrap { padding: 40px 22px 72px; }
     header { margin-bottom: 40px; }
-    nav { gap: 16px; font-size: 13px; }
     h1 { font-size: 36px; }
     h2 { font-size: 25px; }
     .prosa { font-size: 18px; }
@@ -230,12 +226,6 @@
 
   <header>
     <a href="/" class="sello" aria-label="Inicio">RV<span>.</span></a>
-    <nav>
-      <a href="/#bio">Bio</a>
-      <a href="/#escritos">Notas</a>
-      <a href="/#prensa">Menciones</a>
-      <a href="/#contacto">Contacto</a>
-    </nav>
   </header>
 
   <article>
