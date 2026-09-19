@@ -179,6 +179,27 @@
   /* indice de la nota */
   .indice { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 16px; color: var(--apagado); margin-top: 26px; }
   .indice a { border-bottom: 1px solid #DAD5CB; }
+  .indice-titulo { display: none; }
+  .indice a[href="#por-que"] { display: none; }
+
+  /* con ancho suficiente el indice pasa a una columna fija a la izquierda */
+  @media (min-width: 1140px) {
+    .indice {
+      position: fixed;
+      top: 118px;
+      left: 28px;
+      width: 210px;
+      flex-direction: column;
+      flex-wrap: nowrap;
+      gap: 14px;
+      margin-top: 0;
+      font-size: 16px;
+      line-height: 1.35;
+      color: var(--meta);
+    }
+    .indice a, .indice a[href="#por-que"] { display: block; border-bottom: 0; }
+    .indice-titulo { display: block; font-size: 19px; font-weight: 500; color: var(--tinta); margin-bottom: 8px; }
+  }
 
   /* glosario */
   .glosario { margin: 0; display: flex; flex-direction: column; gap: 16px; font-size: 17px; line-height: 1.6; color: var(--cuerpo); text-wrap: pretty; }
@@ -199,7 +220,7 @@
   @media (hover: hover) {
     .prosa a:hover   { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .enlace a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
-    .indice a:hover  { color: var(--acento); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
+    .indice a:hover  { color: var(--tinta); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
     .pie a:hover     { color: var(--acento); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
   }
 
@@ -242,14 +263,16 @@
       <p>Ni los propios expertos están de acuerdo entre ellos. Algunos ven esto como la mayor oportunidad de la historia. Otros lo ven como el mayor riesgo. Muchos ven ambas cosas a la vez. Eso no significa que el tema sea confuso o poco serio: significa que es genuinamente incierto, incluso para la gente que más sabe.</p>
       <p>Abajo van cuatro recursos para formarse una primera opinión. Cada uno viene de alguien distinto, con una mirada distinta. Uno construyó esta tecnología y hoy está preocupado. Otro dirige una de las empresas que la construye. Otra duda de las predicciones más dramáticas. El último es un resumen neutral, de gente que no vende nada.</p>
     </div>
-    <div class="indice">
+    <nav class="indice" aria-label="Contenido">
+      <div class="indice-titulo">Contenido</div>
+      <a href="#por-que">Por qué cuesta entender esto</a>
       <a href="#terminos">Términos básicos</a>
       <a href="#hinton">1. Hinton</a>
       <a href="#amodei">2. Amodei</a>
       <a href="#mitchell">3. Mitchell</a>
       <a href="#80k">4. 80,000 Hours</a>
       <a href="#nota-personal">Nota personal</a>
-    </div>
+    </nav>
   </section>
 
   <section id="terminos">
