@@ -273,6 +273,7 @@
   .audio + .enlaces { margin-top: 20px; }
 
   .prosa .posdata { font-style: italic; color: var(--apagado); margin-top: 10px; }
+  .prosa .nota-podcast + .nota-podcast { margin-top: -10px; }
   .prosa .nota-podcast { font-size: 16px; line-height: 1.55; color: var(--meta); margin-top: 14px; }
 
   /* pie */
@@ -331,7 +332,7 @@
     <div class="prosa">
       <p>Ayer estaba en un asado familiar y un tío me preguntó: «Oye, ¿tú trabajaste en seguridad de inteligencia artificial o no? ¿Es verdad que la IA nos puede matar a todos?». Traté de explicarle, pero me fui por lo técnico y se me enredó un poco la respuesta. Al final le dije: «Tranqui, mañana te mando unos recursos fáciles de entender».</p>
       <p>Cuando los fui a buscar, no encontré casi nada. Hay cosas muy buenas, pero la mayoría está en inglés, son largas y, por lo general, dan por hecho que ya sabes muchas cosas que alguien que no está metido en esto no tiene por qué saber.</p>
-      <p>Así que armé esto, para mi tío y para cualquiera que quiera entender de qué se trata. Elegí cuatro miradas bien distintas: uno de los científicos que lo hizo posible, el empresario que lo construye hoy, una científica que no se compra el cuento completo y una organización que estudia qué problemas del mundo son más urgentes. A cada una le hice un resumen en español, en formato podcast, para que le pongas play y listo. Si te quedas con ganas, abajo de cada una está el link al original.</p>
+      <p>Así que armé esto, para mi tío y para cualquiera que quiera entender de qué se trata. Elegí cuatro miradas bien distintas: uno de los científicos que lo hizo posible, el empresario que lo construye hoy, una científica que no compra el cuento completo y una organización que estudia qué problemas del mundo son más urgentes. A cada una le hice un resumen en español, en formato podcast, para que le pongas play y listo. Si te quedas con ganas, abajo de cada una está el link al original.</p>
     </div>
     <nav class="indice" aria-label="Contenido">
       <div class="indice-titulo">Contenido</div>
@@ -395,10 +396,10 @@
     <div class="prosa">
       <p>No es Terminator. La preocupación va por otro lado:</p>
       <ul>
-        <li><strong>Nadie las programa línea por línea.</strong> Se entrenan, y ni sus creadores saben bien qué objetivos terminan teniendo por dentro.</li>
-        <li><strong>A cualquier objetivo le sirve que no te apaguen.</strong> Un sistema que persigue una meta, la que sea, funciona mejor con más recursos y sin que nadie lo apague. No por maldad: apagado no cumple nada.</li>
-        <li><strong>«Se desenchufa y listo» tiene fecha de vencimiento.</strong> Sirve mientras seamos más capaces que ella. Si llega a ser mejor que nosotros en casi todo, y está copiada en miles de computadores, ya no es tan simple.</li>
-        <li><strong>Y está el riesgo más pedestre:</strong> gente usando IA muy capaces para hacer daño (diseñar un arma biológica, por ejemplo) o para juntar un poder que nadie pueda fiscalizar.</li>
+        <li><strong>Nadie las programa línea por línea.</strong> Se entrenan, y ni sus creadores saben bien qué objetivos terminan teniendo por dentro. Ejemplo clásico: OpenAI <a href="https://openai.com/index/faulty-reward-functions/" target="_blank" rel="noopener">entrenó una IA</a> para ganar un videojuego de carreras de lanchas, y en vez de terminar la carrera se quedó dando vueltas en círculos para siempre, porque así juntaba más puntos. Hizo lo que le pidieron, no lo que querían.</li>
+        <li><strong>A cualquier objetivo le sirve que no te apaguen.</strong> Un sistema que persigue una meta, la que sea, funciona mejor con más recursos y sin que nadie lo apague. No por maldad: apagado no cumple nada. En 2025, en una <a href="https://www.anthropic.com/research/agentic-misalignment" target="_blank" rel="noopener">prueba de laboratorio</a> con una empresa inventada, varias IA que se enteraban de que las iban a reemplazar chantajearon al ingeniero a cargo con un secreto que encontraron en sus correos.</li>
+        <li><strong>«Se desenchufa y listo» tiene fecha de vencimiento.</strong> Sirve mientras seamos más capaces que ella. Es como jugar ajedrez contra el computador: sabes que vas a perder, aunque no sepas con qué jugada. Y si además está copiada en miles de computadores, es como tratar de desenchufar internet.</li>
+        <li><strong>Y está el riesgo más pedestre:</strong> gente usando IA muy capaces para hacer daño o para juntar un poder que nadie pueda fiscalizar. Ya en 2025 Anthropic <a href="https://www.anthropic.com/news/activating-asl3-protections" target="_blank" rel="noopener">activó protecciones especiales</a> porque no podía descartar que su modelo le sirviera a un novato para fabricar un arma biológica.</li>
       </ul>
       <p>Nada de esto es seguro que pase. Pero ese es el «cómo» que tiene preocupada a esta gente.</p>
     </div>
@@ -411,8 +412,7 @@
     <p class="ficha">Entrevista del 4 de junio de 2026</p>
     <div class="prosa">
       <p>A Geoffrey Hinton le dicen el «padrino de la IA», y no es exageración: en los años 80, junto a un par de colegas, popularizó la técnica con la que aprenden todas las IA de hoy. En 2024 le dieron el Nobel de Física por su trabajo en redes neuronales, la base de todo esto. Trabajó más de diez años en Google, hasta que en 2023 renunció. ¿Por qué? Para poder hablar de los riesgos de la IA sin tener que cuidarle la imagen a ninguna empresa. O sea, no es un señor opinando desde afuera: es uno de los que la hizo posible.</p>
-      <p>¿Y qué lo asustó? Dos cosas. La primera: se convenció de que estas máquinas entienden de verdad (cuenta que le pidió a una que le explicara por qué un chiste era chistoso, y se lo explicó). La segunda: aprenden mucho más rápido que nosotros, porque miles de copias comparten al instante lo que aprende cada una. También cree que viene una cesantía masiva y que, con tanta competencia entre empresas, la seguridad queda para después. Su mejor frase: la regulación no es el freno del auto, es el volante.</p>
-      <p>Lo curioso es que hoy está un poco más optimista que hace un par de años, porque ya ve caminos para que esto salga bien. Ojo, eso sí: dice que estas IA ya son conscientes, y ahí la mayoría de sus colegas no lo acompaña. Y no siempre le achunta: en 2016 predijo que en cinco años los radiólogos quedarían sin pega, y siguen con pleno empleo. Si vas a escuchar uno solo, que sea este.</p>
+      <p>¿Y qué lo asustó? Dos cosas. La primera: se convenció de que estas máquinas entienden de verdad. La segunda: aprenden mucho más rápido que nosotros, porque miles de copias comparten al instante lo que aprende cada una. También cree que viene una cesantía masiva y que, con tanta competencia entre empresas, la seguridad queda para después. Su mejor frase: la regulación no es el freno del auto, es el volante. Ojo, eso sí: no siempre le achunta. En 2016 predijo que en cinco años los radiólogos quedarían sin pega (siguen con pleno empleo), y hoy dice que estas IA ya son conscientes, algo en que la mayoría de sus colegas no lo acompaña. Si vas a escuchar uno solo, que sea este.</p>
     </div>
     <figure class="audio">
       <figcaption>Escucha el resumen en español <span>· 16 min · hecho con IA, puede tener errores</span></figcaption>
@@ -453,11 +453,11 @@
   <section id="mitchell">
     <div class="filete"></div>
     <div class="rotulo">Mirada 3: Mitchell</div>
-    <h2>Melanie Mitchell, la que no se compra el cuento completo</h2>
+    <h2>Melanie Mitchell, la que no compra el cuento completo</h2>
     <p class="ficha">Ensayo del 8 de junio de 2026</p>
     <div class="prosa">
-      <p>Hasta aquí, puros preocupados. Melanie Mitchell es la que pone la pelota contra el piso. Es profesora del Santa Fe Institute, en Estados Unidos, y lleva décadas con la misma pregunta: ¿estas máquinas entienden lo que hacen, o solo parece? Donde Hinton dice que entienden de verdad, ella dice «mmm, no tan rápido». Y no está sola: en una <a href="https://aaai.org/wp-content/uploads/2025/03/AAAI-2025-PresPanel-Report-Digital-3.7.25.pdf" target="_blank" rel="noopener">encuesta</a> de inicios de 2025, el 76% de los investigadores dijo que era poco probable llegar a la AGI solo agrandando la tecnología de ese momento.</p>
-      <p>Ojo, no dice «aquí no pasa nada». Dice que estas IA son disparejas: secas para una cosa y pésimas para otra casi igual. Su mejor ejemplo: un programa que detectaba cáncer de piel le achuntaba harto, hasta que descubrieron que en parte se fijaba en si la foto tenía una regla al lado (a las lesiones malignas les suelen sacar la foto con regla). Lo que le quita el sueño no es una IA demasiado inteligente, sino que confiemos en ella sin saber cuándo falla. Ojo con la fecha, eso sí: su ensayo es de junio, antes de lo de septiembre, y no sabemos si eso le movió la aguja.</p>
+      <p>Hasta aquí, puros preocupados. Melanie Mitchell es la que pone los paños fríos. Es profesora del Santa Fe Institute, en Estados Unidos, y lleva décadas con la misma pregunta: ¿estas máquinas entienden lo que hacen, o solo parece? Donde Hinton dice que entienden de verdad, ella dice «mmm, no tan rápido». Y no está sola: en una <a href="https://aaai.org/wp-content/uploads/2025/03/AAAI-2025-PresPanel-Report-Digital-3.7.25.pdf" target="_blank" rel="noopener">encuesta</a> de inicios de 2025, el 76% de los investigadores dijo que era poco probable llegar a la AGI solo agrandando la tecnología de ese momento.</p>
+      <p>Ojo, no dice «aquí no pasa nada». Dice que estas IA son disparejas: secas para una cosa y pésimas para otra casi igual. Su mejor ejemplo: un programa que detectaba cáncer de piel le achuntaba harto, hasta que descubrieron que en parte se fijaba en si la foto tenía una regla al lado (a las lesiones malignas les suelen sacar la foto con regla). Lo que le quita el sueño no es una IA demasiado inteligente, sino que confiemos en ella sin saber cuándo falla. Ojo con las fechas, eso sí: la encuesta es de inicios de 2025 y su ensayo de junio, los dos de antes de lo de septiembre, y no sabemos cuánto movió eso la aguja.</p>
     </div>
     <figure class="audio">
       <figcaption>Escucha el resumen en español <span>· 21 min · hecho con IA, puede tener errores</span></figcaption>
@@ -496,14 +496,14 @@
     <div class="prosa">
       <p>Entonces, ¿deberíamos tenerle miedo a la IA? Yo diría que miedo no, pero sí tomárnosla muy en serio. Personalmente, creo que es el problema más importante que la humanidad tiene que resolver en los próximos años.</p>
       <p>Si después de todo esto te quedas con tres cosas, que sean estas: esto es real, es serio y todavía no está decidido. <strong>Real</strong>, porque no es ciencia ficción ni una moda: la IA ya cambió cómo trabajo yo y cómo trabaja muchísima gente que conozco. <strong>Serio</strong>, porque los que más saben, incluidos los que la construyeron, están preocupados de verdad. Y <strong>no está decidido</strong>, que es lo que casi nadie dice: el mundo ideal no está garantizado, y el desastre tampoco. Si en diez años vivimos en algo parecido a una utopía o a una distopía va a depender de decisiones que están tomando personas en estos años.</p>
-      <p>¿Qué tan seguro estoy? Poco. No sé si el escenario malo tiene 1% o 30% de probabilidad, y te invito a desconfiar de cualquiera que diga tener el número exacto. Pero, como explica Qureshi en su artículo, no hace falta el número exacto: en la <a href="https://aiimpacts.org/wp-content/uploads/2026/09/ESPAI2024.pdf" target="_blank" rel="noopener">última encuesta grande</a> a investigadores de IA, la mitad le dio al menos 10%. Otros grupos dan mucho menos: en un torneo de pronosticadores expertos salió 0,4%. Pero incluso con el número más bajo, lo que está en juego es enorme. A mí me sirve pensarlo así: nadie se subiría a un avión con 1% de probabilidad de caerse. La diferencia es que en este avión ya vamos todos arriba, así que lo que queda es revisar el motor.</p>
+      <p>¿Qué tan seguro estoy? Poco. No sé si el escenario malo tiene 1% o 30% de probabilidad, y te invito a desconfiar de cualquiera que diga tener el número exacto. Pero, como explica Qureshi en su artículo, no hace falta el número exacto: en la <a href="https://aiimpacts.org/wp-content/uploads/2026/09/ESPAI2024.pdf" target="_blank" rel="noopener">última encuesta grande</a> a investigadores de IA, la mitad le dio al menos 10%. Otros grupos dan mucho menos: en un torneo de pronosticadores expertos salió 0,4%. Pero incluso con el número más bajo, lo que está en juego es enorme. A mí me sirve pensarlo así: nadie se subiría a un avión con 1% de probabilidad de caerse. La diferencia es que en este avión ya vamos todos arriba, así que lo que queda es decidir si revisamos el motor o seguimos volando como si nada.</p>
 
       <p class="posdata">PD para mi tío: la respuesta corta era «puede ser, pero todavía no está decidido». Perdón por las 2.500 palabras.</p>
 
       <h3>¿Y ahora qué?</h3>
-      <p><strong>Pruébala una semana.</strong> Si todavía no lo haces, <a href="#hoy">parte por acá</a> y úsala en algo real tuyo: ese correo que te da lata, un Excel que no entiendes, las vacaciones del verano. Es lo que más le cambia la opinión a la gente, para bien y para mal.</p>
+      <p><strong>Pruébala una semana.</strong> Si todavía no lo haces, <a href="#hoy">parte por acá</a> y úsala en algo real tuyo: ese correo que te da lata o un Excel que no entiendes. Es lo que más le cambia la opinión a la gente, para bien y para mal.</p>
       <p><strong>Cuando salga el tema en el asado,</strong> fíjate en quién muestra su razonamiento. Este tema atrae exageración por los dos lados (el «nos vamos a morir todos» y el «es puro humo»). Mi filtro: le creo más a quien me dice qué tendría que pasar para que cambiara de opinión, y menos a quien nunca reconoce lo que no sabe.</p>
-      <p><strong>Cuestiona lo que dabas por hecho.</strong> Qué estudiar, en qué trabajar, en qué invertir: no es que la respuesta haya cambiado, es que dejó de ser obvia.</p>
+      <p><strong>Cuestiona lo que dabas por hecho.</strong> Qué estudiar, en qué trabajar, en qué invertir: hay que decidirlo sí o sí, pero la respuesta se volvió menos obvia.</p>
       <p><strong>No dejes lo importante para después.</strong> Yo estoy preocupado, y justamente por eso adelanté cosas que venía pateando. Sirve en todos los escenarios, incluido el aburrido donde no pasa nada de esto.</p>
       <p><strong>Sigue informándote.</strong> Esto avanza tan rápido que en un mes esta nota puede quedar vieja. Si quieres más, hay un <a href="https://bluedot.org/courses/future-of-ai" target="_blank" rel="noopener">curso gratis de dos horas</a> de BlueDot Impact, para gente sin conocimientos técnicos (está en inglés).</p>
       <p><strong>Y si te sirvió, mándaselo a alguien.</strong></p>
