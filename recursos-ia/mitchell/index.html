@@ -222,7 +222,7 @@
 
   /* compartir la nota */
   .compartir { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 22px; font-size: 18px; }
-  .compartir a, .compartir button { font: inherit; color: var(--acento); background: none; border: 0; padding: 0; cursor: pointer; }
+  .compartir a { color: var(--acento); }
 
   /* reproductor del podcast */
   .audio { margin: 26px 0 0; }
@@ -284,7 +284,7 @@
   @media (hover: hover) {
     .bajada a:hover  { color: var(--acento); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
     .prosa a:hover   { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
-    .compartir a:hover, .compartir button:hover { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
+    .compartir a:hover { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .probar a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .enlace a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .indice a:hover  { color: var(--tinta); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
@@ -352,24 +352,9 @@
   <div class="filete"></div>
   <div class="pie">
     <a href="/recursos-ia/">← Volver a la nota</a>
-    <a href="mailto:hola@robertvaliente.com">hola@robertvaliente.com</a>
   </div>
 
 </div>
-
-<script>
-// Copiar el link de la nota.
-(function () {
-  var b = document.getElementById('copiar-link');
-  if (!b || !navigator.clipboard) { if (b) b.hidden = true; return; }
-  b.addEventListener('click', function () {
-    navigator.clipboard.writeText('https://robertvaliente.com/recursos-ia/').then(function () {
-      b.textContent = 'Link copiado';
-      setTimeout(function () { b.textContent = 'Copiar el link'; }, 2000);
-    });
-  });
-})();
-</script>
 
 <script>
 // Reproductor de los podcasts. Sin JS queda el <audio controls> nativo.
