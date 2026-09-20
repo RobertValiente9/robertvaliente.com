@@ -216,6 +216,10 @@
   .probar span { flex-basis: 100%; }
   .probar a { font-size: 18px; color: var(--acento); }
 
+  /* compartir la nota */
+  .compartir { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 22px; font-size: 18px; }
+  .compartir a, .compartir button { font: inherit; color: var(--acento); background: none; border: 0; padding: 0; cursor: pointer; }
+
   /* reproductor del podcast */
   .audio { margin: 26px 0 0; }
   .audio figcaption { font-size: 18px; line-height: 1.5; color: var(--tinta); margin-bottom: 10px; }
@@ -274,6 +278,7 @@
      pegado tras el tap y el link se ve activo al volver a subir */
   @media (hover: hover) {
     .prosa a:hover   { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
+    .compartir a:hover, .compartir button:hover { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .probar a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .enlace a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .indice a:hover  { color: var(--tinta); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
@@ -452,10 +457,16 @@
       <p>Entonces, ¿deberíamos tenerle miedo a la IA? Yo diría que miedo no, pero sí tomársela en serio. Me quedo con tres cosas: es real, es serio y todavía no está decidido. <strong>Real</strong>, porque no es ciencia ficción ni una moda: ya cambió cómo trabajo yo y mucha gente que conozco. <strong>Serio</strong>, porque los que más saben, incluidos los que lo construyeron, están preocupados de verdad. Y <strong>no está decidido</strong>, que es lo que casi nadie dice: ni el mundo ideal está garantizado ni el desastre tampoco. Depende de decisiones que están tomando personas en estos años.</p>
       <p>¿Qué tan seguro estoy? Poco. No sé si el escenario malo tiene 1% o 20% de probabilidad, y desconfío de cualquiera que diga tener el número exacto. Pero no necesito el número: aunque fuera 2%, nadie se sube a un avión con 2% de probabilidad de caerse. No te pido plata, ni que cambies de trabajo, ni que andes preocupado. Te pido algo más chico: que cuando este tema aparezca, lo trates como un tema serio y no como ruido.</p>
 
-      <h3>Si quieres seguir</h3>
-      <p><strong>Fíjate en quién muestra su razonamiento.</strong> Este tema atrae exageración por los dos lados. Mi filtro: confío más en quien te dice qué lo haría cambiar de opinión, y menos en quien nunca reconoce lo que no sabe.</p>
-      <p><strong>La mirada escéptica.</strong> Hay gente seria que cree que las predicciones más dramáticas son exageradas. La mejor que conozco es Melanie Mitchell, profesora del Santa Fe Institute: sostiene que estas IA son brillantes en una tarea y torpes en otra casi igual, y que todavía no sabemos medir bien qué entienden. Su ensayo (está en inglés): <a href="https://yalereview.org/article/melanie-mitchell-jagged-intelligence" target="_blank" rel="noopener">Jagged Intelligence</a></p>
-      <p><strong>Un curso corto.</strong> BlueDot Impact tiene uno gratis, de dos horas, hecho para gente sin conocimientos técnicos. Está en inglés: <a href="https://bluedot.org/courses/future-of-ai" target="_blank" rel="noopener">bluedot.org/courses/future-of-ai</a></p>
+      <h3>¿Y ahora qué?</h3>
+      <p><strong>Si tienes 15 minutos,</strong> escucha <a href="#hinton">el podcast de Hinton</a>. Es el más corto y el que mejor explica por qué gente muy seria cambió de opinión.</p>
+      <p><strong>Si tienes una semana,</strong> <a href="#hoy">pruébala</a> en algo real tuyo. Es lo que más cambia la opinión de la gente, para bien y para mal.</p>
+      <p><strong>Cuando salga el tema en la mesa,</strong> fíjate en quién muestra su razonamiento. Esto atrae exageración por los dos lados. Mi filtro: confío más en quien te dice qué lo haría cambiar de opinión, y menos en quien nunca reconoce lo que no sabe.</p>
+      <p><strong>Si quedaste con ganas de más,</strong> hay dos caminos, los dos en inglés. Uno es la mirada escéptica: Melanie Mitchell, profesora del Santa Fe Institute, sostiene en <a href="https://yalereview.org/article/melanie-mitchell-jagged-intelligence" target="_blank" rel="noopener">Jagged Intelligence</a> que estas IA son brillantes en una tarea y torpes en otra casi igual, y que todavía no sabemos medir bien qué entienden. El otro es un <a href="https://bluedot.org/courses/future-of-ai" target="_blank" rel="noopener">curso gratis de dos horas</a> de BlueDot Impact, hecho para gente sin conocimientos técnicos.</p>
+      <p><strong>Y si te sirvió, mándaselo a alguien.</strong> A esa persona con la que terminas hablando de estas cosas en los asados. Si te quedaron dudas o no estás de acuerdo con algo, escríbeme: <a href="mailto:hola@robertvaliente.com">hola@robertvaliente.com</a>.</p>
+      <div class="compartir">
+        <a href="https://wa.me/?text=%C2%BFDeber%C3%ADamos%20tenerle%20miedo%20a%20la%20IA%3F%20Tres%20miradas%2C%20cada%20una%20con%20un%20podcast%20en%20espa%C3%B1ol%3A%20https%3A//robertvaliente.com/recursos-ia/" target="_blank" rel="noopener">Mandar por WhatsApp →</a>
+        <button type="button" id="copiar-link">Copiar el link</button>
+      </div>
       <p class="nota-podcast">Los podcasts los generé con IA (NotebookLM) a partir de cada original. Resumen bien, pero pueden tener errores: si algo te suena raro, manda el original.</p>
     </div>
   </section>
@@ -469,6 +480,20 @@
   </div>
 
 </div>
+
+<script>
+// Copiar el link de la nota.
+(function () {
+  var b = document.getElementById('copiar-link');
+  if (!b || !navigator.clipboard) { if (b) b.hidden = true; return; }
+  b.addEventListener('click', function () {
+    navigator.clipboard.writeText('https://robertvaliente.com/recursos-ia/').then(function () {
+      b.textContent = 'Link copiado';
+      setTimeout(function () { b.textContent = 'Copiar el link'; }, 2000);
+    });
+  });
+})();
+</script>
 
 <script>
 // Reproductor de los podcasts. Sin JS queda el <audio controls> nativo.
