@@ -7,6 +7,7 @@ Sitio personal de Roberto Valiente. HTML estático, sin build ni dependencias.
 ```
 index.html              portada — bio, notas, menciones y contacto
 recursos-ia/index.html  nota — ¿Deberíamos tenerle miedo a la IA?
+recursos-ia/mitchell/    mirada extra (Mitchell); solo se enlaza desde la nota, no va en sitemap ni portada
 recursos-ia/audio/       podcasts en español (mp3 mono 64k; Pages no acepta archivos de más de 25 MB)
 ```
 
