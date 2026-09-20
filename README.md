@@ -24,5 +24,4 @@ proyecto de Pages, con el correo `hola@` en Cloudflare Email Routing.
 
 ## Pendiente
 
-- `recursos-ia/` — falta `audio/80k.mp3` (su reproductor está comentado en el HTML)
 - Links de la sección Contacto más allá de email y LinkedIn
