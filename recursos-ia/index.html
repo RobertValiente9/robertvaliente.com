@@ -268,6 +268,7 @@
   .rep-play:focus-visible { border-radius: 50%; }
   .audio + .enlaces { margin-top: 20px; }
 
+  .prosa .posdata { font-style: italic; color: var(--apagado); margin-top: 10px; }
   .prosa .nota-podcast { font-size: 16px; line-height: 1.55; color: var(--meta); margin-top: 14px; }
 
   /* pie */
@@ -323,9 +324,9 @@
     <div class="filete"></div>
     <div class="rotulo">Por qué armé esto</div>
     <div class="prosa">
-      <p>Ayer estaba en un asado familiar y un tío me preguntó: «Oye, ¿tú trabajaste en seguridad de inteligencia artificial o no? ¿Es verdad que la IA nos va a matar a todos?». Traté de explicarle, pero me fui por lo técnico y se me enredó un poco la respuesta. Al final le dije: «Tranqui, mañana te mando unos recursos fáciles de entender».</p>
-      <p>Cuando los fui a buscar, no encontré casi nada. Hay cosas muy buenas, pero la mayoría está en inglés, son largas y, por lo general, dan por hecho que ya sabes muchas cosas.</p>
-      <p>Así que decidí armar este documento, tanto para mi tío como para cualquier persona que tenga ganas de entender de qué se trata todo esto. Elegí tres miradas y a cada una le hice un resumen en español, en formato podcast, para que le pongas play y listo. Cada mirada trae lo mismo: quién habla, de qué habla, el podcast y, si te quedas con ganas, el link al original. Vienen de lugares bien distintos: el científico que inventó esto, el empresario que lo construye hoy y una organización que se dedica a estudiar qué problemas del mundo son más urgentes.</p>
+      <p>Ayer estaba en un asado familiar y un tío me preguntó: «Oye, ¿tú trabajaste en seguridad de inteligencia artificial o no? ¿Es verdad que la IA nos puede matar a todos?». Traté de explicarle, pero me fui por lo técnico y se me enredó un poco la respuesta. Al final le dije: «Tranqui, mañana te mando unos recursos fáciles de entender».</p>
+      <p>Cuando los fui a buscar, no encontré casi nada. Hay cosas muy buenas, pero la mayoría está en inglés, son largas y, por lo general, dan por hecho que ya sabes muchas cosas que alguien que no está metido en esto no tiene por qué saber.</p>
+      <p>Así que decidí armar este documento, tanto para mi tío como para cualquier persona que tenga ganas de entender de qué se trata todo esto. Elegí tres miradas y a cada una le hice un resumen en español, en formato podcast, para que le pongas play y listo. Cada mirada viene igual: quién habla, de qué habla, el podcast y, si te quedas con ganas, el link al original y algunos artículos que te pueden interesar. Vienen de lugares bien distintos: el científico que inventó esto, el empresario que lo construye hoy y una organización que se dedica a estudiar qué problemas del mundo son más urgentes.</p>
     </div>
     <nav class="indice" aria-label="Contenido">
       <div class="indice-titulo">Contenido</div>
@@ -345,23 +346,23 @@
     <dl class="glosario">
       <div>
         <dt>ChatGPT, Claude, Gemini, etc.</dt>
-        <dd>Programas con los que conversas escribiendo, como si al otro lado hubiera una persona. Responden preguntas, redactan textos y ayudan con tareas. Hay varios más; estos son los más conocidos.</dd>
+        <dd>Programas con los que conversas escribiendo por un chat, y al otro lado te responden como si hubiera una persona. Responden preguntas, redactan textos y ayudan con tareas. Hay varios más; estos son los más conocidos.</dd>
       </div>
       <div>
         <dt>Laboratorios de frontera</dt>
-        <dd>Así les dicen a las empresas que construyen las IA más avanzadas. Las principales son OpenAI (hace ChatGPT), Anthropic (hace Claude) y Google (hace Gemini). También están Meta, xAI y, en China, DeepSeek.</dd>
+        <dd>Así les dicen a las empresas que construyen las IA más avanzadas. Las principales son OpenAI (la que hace ChatGPT), Anthropic (la que hace Claude) y Google (la que hace Gemini). También están Meta (la de la IA que tienes en tu WhatsApp) y DeepSeek (la de China).</dd>
       </div>
       <div>
         <dt>Token</dt>
-        <dd>Estas IA no leen ni escriben letra por letra: arman el texto con piezas chicas, como un Lego. Cada pieza es un token: una palabra corta es una pieza, y una larga pueden ser dos o tres. Importa porque todo se mide en tokens: cuánto texto puede manejar una IA de una vez y cuánto cuesta usarla.</dd>
+        <dd>La unidad de medida de estas IA. Un token es más o menos una palabra, o un pedazo de una palabra larga. En tokens se mide cuánto texto puede manejar una IA de una vez y también cuánto cuesta usarla: mientras más tokens procesa, más caro sale.</dd>
       </div>
       <div>
         <dt>Agente de IA</dt>
         <dd>Una IA que no solo responde, sino que hace cosas por su cuenta: busca en internet, escribe y ejecuta programas, manda correos, y va tomando decisiones sola en el camino.</dd>
       </div>
       <div>
-        <dt>AGI / superinteligencia</dt>
-        <dd>AGI es la sigla en inglés de «inteligencia artificial general»: una IA tan capaz como una persona en prácticamente cualquier tarea intelectual. Superinteligencia es el paso siguiente: una IA bastante más capaz que el humano más inteligente, en casi todo. La pelea es sobre si falta poco o falta mucho.</dd>
+        <dt>AGI y superinteligencia</dt>
+        <dd>AGI es la sigla en inglés de «inteligencia artificial general»: una IA tan capaz como una persona en prácticamente cualquier tarea intelectual. Una superinteligencia es el paso siguiente: una IA bastante más capaz que el humano más inteligente, en casi todo.</dd>
       </div>
       <div>
         <dt>Seguridad en IA</dt>
@@ -372,11 +373,11 @@
 
   <section id="hoy">
     <div class="filete"></div>
-    <div class="rotulo">Qué hace hoy · a septiembre de 2026</div>
+    <div class="rotulo">Qué hace hoy · al 19 de septiembre de 2026</div>
     <div class="prosa">
-      <p>El 8 de septiembre, OpenAI <a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener">anunció</a> que 10.000 agentes de IA, trabajando en paralelo durante 88 horas, resolvieron uno de los «problemas del milenio»: una pregunta sobre cómo se mueven los fluidos que llevaba casi 100 años abierta, y por la que se ofrecía un millón de dólares a quien la resolviera. La demostración pasó una verificación formal por computador, aunque la comunidad matemática todavía la está revisando y hay una pelea sobre quién llegó primero. Fintualist lo <a href="https://fintualist.com/chile/ciencia/la-teleserie-entre-los-matematicos-y-la-ia-que-todos-estabamos-esperando/" target="_blank" rel="noopener">contó en español</a>.</p>
-      <p>Si se confirma, es una locura. Significa que estas IA ya no solo repiten lo que nosotros sabemos: están creando conocimiento nuevo. Días antes, al lanzar ese modelo, el presidente de OpenAI ya había <a href="https://x.com/gdb/status/2096721633876771094" target="_blank" rel="noopener">escrito</a> que «estamos entrando en la era de la AGI». Otros responden que una IA capaz de esto igual se cae en tareas simples del día a día.</p>
-      <p>Pero una cosa es escuchar una noticia y otra es probarla. Abre ChatGPT, Claude o el que quieras, y ocúpalo una semana en algo real tuyo. Si nunca lo has usado, probablemente no dimensionas lo poderosas que son estas herramientas. Y un consejo: no lo ocupes solo para preguntarle cosas. Pídele que haga cosas por ti.</p>
+      <p>El 8 de septiembre, OpenAI <a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener">anunció</a> que 10.000 agentes de IA, trabajando en paralelo durante 88 horas, resolvieron uno de los «problemas del milenio»: una pregunta sobre cómo se mueven los fluidos que llevaba casi 100 años abierta, que generaciones de matemáticos habían intentado resolver y por la que se ofrecía un millón de dólares. La demostración pasó una verificación formal por computador, aunque la comunidad matemática todavía la está revisando y hay una pelea sobre quién llegó primero. Fintualist lo <a href="https://fintualist.com/chile/ciencia/la-teleserie-entre-los-matematicos-y-la-ia-que-todos-estabamos-esperando/" target="_blank" rel="noopener">contó en español</a>.</p>
+      <p>Si se confirma, es una locura. Significa que estas IA ya no solo repiten lo que nosotros sabemos: están creando conocimiento nuevo. Hay quienes creen que con esto estamos entrando en la era de la AGI, y que los modelos que usamos hoy son sus primeras versiones; el presidente de OpenAI lo <a href="https://x.com/gdb/status/2096721633876771094" target="_blank" rel="noopener">escribió</a> tal cual al lanzar este modelo. Otros responden que una IA capaz de esto igual se cae en tareas simples del día a día, y que todavía no estamos cerca.</p>
+      <p>Pero una cosa es leer en las noticias de qué son capaces estas IA y otra es probarlas. Abre ChatGPT, Claude o la que quieras, y ocúpala una semana en algo real tuyo. Si nunca las has usado, probablemente no dimensionas lo poderosas que son estas herramientas. Y un consejo: no la ocupes solo para preguntarle cosas. Pídele que haga cosas por ti (o sea, úsala como un agente).</p>
     </div>
     <div class="probar">
       <span>Pruébalo ahora:</span>
@@ -391,8 +392,8 @@
     <h2>Geoffrey Hinton, el científico que se asustó de su propio invento</h2>
     <p class="ficha">4 de junio de 2026</p>
     <div class="prosa">
-      <p>Geoffrey Hinton es el científico que, junto a un par de colegas, desarrolló en los años 80 la técnica con la que aprenden todas las IA de hoy. Por eso le dicen el «padrino de la IA», y por eso ganó el Premio Nobel de Física en 2024. Trabajó más de diez años en Google. En 2023 renunció, para poder hablar de los riesgos sin tener que cuidarle la imagen a una empresa. No es alguien opinando desde afuera: es el que la construyó.</p>
-      <p>En esta entrevista cuenta qué fue lo que lo asustó. Se convenció de que estas máquinas de verdad entienden, y de que aprenden mucho más rápido que nosotros, porque miles de copias pueden compartir al instante lo que aprende cada una. Cree que van a causar cesantía masiva, y que las empresas compiten tan fuerte que la seguridad queda en segundo plano. Su imagen: la regulación no es el freno del auto, es el volante. Aun así, dice que hoy está un poco más optimista que hace un par de años, porque ya ve caminos para que esto salga bien. Si vas a escuchar uno solo, que sea este.</p>
+      <p>A Geoffrey Hinton le dicen el «padrino de la IA», y no es exageración: en los años 80, junto a un par de colegas, desarrolló la técnica con la que aprenden todas las IA de hoy. En 2024 le dieron el Nobel de Física por eso. Trabajó más de diez años en Google, hasta que en 2023 renunció. ¿Por qué? Para poder hablar de los riesgos de la IA sin tener que cuidarle la imagen a ninguna empresa. O sea, no es un señor opinando desde afuera: es literalmente el que la construyó.</p>
+      <p>¿Y qué lo asustó? Dos cosas. La primera: se convenció de que estas máquinas entienden de verdad. En la entrevista cuenta que le pidió a una que le explicara por qué un chiste era chistoso, y se lo explicó. La segunda: aprenden mucho más rápido que nosotros, porque miles de copias pueden compartir al instante lo que aprende cada una. También cree que viene una cesantía masiva, y que las empresas están compitiendo tan fuerte que la seguridad queda para después. Su mejor frase: la regulación no es el freno del auto, es el volante. Lo curioso es que hoy dice estar un poco más optimista que hace un par de años, porque ya ve caminos para que esto salga bien. Si vas a escuchar uno solo, que sea este.</p>
     </div>
     <figure class="audio">
       <figcaption>Escucha el resumen en español <span>· podcast hecho con IA</span></figcaption>
@@ -408,12 +409,12 @@
   <section id="amodei">
     <div class="filete"></div>
     <div class="rotulo">Mirada 2</div>
-    <h2>Dario Amodei, el que está en la carrera y les pide a sus competidores que corran todos más lento</h2>
+    <h2>Dario Amodei, el corredor que les pide a sus competidores que todos corran más lento</h2>
     <p class="ficha">12 de septiembre de 2026</p>
     <div class="prosa">
-      <p>Dario Amodei es un físico que trabajó varios años en OpenAI, donde dirigía toda la investigación. En 2021 se fue con un grupo de compañeros, en parte porque sentía que la empresa no le daba suficiente peso a la seguridad en inteligencia artificial, y juntos fundaron Anthropic. Hoy es su gerente general.</p>
-      <p>Su ensayo dice algo raro para el gerente general de una empresa con fines de lucro: hay que bajar la velocidad a la que estos sistemas se vuelven más capaces, para alcanzar a revisar la seguridad de lo que estamos construyendo. Y parte por su propia casa: compromete a su empresa a darles acceso permanente a revisores externos. Ojo con quién escribe: Amodei dirige una empresa del rubro, que esa misma semana buscaba levantar hasta USD 100 mil millones. Eso no invalida lo que dice, pero sí es parte del contexto.</p>
-      <p>El ensayo tuvo repercusiones de inmediato. En cosa de horas, Sam Altman, gerente general de OpenAI y su principal competidor, <a href="https://x.com/sama/status/2098811563415150910" target="_blank" rel="noopener">escribió en X</a> que estaba de acuerdo y que también les abriría la puerta a revisores externos. Elon Musk <a href="https://x.com/elonmusk/status/2098789109980332057" target="_blank" rel="noopener">respondió en X</a> con tres palabras: «Dario is right». El presidente Trump, en cambio, <a href="https://www.npr.org/2026/09/13/nx-s1-5968078/trump-mike-johnson-ai-slowdown" target="_blank" rel="noopener">dijo a periodistas</a> ese domingo que Estados Unidos no puede quedarse atrás de China, porque «quien gana la IA, gana», y al día siguiente <a href="https://www.cnn.com/2026/09/14/politics/trump-vance-ai-alarms" target="_blank" rel="noopener">calificó estas alarmas de «engaño»</a>. Que rivales como Altman y Musk coincidan en algo así es muy raro.</p>
+      <p>Dario Amodei es un físico que trabajó varios años en OpenAI, donde dirigía toda la investigación. En 2021 renunció junto a un grupo de compañeros, en parte porque sentía que la empresa no le daba suficiente peso a la seguridad en IA, y juntos fundaron Anthropic, la empresa que hace Claude. Hoy es su gerente general.</p>
+      <p>Su ensayo dice algo raro para el jefe de una empresa que busca ganar plata: hay que bajar la velocidad a la que estas IA se vuelven más capaces, para alcanzar a revisar que lo que estamos construyendo sea seguro. Y no se queda en pedirlo: se compromete a dejar entrar a su empresa a revisores externos, de forma permanente, para que vean cómo trabajan por dentro. Ojo con quién escribe: Amodei dirige una empresa del rubro que esa misma semana buscaba levantar hasta 100 mil millones de dólares. Eso no invalida lo que dice, pero sí es parte del contexto.</p>
+      <p>El ensayo tuvo repercusiones de inmediato. En cosa de horas, Sam Altman, gerente general de OpenAI y su principal competidor, <a href="https://x.com/sama/status/2098811563415150910" target="_blank" rel="noopener">escribió en X</a> que estaba de acuerdo y que también les abriría la puerta a revisores externos. Elon Musk <a href="https://x.com/elonmusk/status/2098789109980332057" target="_blank" rel="noopener">respondió</a>, también en X, con tres palabras: «Dario is right». El presidente Trump, en cambio, <a href="https://www.npr.org/2026/09/13/nx-s1-5968078/trump-mike-johnson-ai-slowdown" target="_blank" rel="noopener">dijo a periodistas</a> ese domingo que Estados Unidos no puede quedarse atrás, porque «quien gana la IA, gana». Que rivales como Altman y Musk coincidan en algo así es muy raro.</p>
     </div>
     <figure class="audio">
       <figcaption>Escucha el resumen en español <span>· podcast hecho con IA</span></figcaption>
@@ -434,10 +435,10 @@
     <div class="filete"></div>
     <div class="rotulo">Mirada 3</div>
     <h2>Zershaaneh Qureshi y 80,000 Hours, el argumento completo y ordenado</h2>
-    <p class="ficha">Febrero de 2026</p>
+    <p class="ficha">Febrero de 2026 · actualizado en septiembre de 2026</p>
     <div class="prosa">
-      <p>80,000 Hours es una organización sin fines de lucro que nació en 2011 en la Universidad de Oxford. No construye IA ni vende nada relacionado: se dedica a investigar qué problemas del mundo son más urgentes. Este artículo lo escribió Zershaaneh Qureshi, matemática y filósofa formada en Oxford que hoy investiga seguridad en IA. Partió de una versión anterior de su colega Cody Fenwick y la respaldó un equipo multidisciplinario: físicos y filósofos de la Universidad de Oxford y de la Universidad de Nueva York (NYU), además de gente que viene del periodismo y las políticas públicas. Eso sí, no es un árbitro neutral. Hace años concluyeron que el riesgo de la IA es uno de los problemas más importantes que hay, y escriben desde ahí.</p>
-      <p>Este artículo es el resumen más completo y ordenado que conozco de por qué la IA avanzada preocupa a tanta gente. Va paso a paso y, lo más útil, se hace cargo de las objeciones típicas, partiendo por la más obvia: ¿no es esto ciencia ficción? Es largo y no es para leerlo de una sentada. Sirve como el lugar al que volver cuando te queda una duda puntual y quieres ver el argumento completo, con sus fuentes.</p>
+      <p>80,000 Hours es una organización sin fines de lucro que nació en 2011 en la Universidad de Oxford. No construye IA ni vende nada: se dedica a investigar qué problemas del mundo son más urgentes. Este artículo lo escribió Zershaaneh Qureshi, matemática y filósofa formada en Oxford que hoy investiga seguridad en IA, y lo respalda el equipo de 80,000 Hours: un grupo multidisciplinario, principalmente de físicos y filósofos de la Universidad de Oxford y de la Universidad de Nueva York. Ojo con quién escribe, eso sí: no son neutrales. Hace años concluyeron que el riesgo de la IA es uno de los problemas más importantes del mundo, y escriben desde ahí.</p>
+      <p>Es el resumen más completo y ordenado que conozco de por qué la IA avanzada preocupa a tanta gente. Va paso a paso y, lo más útil, se hace cargo de las objeciones típicas, partiendo por la más obvia: ¿no es esto ciencia ficción? Es largo y no es para leerlo de una. Sirve como el lugar al que volver cuando te queda una duda puntual y quieres ver el argumento completo, con sus fuentes.</p>
     </div>
     <figure class="audio">
       <figcaption>Escucha el resumen en español <span>· podcast hecho con IA</span></figcaption>
@@ -454,19 +455,23 @@
     <div class="filete"></div>
     <div class="rotulo">Con qué me quedo</div>
     <div class="prosa">
-      <p>Entonces, ¿deberíamos tenerle miedo a la IA? Yo diría que miedo no, pero sí tomársela en serio. Me quedo con tres cosas: es real, es serio y todavía no está decidido. <strong>Real</strong>, porque no es ciencia ficción ni una moda: ya cambió cómo trabajo yo y mucha gente que conozco. <strong>Serio</strong>, porque los que más saben, incluidos los que lo construyeron, están preocupados de verdad. Y <strong>no está decidido</strong>, que es lo que casi nadie dice: ni el mundo ideal está garantizado ni el desastre tampoco. Depende de decisiones que están tomando personas en estos años.</p>
-      <p>¿Qué tan seguro estoy? Poco. No sé si el escenario malo tiene 1% o 20% de probabilidad, y desconfío de cualquiera que diga tener el número exacto. Pero no necesito el número: aunque fuera 2%, nadie se sube a un avión con 2% de probabilidad de caerse. No te pido plata, ni que cambies de trabajo, ni que andes preocupado. Te pido algo más chico: que cuando este tema aparezca, lo trates como un tema serio y no como ruido.</p>
+      <p>Entonces, ¿deberíamos tenerle miedo a la IA? Yo diría que miedo no, pero sí tomárnosla muy en serio. Personalmente, creo que es el problema más importante que la humanidad tiene que resolver en los próximos años.</p>
+      <p>Si después de todo esto te quedas con tres cosas, que sean estas: esto es real, es serio y todavía no está decidido. <strong>Real</strong>, porque no es ciencia ficción ni una moda: la IA ya cambió cómo trabajo yo y cómo trabaja muchísima gente que conozco. <strong>Serio</strong>, porque los que más saben, incluidos los que la construyeron, están preocupados de verdad. Y <strong>no está decidido</strong>, que es lo que casi nadie dice: el mundo ideal no está garantizado, y el desastre tampoco. Si en diez años vivimos en algo parecido a una utopía o a una distopía va a depender de decisiones que están tomando personas en estos años.</p>
+      <p>¿Qué tan seguro estoy? Poco. No sé si el escenario malo tiene 1% o 20% de probabilidad, y te invito a desconfiar de cualquiera que diga tener el número exacto. Pero, como explica Qureshi en su artículo, no hace falta el número exacto: cuando lo que está en juego es tan grande, incluso una probabilidad chica justifica tomárselo en serio. Nadie se sube a un avión con 1% de probabilidad de caerse.</p>
 
       <h3>¿Y ahora qué?</h3>
       <p><strong>Si tienes 15 minutos,</strong> escucha <a href="#hinton">el podcast de Hinton</a>. Es el más corto y el que mejor explica por qué gente muy seria cambió de opinión.</p>
-      <p><strong>Si tienes una semana,</strong> <a href="#hoy">pruébala</a> en algo real tuyo. Es lo que más cambia la opinión de la gente, para bien y para mal.</p>
-      <p><strong>Cuando salga el tema en la mesa,</strong> fíjate en quién muestra su razonamiento. Esto atrae exageración por los dos lados. Mi filtro: confío más en quien te dice qué lo haría cambiar de opinión, y menos en quien nunca reconoce lo que no sabe.</p>
-      <p><strong>Si quedaste con ganas de más,</strong> hay dos caminos, los dos en inglés. Uno es la mirada escéptica: Melanie Mitchell, profesora del Santa Fe Institute, sostiene en <a href="https://yalereview.org/article/melanie-mitchell-jagged-intelligence" target="_blank" rel="noopener">Jagged Intelligence</a> que estas IA son brillantes en una tarea y torpes en otra casi igual, y que todavía no sabemos medir bien qué entienden. El otro es un <a href="https://bluedot.org/courses/future-of-ai" target="_blank" rel="noopener">curso gratis de dos horas</a> de BlueDot Impact, hecho para gente sin conocimientos técnicos.</p>
+      <p><strong>Si tienes una semana,</strong> <a href="#hoy">pruébala</a> en algo real tuyo. Es lo que más le cambia la opinión a la gente, para bien y para mal.</p>
+      <p><strong>Cuando salga el tema en la mesa,</strong> fíjate en quién muestra su razonamiento. Esto atrae exageración por los dos lados, y lo más probable es que se politice. Trata de no caer en bandos. Mi filtro: confío más en quien te dice qué tendría que pasar para que cambiara de opinión, y menos en quien nunca reconoce lo que no sabe. Y cada vez que escuches algo sobre IA, trata de entender cómo llegó esa persona a su conclusión.</p>
+      <p><strong>Cuestiona lo que dabas por hecho.</strong> Hay decisiones que antes se respondían solas (qué estudiar, en qué trabajar, en qué invertir) y que hoy vale la pena pensar dos veces. No porque la respuesta haya cambiado, sino porque ya no es obvia.</p>
+      <p><strong>No dejes lo importante para después.</strong> La incertidumbre no es razón para dejar de hacer planes. Es razón para no seguir postergando lo que importa. Yo estoy preocupado, y justamente por eso adelanté cosas que venía dejando para más adelante. Vale en todos los escenarios, incluido el aburrido donde no pasa nada de esto.</p>
+      <p><strong>Si quedaste con ganas de más,</strong> hay dos caminos, los dos en inglés. Uno es la mirada escéptica: hay gente seria que cree que las predicciones más dramáticas son exageradas. Armando esto me topé con Melanie Mitchell, profesora del Santa Fe Institute, que sostiene en <a href="https://yalereview.org/article/melanie-mitchell-jagged-intelligence" target="_blank" rel="noopener">Jagged Intelligence</a> que estas IA son brillantes en una tarea y torpes en otra casi igual, y que todavía no sabemos medir bien qué entienden. El otro es un <a href="https://bluedot.org/courses/future-of-ai" target="_blank" rel="noopener">curso gratis de dos horas</a> de BlueDot Impact, hecho para gente sin conocimientos técnicos.</p>
       <p><strong>Y si te sirvió, mándaselo a alguien.</strong> A esa persona con la que terminas hablando de estas cosas en los asados. Si te quedaron dudas o no estás de acuerdo con algo, escríbeme: <a href="mailto:hola@robertvaliente.com">hola@robertvaliente.com</a>.</p>
       <div class="compartir">
         <a href="https://wa.me/?text=%C2%BFDeber%C3%ADamos%20tenerle%20miedo%20a%20la%20IA%3F%20Tres%20miradas%2C%20cada%20una%20con%20un%20podcast%20en%20espa%C3%B1ol%3A%20https%3A//robertvaliente.com/recursos-ia/" target="_blank" rel="noopener">Mandar por WhatsApp →</a>
         <button type="button" id="copiar-link">Copiar el link</button>
       </div>
+      <p class="posdata">PD para mi tío: cumplí. La próxima pregunta difícil en un asado te la cobro en choripanes.</p>
       <p class="nota-podcast">Los podcasts los generé con IA (NotebookLM) a partir de cada original. Resumen bien, pero pueden tener errores: si algo te suena raro, manda el original.</p>
     </div>
   </section>
