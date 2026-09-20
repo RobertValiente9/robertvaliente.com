@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Recursos sobre IA y sus riesgos — Roberto Valiente</title>
-<meta name="description" content="Cuatro recursos para formarse una primera opinión sobre la inteligencia artificial y sus riesgos, para personas sin familiaridad previa con el tema.">
+<title>¿Deberíamos tenerle miedo a la IA? — Roberto Valiente</title>
+<meta name="description" content="Cuatro miradas para entender la inteligencia artificial y sus riesgos, cada una con un resumen en español para escuchar. Para personas sin familiaridad previa con el tema.">
 <meta name="author" content="Roberto Valiente">
 
 <link rel="canonical" href="https://robertvaliente.com/recursos-ia/">
@@ -12,8 +12,8 @@
 <meta property="og:type" content="article">
 <meta property="og:site_name" content="Roberto Valiente">
 <meta property="og:locale" content="es_CL">
-<meta property="og:title" content="Recursos sobre IA y sus riesgos">
-<meta property="og:description" content="Cuatro recursos para formarse una primera opinión sobre la inteligencia artificial y sus riesgos, para personas sin familiaridad previa con el tema.">
+<meta property="og:title" content="¿Deberíamos tenerle miedo a la IA?">
+<meta property="og:description" content="Cuatro miradas para entender la inteligencia artificial y sus riesgos, cada una con un resumen en español para escuchar. Para personas sin familiaridad previa con el tema.">
 <meta property="og:url" content="https://robertvaliente.com/recursos-ia/">
 <meta property="og:image" content="https://robertvaliente.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -23,16 +23,16 @@
 <meta property="article:author" content="Roberto Valiente">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Recursos sobre IA y sus riesgos">
-<meta name="twitter:description" content="Cuatro recursos para formarse una primera opinión sobre la inteligencia artificial y sus riesgos, para personas sin familiaridad previa con el tema.">
+<meta name="twitter:title" content="¿Deberíamos tenerle miedo a la IA?">
+<meta name="twitter:description" content="Cuatro miradas para entender la inteligencia artificial y sus riesgos, cada una con un resumen en español para escuchar. Para personas sin familiaridad previa con el tema.">
 <meta name="twitter:image" content="https://robertvaliente.com/og-image.png">
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Article",
-  "headline": "Recursos sobre IA y sus riesgos",
-  "description": "Cuatro recursos para formarse una primera opinión sobre la inteligencia artificial y sus riesgos, para personas sin familiaridad previa con el tema.",
+  "headline": "¿Deberíamos tenerle miedo a la IA?",
+  "description": "Cuatro miradas para entender la inteligencia artificial y sus riesgos, cada una con un resumen en español para escuchar. Para personas sin familiaridad previa con el tema.",
   "inLanguage": "es",
   "datePublished": "2026-09-19",
   "dateModified": "2026-09-19",
@@ -180,7 +180,7 @@
   .indice { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 16px; color: var(--apagado); margin-top: 26px; }
   .indice a { border-bottom: 1px solid #DAD5CB; }
   .indice-titulo { display: none; }
-  .indice a[href="#por-que"] { display: none; }
+  .indice a[href="#intro"] { display: none; }
 
   /* con ancho suficiente el indice pasa a una columna fija a la izquierda */
   @media (min-width: 1140px) {
@@ -197,7 +197,7 @@
       line-height: 1.35;
       color: var(--meta);
     }
-    .indice a, .indice a[href="#por-que"] { display: block; border-bottom: 0; }
+    .indice a, .indice a[href="#intro"] { display: block; border-bottom: 0; }
     .indice-titulo { display: block; font-size: 19px; font-weight: 500; color: var(--tinta); margin-bottom: 8px; }
   }
 
@@ -211,6 +211,61 @@
   .enlace a { font-size: 18px; line-height: 1.5; color: var(--acento); }
   .enlace p { font-size: 16px; line-height: 1.55; color: var(--apagado); margin: 3px 0 0; text-wrap: pretty; }
 
+  /* probar la IA con una pregunta ya escrita */
+  .probar { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; margin-top: 22px; font-size: 17px; color: var(--apagado); }
+  .probar span { flex-basis: 100%; }
+  .probar a { font-size: 18px; color: var(--acento); }
+
+  /* reproductor del podcast */
+  .audio { margin: 26px 0 0; }
+  .audio figcaption { font-size: 18px; line-height: 1.5; color: var(--tinta); margin-bottom: 10px; }
+  .audio figcaption span { font-size: 16px; color: var(--meta); }
+  .audio audio { display: block; width: 100%; height: 44px; }
+
+  /* el reproductor propio reemplaza al nativo cuando hay JS */
+  .rep {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #E7E4DA;
+    border-radius: 10px;
+    padding: 14px 18px 14px 14px;
+  }
+  .rep button { font: inherit; color: var(--tinta); background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .rep svg { display: block; }
+  .rep-salto { width: 40px; height: 40px; flex-shrink: 0; color: var(--cuerpo); }
+  .rep-play {
+    width: 52px; height: 52px; flex-shrink: 0;
+    border-radius: 50%;
+    background: var(--acento) !important;
+    color: var(--papel) !important;
+    display: grid; place-items: center;
+  }
+  .rep-play .i-pausa, .rep.sonando .rep-play .i-play { display: none; }
+  .rep.sonando .rep-play .i-pausa { display: block; }
+  .rep-cuerpo { flex: 1; min-width: 0; padding-left: 4px; }
+  .rep-barra {
+    -webkit-appearance: none; appearance: none;
+    display: block; width: 100%; height: 18px; margin: 0;
+    background: transparent; cursor: pointer;
+  }
+  .rep-barra::-webkit-slider-runnable-track { height: 2px; background: linear-gradient(to right, var(--tinta) var(--avance, 0%), #BDB7AA var(--avance, 0%)); }
+  .rep-barra::-moz-range-track { height: 2px; background: #BDB7AA; }
+  .rep-barra::-moz-range-progress { height: 2px; background: var(--tinta); }
+  .rep-barra::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: -6px; border-radius: 50%; background: var(--tinta); }
+  .rep-barra::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--tinta); }
+  .rep-pie {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 4px;
+    font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--apagado);
+  }
+  .rep-vel { font-family: 'IBM Plex Mono', monospace !important; font-size: 12px !important; letter-spacing: 0.06em; color: var(--apagado) !important; padding: 4px 0 4px 10px !important; }
+  .rep button:focus-visible, .rep-barra:focus-visible { outline: 2px solid var(--acento); outline-offset: 3px; border-radius: 4px; }
+  .rep-play:focus-visible { border-radius: 50%; }
+  .audio + .enlaces { margin-top: 20px; }
+
+  .prosa .nota-podcast { font-size: 16px; line-height: 1.55; color: var(--meta); margin-top: 14px; }
+
   /* pie */
   .pie { display: flex; flex-wrap: wrap; gap: 18px; font-size: 16px; color: var(--apagado); }
   .pie a { border-bottom: 1px solid #DAD5CB; }
@@ -219,9 +274,11 @@
      pegado tras el tap y el link se ve activo al volver a subir */
   @media (hover: hover) {
     .prosa a:hover   { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
+    .probar a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .enlace a:hover  { border-bottom: 1px solid oklch(0.49 0.13 58 / 0.4); }
     .indice a:hover  { color: var(--tinta); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
     .pie a:hover     { color: var(--acento); border-bottom-color: oklch(0.49 0.13 58 / 0.4); }
+    .rep-salto:hover, .rep-vel:hover { color: var(--acento) !important; }
   }
 
   /* navegacion por teclado: se mantiene en todos los dispositivos */
@@ -238,6 +295,9 @@
     h2 { font-size: 25px; }
     .prosa { font-size: 18px; }
     .filete { margin: 36px 0 22px; }
+    .rep { gap: 10px; padding: 12px 14px 12px 12px; }
+    .rep-salto { width: 34px; height: 34px; }
+    .rep-play { width: 46px; height: 46px; }
   }
 </style>
 </head>
@@ -251,210 +311,174 @@
 
   <article>
 
-  <h1>Recursos sobre IA y sus riesgos</h1>
-  <p class="bajada">Sep 2026 · Para personas sin familiaridad previa con la inteligencia artificial (IA) o la seguridad en IA.</p>
+  <h1>¿Deberíamos tenerle miedo a la IA?</h1>
+  <p class="bajada">19 de septiembre de 2026 · por Roberto Valiente</p>
 
-  <section id="por-que">
+  <section id="intro">
     <div class="filete"></div>
-    <div class="rotulo">Por qué cuesta entender esto</div>
+    <div class="rotulo">Por qué armé esto</div>
     <div class="prosa">
-      <p>La inteligencia artificial (IA) avanza muy rápido y cambia cada pocos meses. Por eso es difícil formarse una opinión estable sobre el tema.</p>
-      <p>Además, mezcla dos cosas distintas. Una es la tecnología en sí: qué puede hacer hoy un sistema como ChatGPT o Claude. La otra es el riesgo: qué pasa si estos sistemas se vuelven más capaces que nosotros y no sabemos controlarlos bien.</p>
-      <p>Ni los propios expertos están de acuerdo entre ellos. Algunos ven esto como la mayor oportunidad de la historia. Otros lo ven como el mayor riesgo. Muchos ven ambas cosas a la vez. Eso no significa que el tema sea confuso o poco serio: significa que es genuinamente incierto, incluso para la gente que más sabe.</p>
-      <p>Abajo van cuatro recursos para formarse una primera opinión. Cada uno viene de alguien distinto, con una mirada distinta. Uno construyó esta tecnología y hoy está preocupado. Otro dirige una de las empresas que la construye. Otra duda de las predicciones más dramáticas. El último es un resumen neutral, de gente que no vende nada.</p>
+      <p>Ayer estaba en un asado familiar y un tío me preguntó: «Oye, ¿tú trabajaste en seguridad de inteligencia artificial o no? ¿Es verdad que la IA nos va a matar a todos?». Traté de explicarle, pero me fui por lo técnico y se me enredó un poco la respuesta. Al final le dije: «Tranqui, mañana te mando unos recursos fáciles de entender».</p>
+      <p>Cuando los fui a buscar, no encontré casi nada. Hay cosas muy buenas, pero la mayoría está en inglés, son largas y, por lo general, dan por hecho que ya sabes muchas cosas.</p>
+      <p>Así que decidí armar este documento, tanto para mi tío como para cualquier persona que tenga ganas de entender de qué se trata todo esto. Elegí cuatro miradas distintas y a cada una le hice un resumen en español, en formato podcast, para que le pongas play y listo. Cada mirada trae lo mismo: quién es la persona, de qué habla, el podcast y, si te quedas con ganas, el link al original. Las cuatro no están de acuerdo entre sí, y esa es la gracia: ni la gente que más sabe de esto lo tiene resuelto.</p>
     </div>
     <nav class="indice" aria-label="Contenido">
       <div class="indice-titulo">Contenido</div>
-      <a href="#por-que">Por qué cuesta entender esto</a>
+      <a href="#intro">Por qué armé esto</a>
       <a href="#terminos">Términos básicos</a>
+      <a href="#hoy">Qué hace hoy</a>
       <a href="#hinton">1. Hinton</a>
       <a href="#amodei">2. Amodei</a>
       <a href="#mitchell">3. Mitchell</a>
       <a href="#80k">4. 80,000 Hours</a>
-      <a href="#nota-personal">Nota personal</a>
+      <a href="#cierre">Con qué me quedo</a>
     </nav>
   </section>
 
   <section id="terminos">
     <div class="filete"></div>
-    <div class="rotulo">Antes de partir: algunos términos básicos</div>
+    <div class="rotulo">Antes de partir: seis términos</div>
     <dl class="glosario">
       <div>
-        <dt>Chatbot / asistente de IA</dt>
-        <dd>Un programa con el que conversas escribiendo, como si fuera una persona. Responde preguntas, escribe textos, ayuda con tareas.</dd>
+        <dt>ChatGPT, Claude, Gemini, etc.</dt>
+        <dd>Programas con los que conversas escribiendo, como si al otro lado hubiera una persona. Responden preguntas, redactan textos y ayudan con tareas. Hay varios más; estos son los más conocidos.</dd>
       </div>
       <div>
-        <dt>ChatGPT</dt>
-        <dd>El chatbot más conocido del mundo. Lo hizo la empresa OpenAI.</dd>
-      </div>
-      <div>
-        <dt>OpenAI</dt>
-        <dd>La empresa que creó ChatGPT. Hoy es la empresa más famosa del rubro.</dd>
-      </div>
-      <div>
-        <dt>Claude</dt>
-        <dd>Otro chatbot, parecido a ChatGPT. Lo hace la empresa Anthropic.</dd>
-      </div>
-      <div>
-        <dt>Anthropic</dt>
-        <dd>La empresa que creó Claude. La fundó un grupo de personas que antes trabajaba en OpenAI y se fue para darle más peso a la seguridad.</dd>
-      </div>
-      <div>
-        <dt>Laboratorio de frontera</dt>
-        <dd>Así le dicen a las empresas (OpenAI, Anthropic, Google, entre otras) que construyen los sistemas de IA más avanzados que existen hoy.</dd>
-      </div>
-      <div>
-        <dt>Modelo de lenguaje (LLM)</dt>
-        <dd>El tipo de programa detrás de ChatGPT, Claude y similares. Se entrena leyendo enormes cantidades de texto para aprender a predecir qué palabra viene después, y así termina siendo capaz de conversar, escribir y responder preguntas.</dd>
+        <dt>Laboratorios de frontera</dt>
+        <dd>Así les dicen a las empresas que construyen las IA más avanzadas. Las principales son OpenAI (hace ChatGPT), Anthropic (hace Claude) y Google (hace Gemini). También están Meta, xAI y, en China, DeepSeek.</dd>
       </div>
       <div>
         <dt>Token</dt>
-        <dd>La unidad mínima de texto que estos programas leen y generan. Puede ser una palabra completa o un pedazo de ella. Es la forma en que la IA «lee» y «escribe», palabra por pedazo de palabra.</dd>
+        <dd>Estas IA no leen ni escriben letra por letra: arman el texto con piezas chicas, como un Lego. Cada pieza es un token: una palabra corta es una pieza, y una larga pueden ser dos o tres. Importa porque todo se mide en tokens: cuánto texto puede manejar una IA de una vez y cuánto cuesta usarla.</dd>
       </div>
       <div>
-        <dt>AGI (inteligencia artificial general)</dt>
-        <dd>Una IA que sería tan capaz como una persona en prácticamente cualquier tarea intelectual, no solo en una cosa específica. Hoy los chatbots son muy buenos en algunas áreas y flojos en otras; AGI describe el punto en que dejarían de tener esas debilidades.</dd>
+        <dt>Agente de IA</dt>
+        <dd>Una IA que no solo responde, sino que hace cosas por su cuenta: busca en internet, escribe y ejecuta programas, manda correos, y va tomando decisiones sola en el camino.</dd>
       </div>
       <div>
-        <dt>Superinteligencia</dt>
-        <dd>Un nivel todavía más allá de AGI: una IA notablemente más capaz que el ser humano más inteligente, en prácticamente todo. Es el escenario que más preocupa a la gente citada acá, porque no sabemos bien cómo controlar algo así.</dd>
+        <dt>AGI / superinteligencia</dt>
+        <dd>AGI es la sigla en inglés de «inteligencia artificial general»: una IA tan capaz como una persona en prácticamente cualquier tarea intelectual. Superinteligencia es el paso siguiente: una IA bastante más capaz que el humano más inteligente, en casi todo. La pelea es sobre si falta poco o falta mucho.</dd>
       </div>
       <div>
-        <dt>Seguridad de la IA / alineamiento</dt>
-        <dd>El área de trabajo dedicada a que estos sistemas hagan lo que sus creadores y la sociedad realmente quieren, y no cosas dañinas o no previstas. Cuando alguien dice que una empresa «invierte poco en seguridad», se refiere a esto.</dd>
+        <dt>Seguridad en IA</dt>
+        <dd>El trabajo de lograr que estos sistemas hagan lo que de verdad queremos, y no cosas dañinas o que nadie previó.</dd>
       </div>
     </dl>
   </section>
 
+  <section id="hoy">
+    <div class="filete"></div>
+    <div class="rotulo">Qué hace hoy · a septiembre de 2026</div>
+    <div class="prosa">
+      <p>El 8 de septiembre, OpenAI <a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener">anunció</a> que 10.000 agentes de IA, trabajando en paralelo durante 88 horas, resolvieron uno de los «problemas del milenio»: una pregunta sobre cómo se mueven los fluidos que llevaba casi 100 años abierta, y por la que se ofrecía un millón de dólares a quien la resolviera. La demostración pasó una verificación formal por computador, aunque la comunidad matemática todavía la está revisando y hay una pelea sobre quién llegó primero. Fintualist lo <a href="https://fintualist.com/chile/ciencia/la-teleserie-entre-los-matematicos-y-la-ia-que-todos-estabamos-esperando/" target="_blank" rel="noopener">contó en español</a>.</p>
+      <p>Si se confirma, es una locura. Significa que estas IA ya no solo repiten lo que nosotros sabemos: están creando conocimiento nuevo. Días antes, al lanzar ese modelo, el presidente de OpenAI ya había <a href="https://x.com/gdb/status/2096721633876771094" target="_blank" rel="noopener">escrito</a> que «estamos entrando en la era de la AGI». Otros responden que una IA capaz de esto igual se cae en tareas simples del día a día.</p>
+      <p>Pero una cosa es escuchar una noticia y otra es probarla. Abre ChatGPT, Claude o el que quieras, y ocúpalo una semana en algo real tuyo. Si nunca lo has usado, probablemente no dimensionas lo poderosas que son estas herramientas. Y un consejo: no lo ocupes solo para preguntarle cosas. Pídele que haga cosas por ti.</p>
+    </div>
+    <div class="probar">
+      <span>Pruébalo ahora:</span>
+      <a href="https://claude.ai/new?q=Quiero%20entender%20para%20qu%C3%A9%20me%20sirves.%20Hazme%203%20preguntas%20cortas%20sobre%20mi%20trabajo%2C%20una%20a%20la%20vez%2C%20y%20despu%C3%A9s%20mu%C3%A9strame%20con%20ejemplos%20concretos%20c%C3%B3mo%20me%20podr%C3%ADas%20ayudar%20esta%20semana." target="_blank" rel="noopener">Abrir Claude →</a>
+      <a href="https://chatgpt.com/?q=Quiero%20entender%20para%20qu%C3%A9%20me%20sirves.%20Hazme%203%20preguntas%20cortas%20sobre%20mi%20trabajo%2C%20una%20a%20la%20vez%2C%20y%20despu%C3%A9s%20mu%C3%A9strame%20con%20ejemplos%20concretos%20c%C3%B3mo%20me%20podr%C3%ADas%20ayudar%20esta%20semana." target="_blank" rel="noopener">Abrir ChatGPT →</a>
+    </div>
+  </section>
+
   <section id="hinton">
     <div class="filete"></div>
-    <div class="rotulo">Recurso 1</div>
-    <h2>Geoffrey Hinton, el que construyó esto y ahora advierte</h2>
-    <p class="ficha">Entrevista en video · junio 2026 · 54 minutos · en inglés</p>
+    <div class="rotulo">Mirada 1</div>
+    <h2>Geoffrey Hinton, el científico que se asustó de su propio invento</h2>
+    <p class="ficha">4 de junio de 2026</p>
     <div class="prosa">
-      <p>Geoffrey Hinton es el científico que inventó, junto a un par de colegas, la técnica que hizo posible el aprendizaje profundo. En palabras simples: ayudó a crear la base técnica de toda la IA que existe hoy. Trabajó más de diez años en Google, en su equipo de investigación de IA. En 2024 ganó el Premio Nobel de Física por este trabajo. Se le conoce como el «padrino de la IA».</p>
-      <p>Lo que lo hace distinto es lo que hizo en 2023: renunció a Google específicamente para poder hablar en público sobre los riesgos de la IA sin las restricciones de una empresa. No es un periodista ni un activista opinando desde afuera. Es la persona que construyó la tecnología y después decidió que valía la pena renunciar a su trabajo para poder advertir sobre ella.</p>
-      <p>En esta entrevista dice que está más preocupado que hace un par de años, y estima entre 10% y 20% la probabilidad de que la IA termine descontrolándose. Habla de por qué la tecnología avanzó más rápido de lo que él esperaba, de si las empresas tienen los incentivos correctos para priorizar la seguridad, de cesantía, y de por qué cree que hace falta regulación. Su imagen para eso es que la regulación debería funcionar como un volante, no como un freno.</p>
-      <p>Si vas a ver solo uno de estos cuatro recursos, este es el que recomiendo. Es el que mejor transmite por qué gente muy seria cambió de opinión sobre este tema.</p>
+      <p>Geoffrey Hinton es el científico que, junto a un par de colegas, desarrolló en los años 80 la técnica con la que aprenden todas las IA de hoy. Por eso le dicen el «padrino de la IA», y por eso ganó el Premio Nobel de Física en 2024. Trabajó más de diez años en Google. En 2023 renunció, para poder hablar de los riesgos sin tener que cuidarle la imagen a una empresa. No es alguien opinando desde afuera: es el que la construyó.</p>
+      <p>En esta entrevista cuenta qué fue lo que lo asustó. Se convenció de que estas máquinas de verdad entienden, y de que aprenden mucho más rápido que nosotros, porque miles de copias pueden compartir al instante lo que aprende cada una. Cree que van a causar cesantía masiva, y que las empresas compiten tan fuerte que la seguridad queda en segundo plano. Su imagen: la regulación no es el freno del auto, es el volante. Aun así, dice que hoy está un poco más optimista que hace un par de años, porque ya ve caminos para que esto salga bien. Si vas a escuchar uno solo, que sea este.</p>
     </div>
+    <figure class="audio">
+      <figcaption>Escucha el resumen en español <span>· podcast hecho con IA</span></figcaption>
+      <audio controls preload="none" src="audio/hinton.mp3"></audio>
+    </figure>
     <div class="enlaces">
       <div class="enlace">
-        <a href="https://www.youtube.com/watch?v=p7t1Q_p2gZs" target="_blank" rel="noopener">Ver la entrevista original →</a>
+        <a href="https://www.youtube.com/watch?v=p7t1Q_p2gZs" target="_blank" rel="noopener">Ver la entrevista original (está en inglés) →</a>
       </div>
-      <!-- PENDIENTE: falta la URL del podcast
-      <div class="enlace">
-        <a href="" target="_blank" rel="noopener">Escuchar el resumen en español →</a>
-        <p>Un podcast generado con IA, que traduce y simplifica este recurso. Dura menos y es más fácil de seguir.</p>
-      </div>
-      -->
     </div>
   </section>
 
   <section id="amodei">
     <div class="filete"></div>
-    <div class="rotulo">Recurso 2</div>
-    <h2>Dario Amodei, el que la construye hoy y pide frenar</h2>
-    <p class="ficha">Ensayo · 12 de septiembre de 2026 · unas 3.800 palabras · en inglés</p>
+    <div class="rotulo">Mirada 2</div>
+    <h2>Dario Amodei, el que está en la carrera y les pide a sus competidores que corran todos más lento</h2>
+    <p class="ficha">12 de septiembre de 2026</p>
     <div class="prosa">
-      <p>Dario Amodei es físico de formación, con doctorado en Princeton. Trabajó varios años en OpenAI, donde llegó a liderar todo el equipo de investigación. En 2021 se fue junto a un grupo de colegas, en parte por diferencias sobre cuánto peso le daba la empresa a la seguridad, y fundaron Anthropic, la empresa detrás de Claude. Hoy es su gerente general.</p>
-      <p>Este ensayo es de hace pocos días y su tesis es directa: hay que bajar la velocidad a la que se mejoran las capacidades de los modelos de IA. Aclara que no habla de parar el entrenamiento ni la investigación, sino de darse tiempo para revisar y auditar lo que se construye. Y compromete a su propia empresa al primer paso: darle a evaluadores externos acceso permanente a sus sistemas, del mismo nivel que un empleado.</p>
-      <p>Lo notable no es solo el ensayo, sino lo que pasó después. En cuestión de horas, Sam Altman, el gerente general de OpenAI y su principal competidor, dijo que estaba de acuerdo y que haría lo mismo. Elon Musk escribió tres palabras: «Dario is right». Para el domingo siguiente, el presidente Trump había rechazado la premisa en público y medios estatales chinos calificaron la propuesta como una estrategia de contención geopolítica. Es raro ver a estas tres personas coincidir en algo, y también es raro ver una discusión así escalar tan rápido.</p>
-      <p>Conviene leerlo sabiendo quién lo escribe. Amodei dirige una empresa del rubro y publicó esto la misma semana en que se reportó que Anthropic busca levantar hasta USD 100 mil millones. Eso no invalida el argumento, pero es parte del contexto. El ensayo también abre con la parte optimista: cree que la IA podría curar la mayoría de las enfermedades graves en cinco a diez años. Cuenta que su papá murió de una enfermedad que se curó pocos años después, y que él mismo sobrevivió un cáncer que hace cincuenta años no tenía tratamiento.</p>
+      <p>Dario Amodei es un físico que trabajó varios años en OpenAI, donde dirigía toda la investigación. En 2021 se fue con un grupo de compañeros, en parte porque sentía que la empresa no le daba suficiente peso a la seguridad en inteligencia artificial, y juntos fundaron Anthropic. Hoy es su gerente general.</p>
+      <p>Su ensayo dice algo raro para el gerente general de una empresa con fines de lucro: hay que bajar la velocidad a la que estos sistemas se vuelven más capaces, para alcanzar a revisar la seguridad de lo que estamos construyendo. Y parte por su propia casa: compromete a su empresa a darles acceso permanente a revisores externos. Ojo con quién escribe: Amodei dirige una empresa del rubro, que esa misma semana buscaba levantar hasta USD 100 mil millones. Eso no invalida lo que dice, pero sí es parte del contexto.</p>
+      <p>El ensayo tuvo repercusiones de inmediato. En cosa de horas, Sam Altman, gerente general de OpenAI y su principal competidor, <a href="https://x.com/sama/status/2098811563415150910" target="_blank" rel="noopener">escribió en X</a> que estaba de acuerdo y que también les abriría la puerta a revisores externos. Elon Musk <a href="https://x.com/elonmusk/status/2098789109980332057" target="_blank" rel="noopener">respondió en X</a> con tres palabras: «Dario is right». El presidente Trump, en cambio, <a href="https://www.npr.org/2026/09/13/nx-s1-5968078/trump-mike-johnson-ai-slowdown" target="_blank" rel="noopener">dijo a periodistas</a> ese domingo que Estados Unidos no puede quedarse atrás de China, porque «quien gana la IA, gana», y al día siguiente <a href="https://www.cnn.com/2026/09/14/politics/trump-vance-ai-alarms" target="_blank" rel="noopener">calificó estas alarmas de «engaño»</a>. Que rivales como Altman y Musk coincidan en algo así es muy raro.</p>
     </div>
+    <figure class="audio">
+      <figcaption>Escucha el resumen en español <span>· podcast hecho con IA</span></figcaption>
+      <audio controls preload="none" src="audio/amodei.mp3"></audio>
+    </figure>
     <div class="enlaces">
       <div class="enlace">
-        <a href="https://darioamodei.com/post/we-must-pace-the-frontier" target="_blank" rel="noopener">Leer el ensayo original →</a>
+        <a href="https://darioamodei.com/post/we-must-pace-the-frontier" target="_blank" rel="noopener">Leer el ensayo original (está en inglés) →</a>
       </div>
       <div class="enlace">
-        <a href="https://www.darioamodei.com/essay/machines-of-loving-grace" target="_blank" rel="noopener">Si quieres la versión optimista completa →</a>
-        <p>En 2024 escribió «Machines of Loving Grace», donde imagina en detalle cómo se vería un mundo donde esto sale bien.</p>
+        <a href="https://www.darioamodei.com/essay/machines-of-loving-grace" target="_blank" rel="noopener">Machines of Loving Grace, su ensayo optimista (está en inglés) →</a>
+        <p>En 2024 Amodei imaginó en detalle cómo se vería un mundo donde esto sale bien: enfermedades curadas, mucha menos pobreza. Sirve para entender qué está en juego: si esto sale mal, no perdemos solo lo que tenemos hoy, sino también todo eso que pudo haber sido.</p>
       </div>
     </div>
   </section>
 
   <section id="mitchell">
     <div class="filete"></div>
-    <div class="rotulo">Recurso 3</div>
+    <div class="rotulo">Mirada 3</div>
     <h2>Melanie Mitchell, la que duda de las predicciones</h2>
-    <p class="ficha">Ensayo · verano 2026 · en inglés</p>
+    <p class="ficha">8 de junio de 2026</p>
     <div class="prosa">
-      <p>Melanie Mitchell es profesora del Santa Fe Institute, un centro de investigación en Estados Unidos, y lleva décadas estudiando cómo razonan las máquinas. Su trabajo se concentra en una pregunta específica: si estos sistemas realmente entienden lo que hacen, o solo lo parecen.</p>
-      <p>La incluyo porque sin ella este documento estaría cojo. Los otros tres recursos apuntan en la misma dirección: esto es enorme. Pero ese no es el estado real del debate. En una encuesta a miembros de AAAI, la principal sociedad académica de IA, más del 84% respondió que las redes neuronales por sí solas no bastan para llegar a AGI. Buena parte del mundo académico cree que las predicciones más dramáticas son exageradas, y eso merece estar acá.</p>
-      <p>Ahora, su argumento no es «no pasa nada». Es más incómodo que eso. Sostiene que estos sistemas son irregulares de una forma que no entendemos: brillantes en una tarea y torpes en otra muy parecida, sin que sepamos bien por qué. Su ensayo se titula, traducido, «Inteligencia irregular: las incógnitas peligrosas en el corazón de los modelos de lenguaje». O sea, es escéptica de las predicciones y al mismo tiempo está preocupada, por razones distintas a las de Hinton.</p>
-      <p>Hay algo que ella dice y que vale para leer todo lo demás: en este campo la gente usa la palabra «escéptico» como insulto, cuando ser escéptico es justamente el trabajo. Si después de leer esto alguien te dice que la IA es puro humo, o que nos vamos a extinguir, ya tienes con qué evaluarlo.</p>
+      <p>Melanie Mitchell es profesora del Santa Fe Institute, un centro de investigación en Estados Unidos, y lleva décadas estudiando una pregunta: ¿estas máquinas entienden lo que hacen, o solo parece que entienden? La incluyo porque sin ella esta página quedaría coja. Mucha gente seria cree que las predicciones más dramáticas son exageradas: en una encuesta a investigadores de AAAI, la principal sociedad académica de IA, el 84% respondió que la tecnología actual, por sí sola, no basta para llegar a AGI.</p>
+      <p>Su argumento no es «aquí no pasa nada». Es que estos sistemas son disparejos de una forma que nadie entiende bien: brillantes en una tarea y torpes en otra casi igual. Un ejemplo que cuenta: un programa que clasificaba lesiones de piel acertaba mucho, hasta que descubrieron que se fijaba, en parte, en si la foto tenía una regla de medir al lado, porque las lesiones malignas suelen fotografiarse con regla. Funcionan muy bien hasta que, sin aviso, dejan de hacerlo. Su preocupación es distinta a la de Hinton: no que sean demasiado inteligentes, sino que confiemos en ellos sin saber cuándo fallan.</p>
     </div>
+    <figure class="audio">
+      <figcaption>Escucha el resumen en español <span>· podcast hecho con IA</span></figcaption>
+      <audio controls preload="none" src="audio/mitchell.mp3"></audio>
+    </figure>
     <div class="enlaces">
       <div class="enlace">
-        <a href="https://yalereview.org/article/melanie-mitchell-jagged-intelligence" target="_blank" rel="noopener">Leer el ensayo original →</a>
+        <a href="https://yalereview.org/article/melanie-mitchell-jagged-intelligence" target="_blank" rel="noopener">Leer el ensayo original (está en inglés) →</a>
       </div>
     </div>
   </section>
 
   <section id="80k">
     <div class="filete"></div>
-    <div class="rotulo">Recurso 4</div>
-    <h2>80,000 Hours, el resumen de quienes no venden nada</h2>
-    <p class="ficha">Artículo · actualizado 2026 · largo · en inglés</p>
+    <div class="rotulo">Mirada 4</div>
+    <h2>80,000 Hours, el argumento completo y ordenado</h2>
+    <p class="ficha">Febrero de 2026</p>
     <div class="prosa">
-      <p>80,000 Hours es una organización sin fines de lucro fundada en 2011 en la Universidad de Oxford, en el Reino Unido. No es un laboratorio de IA y no vende nada relacionado con IA: es un equipo de investigación independiente que se dedica a estudiar qué problemas del mundo son más urgentes.</p>
-      <p>Sus credenciales importan acá. Su gerente general, Niel Bowerman, tiene un doctorado en física de Oxford, y antes fue subdirector del Future of Humanity Institute, un centro de investigación de la misma universidad. El resto del equipo incluye gente formada en Oxford, Princeton y Harvard, con antecedentes en física, filosofía, economía y políticas públicas.</p>
-      <p>Este artículo es el resumen escrito más completo y ordenado de por qué la IA avanzada preocupa a tanta gente. Explica el argumento paso a paso y, lo más útil, se hace cargo de las objeciones más comunes, incluida la más obvia: ¿no es esto ciencia ficción? Justamente por no ser un laboratorio de IA, ofrece una mirada más neutral que los otros dos.</p>
-      <p>Es largo. No es para leerlo de una sentada. Sirve más como referencia: el lugar donde volver cuando te queda una duda específica y quieres ver el argumento completo, con sus fuentes.</p>
+      <p>80,000 Hours es una organización sin fines de lucro que nació en 2011 en la Universidad de Oxford. No construye IA ni vende nada relacionado: se dedica a investigar qué problemas del mundo son más urgentes. Eso sí, no es un árbitro neutral. Hace años concluyeron que el riesgo de la IA es uno de los problemas más importantes que hay, y escriben desde ahí.</p>
+      <p>Este artículo es el resumen más completo y ordenado que conozco de por qué la IA avanzada preocupa a tanta gente. Va paso a paso y, lo más útil, se hace cargo de las objeciones típicas, partiendo por la más obvia: ¿no es esto ciencia ficción? Es largo y no es para leerlo de una sentada. Sirve como el lugar al que volver cuando te queda una duda puntual y quieres ver el argumento completo, con sus fuentes.</p>
     </div>
+    <!-- PENDIENTE: falta audio/80k.mp3
+    <figure class="audio">
+      <figcaption>Escucha el resumen en español <span>· podcast hecho con IA</span></figcaption>
+      <audio controls preload="none" src="audio/80k.mp3"></audio>
+    </figure>
+    -->
     <div class="enlaces">
       <div class="enlace">
-        <a href="https://80000hours.org/problem-profiles/artificial-intelligence/" target="_blank" rel="noopener">Leer el artículo original →</a>
+        <a href="https://80000hours.org/problem-profiles/artificial-intelligence/" target="_blank" rel="noopener">Leer el artículo original (está en inglés) →</a>
       </div>
-      <!-- PENDIENTE: falta la URL del podcast
-      <div class="enlace">
-        <a href="" target="_blank" rel="noopener">Escuchar el resumen en español →</a>
-        <p>Un podcast generado con IA, que traduce y simplifica este recurso.</p>
-      </div>
-      -->
     </div>
   </section>
 
-  <section id="nota-personal">
+  <section id="cierre">
     <div class="filete"></div>
-    <div class="rotulo">Una nota personal</div>
+    <div class="rotulo">Con qué me quedo</div>
     <div class="prosa">
-      <p>Armé este documento porque creo que esto es el problema más importante que vamos a enfrentar en las próximas décadas. Quiero explicar por qué pienso eso, y también dónde no estoy seguro.</p>
+      <p>Entonces, ¿deberíamos tenerle miedo a la IA? Yo diría que miedo no, pero sí tomársela en serio. Me quedo con tres cosas: es real, es serio y todavía no está decidido. <strong>Real</strong>, porque no es ciencia ficción ni una moda: ya cambió cómo trabajo yo y mucha gente que conozco. <strong>Serio</strong>, porque los que más saben, incluidos los que lo construyeron, están preocupados de verdad. Y <strong>no está decidido</strong>, que es lo que casi nadie dice: ni el mundo ideal está garantizado ni el desastre tampoco. Depende de decisiones que están tomando personas en estos años.</p>
+      <p>¿Qué tan seguro estoy? Poco. No sé si el escenario malo tiene 1% o 20% de probabilidad, y desconfío de cualquiera que diga tener el número exacto. Pero no necesito el número: aunque fuera 2%, nadie se sube a un avión con 2% de probabilidad de caerse. No te pido plata, ni que cambies de trabajo, ni que andes preocupado. Te pido algo más chico: que cuando este tema aparezca, lo trates como un tema serio y no como ruido.</p>
 
-      <h3>Por qué creo que importa tanto</h3>
-      <p>Casi todos los problemas grandes del mundo son terribles pero acotados. Una guerra destruye un país. Una crisis económica arruina una década. Son desastres enormes, y después el mundo sigue.</p>
-      <p>Lo que hace distinta a la inteligencia artificial es el rango de resultados posibles. En el extremo bueno, tienes una tecnología que acelera la investigación médica, la ciencia y el crecimiento económico de una forma que hoy no somos capaces de imaginar bien. En el extremo malo, tienes sistemas más capaces que nosotros tomando decisiones que no entendemos ni controlamos.</p>
-      <p>Ese rango es el punto. No es que sepa cuál va a pasar. Es que la distancia entre los dos extremos es más grande que en cualquier otro tema que se me ocurra, y todavía estamos a tiempo de influir en cuál nos toca.</p>
-
-      <h3>Qué tan seguro estoy</h3>
-      <p>Poco, y quiero ser honesto sobre eso.</p>
-      <p>No sé si la IA va a ser tan transformadora como creen varias de las personas de este documento. No sé si el escenario malo tiene 1% de probabilidad o 20%. Hinton dice entre 10% y 20%. Hay investigadores serios que dicen que es mucho menos. Melanie Mitchell, que está acá arriba, duda de todo el marco de las predicciones.</p>
-      <p>Ese desacuerdo es real y no lo voy a esconder. Si alguien te dice que tiene el número correcto, desconfía.</p>
-      <p>Pero acá va la parte que a mí me convenció: no necesito saber el número. Aunque el escenario malo tuviera 2% de probabilidad, sigue siendo la cosa más importante en la que podríamos estar trabajando, simplemente por el tamaño de lo que está en juego. Nadie se sube a un avión con 2% de probabilidad de caerse.</p>
-
-      <h3>Por qué te estoy escribiendo a ti</h3>
-      <p>Dudé si armar esto. Mi duda no era si es verdad. Era si sirve de algo contárselo a alguien que no trabaja en esto.</p>
-      <p>Consideré en serio el argumento contrario: que si no hay nada que hacer, informarse solo genera angustia. No le contamos a alguien un diagnóstico que no puede tratar.</p>
-      <p>Concluí que no aplica acá, por dos razones.</p>
-      <p>La primera es que sí hay decisiones sobre la mesa. Qué le recomiendas estudiar a tu hijo. Cómo evalúas a un candidato cuando este tema llegue a la política, que va a llegar. Qué tan en serio tomas a alguien que te dice que esto es puro humo. Esas decisiones las vas a tomar igual, sepas o no. La ignorancia no te las ahorra; solo hace que las tomes peor.</p>
-      <p>La segunda es más simple. Cuando esto se politice, y se va a politizar, la gente se va a repartir en dos bandos: los que dicen que es una burbuja y los que dicen que nos vamos a extinguir. Los dos bandos van a estar equivocados. Haber leído algo serio antes de que llegara esa pelea es lo que hace que alguien no quede capturado por ninguno.</p>
-
-      <h3>Lo que no te estoy pidiendo</h3>
-      <p>No te estoy pidiendo plata. No te estoy pidiendo que cambies de trabajo. No te estoy pidiendo que te preocupes más.</p>
-      <p>Lo que te pido es más chico: que cuando este tema aparezca, lo trates como un tema serio y no como ruido. La mayoría de la gente todavía no llegó ahí, y llegar antes tiene valor.</p>
-
-      <h3>Lo que sí creo que vale la pena hacer</h3>
-      <p><strong>Úsalo.</strong> Abre ChatGPT o Claude y trabájalo una semana con algo real tuyo. La distancia entre lo que la gente cree que hacen estas herramientas y lo que hacen de verdad es enorme. No la vas a cerrar leyendo.</p>
-      <p><strong>Cuestiona lo que dabas por seguro.</strong> Hace cinco años, que tu hijo entrara a radiología en una buena universidad era una buena noticia sin matices. Hoy hay que preguntar. No digo que sea mala idea. Digo que ya no es una pregunta que se responda sola, y que muchas decisiones de ese tipo están en la misma situación.</p>
-      <p><strong>Busca a la gente que muestra su razonamiento.</strong> Este tema atrae exageración por los dos lados. El filtro que uso es simple: prefiero a quien te dice qué lo haría cambiar de opinión, y desconfío de quien nunca reconoce lo que no sabe.</p>
-      <p><strong>No postergues lo bueno.</strong> La incertidumbre no es razón para dejar de planificar. Es razón para no dejar lo importante para después. Yo adelanté mis planes por esto, y estoy más contento así. Vale en todos los escenarios, incluido el aburrido donde no pasa nada de esto.</p>
-      <p><strong>Si quieres profundizar.</strong> BlueDot Impact tiene un curso gratis de dos horas, autoguiado, hecho para gente sin conocimientos técnicos. Está en inglés. Si te acomoda leer en inglés, es el mejor punto de partida que conozco: <a href="https://bluedot.org/courses/future-of-ai" target="_blank" rel="noopener">bluedot.org/courses/future-of-ai</a></p>
-
-      <h3>Lo que me gustaría que te quedara</h3>
-      <p>Si de todo esto retienes una sola cosa, que sea esta: es real, es serio, y todavía no está decidido.</p>
-      <p><strong>Real</strong>, porque no es ciencia ficción ni una moda pasajera. Ya cambió cómo trabajo yo y mucha gente que conozco.</p>
-      <p><strong>Serio</strong>, porque las personas que más saben del tema, incluidas las que lo construyeron, están genuinamente preocupadas. Eso no es publicidad ni alarmismo. Es el estado de la discusión.</p>
-      <p><strong>Todavía no está decidido</strong>, que es lo más importante y lo que casi nadie dice. Ni la utopía está garantizada ni el desastre tampoco. Se decide en los próximos años, con decisiones que están tomando personas, no un destino.</p>
-      <p>Es justamente por eso que vale la pena entenderlo.</p>
+      <h3>Si quieres seguir</h3>
+      <p><strong>Fíjate en quién muestra su razonamiento.</strong> Este tema atrae exageración por los dos lados. Mi filtro: confío más en quien te dice qué lo haría cambiar de opinión, y menos en quien nunca reconoce lo que no sabe.</p>
+      <p><strong>Un curso corto.</strong> BlueDot Impact tiene uno gratis, de dos horas, hecho para gente sin conocimientos técnicos. Está en inglés: <a href="https://bluedot.org/courses/future-of-ai" target="_blank" rel="noopener">bluedot.org/courses/future-of-ai</a></p>
+      <p class="nota-podcast">Los podcasts los generé con IA (NotebookLM) a partir de cada original. Resumen bien, pero pueden tener errores: si algo te suena raro, manda el original.</p>
     </div>
   </section>
 
@@ -467,6 +491,87 @@
   </div>
 
 </div>
+
+<script>
+// Reproductor de los podcasts. Sin JS queda el <audio controls> nativo.
+(function () {
+  var VELOCIDADES = [1, 1.25, 1.5, 2, 0.8];
+  var salto = function (dir) {
+    return '<svg viewBox="0 0 34 34" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<g' + (dir > 0 ? ' transform="translate(34 0) scale(-1 1)"' : '') + '><path d="M17 6.5a11.5 11.5 0 1 1-10.6 7"/><path d="M17 2.5l-4.5 4 4.5 4"/></g>' +
+      '<text x="17" y="22" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="currentColor" stroke="none">10</text></svg>';
+  };
+  var reloj = function (t) {
+    if (!isFinite(t)) return '--:--';
+    t = Math.floor(t);
+    var h = Math.floor(t / 3600), m = Math.floor(t % 3600 / 60), s = t % 60;
+    var dos = function (n) { return (n < 10 ? '0' : '') + n; };
+    return (h ? h + ':' + dos(m) : dos(m)) + ':' + dos(s);
+  };
+  var todos = [];
+
+  document.querySelectorAll('.audio audio').forEach(function (audio) {
+    audio.controls = false;
+    audio.preload = 'metadata';
+    todos.push(audio);
+
+    var rep = document.createElement('div');
+    rep.className = 'rep';
+    rep.innerHTML =
+      '<button type="button" class="rep-salto" data-salto="-10" aria-label="Retroceder 10 segundos">' + salto(-1) + '</button>' +
+      '<button type="button" class="rep-play" aria-label="Reproducir">' +
+        '<svg class="i-play" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>' +
+        '<svg class="i-pausa" viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>' +
+      '</button>' +
+      '<button type="button" class="rep-salto" data-salto="10" aria-label="Adelantar 10 segundos">' + salto(1) + '</button>' +
+      '<div class="rep-cuerpo">' +
+        '<input class="rep-barra" type="range" min="0" max="1000" value="0" step="1" aria-label="Avance del audio">' +
+        '<div class="rep-pie"><span class="rep-tiempo">00:00 / --:--</span><button type="button" class="rep-vel" aria-label="Velocidad de reproducción">VELOCIDAD 1X</button></div>' +
+      '</div>';
+    audio.after(rep);
+
+    var play = rep.querySelector('.rep-play'), barra = rep.querySelector('.rep-barra'),
+        tiempo = rep.querySelector('.rep-tiempo'), vel = rep.querySelector('.rep-vel'), arrastrando = false;
+
+    var pintar = function () {
+      var d = audio.duration, t = audio.currentTime;
+      tiempo.textContent = reloj(t) + ' / ' + reloj(d);
+      if (!arrastrando && isFinite(d) && d > 0) barra.value = Math.round(t / d * 1000);
+      barra.style.setProperty('--avance', (barra.value / 10) + '%');
+    };
+
+    play.addEventListener('click', function () {
+      if (audio.paused) {
+        todos.forEach(function (o) { if (o !== audio) o.pause(); });
+        audio.play();
+      } else audio.pause();
+    });
+    rep.querySelectorAll('.rep-salto').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var d = isFinite(audio.duration) ? audio.duration : Infinity;
+        audio.currentTime = Math.max(0, Math.min(d, audio.currentTime + Number(b.dataset.salto)));
+      });
+    });
+    vel.addEventListener('click', function () {
+      var i = (VELOCIDADES.indexOf(audio.playbackRate) + 1) % VELOCIDADES.length;
+      audio.playbackRate = VELOCIDADES[i];
+      vel.textContent = 'VELOCIDAD ' + String(VELOCIDADES[i]).replace('.', ',') + 'X';
+    });
+    barra.addEventListener('input', function () {
+      arrastrando = true;
+      barra.style.setProperty('--avance', (barra.value / 10) + '%');
+      if (isFinite(audio.duration)) tiempo.textContent = reloj(barra.value / 1000 * audio.duration) + ' / ' + reloj(audio.duration);
+    });
+    barra.addEventListener('change', function () {
+      if (isFinite(audio.duration)) audio.currentTime = barra.value / 1000 * audio.duration;
+      arrastrando = false;
+    });
+    audio.addEventListener('play', function () { rep.classList.add('sonando'); play.setAttribute('aria-label', 'Pausar'); });
+    audio.addEventListener('pause', function () { rep.classList.remove('sonando'); play.setAttribute('aria-label', 'Reproducir'); });
+    ['timeupdate', 'loadedmetadata', 'durationchange', 'ended'].forEach(function (e) { audio.addEventListener(e, pintar); });
+  });
+})();
+</script>
 
 </body>
 </html>

@@ -6,7 +6,8 @@ Sitio personal de Roberto Valiente. HTML estático, sin build ni dependencias.
 
 ```
 index.html              portada — bio, notas, menciones y contacto
-recursos-ia/index.html  nota — recursos sobre IA y sus riesgos
+recursos-ia/index.html  nota — ¿Deberíamos tenerle miedo a la IA?
+recursos-ia/audio/       podcasts en español (mp3 mono 64k; Pages no acepta archivos de más de 25 MB)
 ```
 
 En español. Cada nota es una carpeta con su `index.html` y repite el
@@ -23,5 +24,5 @@ proyecto de Pages, con el correo `hola@` en Cloudflare Email Routing.
 
 ## Pendiente
 
-- `recursos-ia/` — URLs de los dos podcasts en español (bloques comentados en el HTML)
+- `recursos-ia/` — falta `audio/80k.mp3` (su reproductor está comentado en el HTML)
 - Links de la sección Contacto más allá de email y LinkedIn
