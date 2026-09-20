@@ -23,7 +23,7 @@ una pasantía de un mes en Silicon Valley.
 
 ## Notas
 
-- [¿Deberíamos tenerle miedo a la IA?](https://robertvaliente.com/recursos-ia/): cuatro recursos (Geoffrey Hinton, Dario Amodei, Melanie Mitchell y 80,000 Hours) para formarse una primera opinión sobre la IA y sus riesgos, con un glosario y una nota personal. Para personas sin familiaridad previa con el tema.
+- [¿Deberíamos tenerle miedo a la IA?](https://robertvaliente.com/recursos-ia/): tres miradas (Geoffrey Hinton, Dario Amodei y 80,000 Hours), cada una con un resumen en español en formato podcast, para formarse una primera opinión sobre la IA y sus riesgos, con un glosario y una nota personal. Para personas sin familiaridad previa con el tema.
 
 ## Enlaces
 
