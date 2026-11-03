@@ -317,7 +317,7 @@ table.linea td:last-child{color:var(--ambar-led);font-weight:700}
         <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
         <dt>1 punto</dt><dd>Respondes antes de que se acaben los 24.</dd>
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 24 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
-        <dt>Modo Mamba</dt><dd>Con 5 seguidas, cada canasta vale 1 punto más.</dd>
+        <dt>Modo Mamba</dt><dd>Con 5 seguidas, el balón se prende fuego.</dd>
       </dl>
       </details>
       <div class="records" id="records" hidden>
@@ -478,7 +478,7 @@ function responder(s,facts,valor,ms,ahora,tipo='valor'){
     s.rebotes.push({k,tras:3});
     return{ok:false,k,pts:0,ms,otraOportunidad:false};
   }
-  const tope=s.tope,base=tope?1:valorTiro(ms),pts=tope?1:base+(s.racha>=RACHA_MAMBA?1:0);
+  const tope=s.tope,base=tope?1:valorTiro(ms),pts=base;
   s.enRebote=false;
   s.hist.push(true);
   s.racha++;s.mejorRacha=Math.max(s.mejorRacha,s.racha);
@@ -602,6 +602,13 @@ let ac=null,busSfx=null,busMus=null,bufRuido=null;
 function audio(){
   try{
     if(!ac){
+      // En iPhone el audio web obedece al interruptor de silencio; "playback" hace que suene igual.
+      if(navigator.audioSession){try{navigator.audioSession.type='playback';}catch(e){}}
+      else if(/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)){
+        // Mismo efecto en iOS antiguos: un audio HTML en silencio, en bucle.
+        const a=new Audio('data:audio/wav;base64,UklGRkQDAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YSADAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==');a.loop=true;a.setAttribute('playsinline','');
+        const p=a.play();if(p&&p.catch)p.catch(()=>{});
+      }
       ac=new(window.AudioContext||window.webkitAudioContext)();
       const comp=ac.createDynamicsCompressor();comp.connect(ac.destination);
       busSfx=ac.createGain();busSfx.connect(comp);
@@ -609,11 +616,13 @@ function audio(){
       bufRuido=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);
       const a=bufRuido.getChannelData(0);
       for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;
-      // Safari libera el audio recién al reproducir algo dentro del gesto
-      const s=ac.createBufferSource();s.buffer=ac.createBuffer(1,1,ac.sampleRate);s.connect(ac.destination);s.start();
       ac.onstatechange=pintarSonido;
     }
-    if(ac.state==='suspended'){const r=ac.resume();if(r&&r.catch)r.catch(()=>{});}
+    // iOS también lo deja "interrupted" al volver de otra app. Safari lo libera al reproducir algo dentro del toque.
+    if(ac.state!=='running'){
+      const r=ac.resume();if(r&&r.catch)r.catch(()=>{});
+      const s=ac.createBufferSource();s.buffer=ac.createBuffer(1,1,ac.sampleRate);s.connect(ac.destination);s.start();
+    }
   }catch(e){ac=null;}
   return ac;
 }
@@ -622,13 +631,13 @@ function tono(f0,f1,d,tipo,vol,dest=busSfx,t=ac.currentTime){
   o.type=tipo;o.frequency.setValueAtTime(f0,t);
   if(f1!==f0)o.frequency.exponentialRampToValueAtTime(f1,t+d);
   g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
-  o.connect(g).connect(dest);o.start(t);o.stop(t+d+.02);
+  o.connect(g);g.connect(dest);o.start(t);o.stop(t+d+.02);
 }
 function ruido(d,fc,vol,filtro='bandpass',dest=busSfx,t=ac.currentTime){
   const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();
   s.buffer=bufRuido;f.type=filtro;f.frequency.setValueAtTime(fc,t);f.Q.value=.9;
   g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
-  s.connect(f).connect(g).connect(dest);s.start(t,Math.random()*.4,d+.02);
+  s.connect(f);f.connect(g);g.connect(dest);s.start(t,Math.random()*.4,d+.02);
 }
 const SONIDOS={
   swish(){ruido(.24,4200,.9);},
@@ -671,7 +680,7 @@ function musicaIniciar(){
 }
 function musicaParar(){clearInterval(M.timer);M.timer=0;}
 function pintarSonido(){
-  const bloqueado=ac&&ac.state==='suspended';
+  const bloqueado=ac&&ac.state!=='running';
   document.querySelectorAll('.btn-sonido').forEach(b=>b.textContent='Sonido: '+(bloqueado?'bloqueado':prog.sonido?'sí':'no'));
   document.querySelectorAll('.btn-musica').forEach(b=>b.textContent='Música: '+(prog.musica?'sí':'no'));
 }
@@ -824,7 +833,14 @@ function pintarMarcador(){
   }).join('');
   const enMamba=S.modo==='partido'&&S.racha>=RACHA_MAMBA;
   document.body.classList.toggle('mamba',enMamba);
-  $('racha').textContent=enMamba?'Modo Mamba: +1':S.racha>=2?`Racha de ${S.racha}`:'';
+  $('racha').textContent=enMamba?'Modo Mamba':S.racha>=2?`Racha de ${S.racha}`:'';
+}
+// Deja ver el tiro antes de permitir que se salte el dato.
+let saltableDesde=0;
+function saltarDato(){
+  if(fase!=='feedback'||!saltable||performance.now()-saltableDesde<700)return false;
+  proximoTiro();
+  return true;
 }
 function tecla(d){
   if(fase!=='tiro'&&fase!=='correccion')return;
@@ -883,7 +899,7 @@ function acierto(r){
   if(DATOS[r.k]&&!vistos.has(r.k)){
     vistos.add(r.k);
     $('nota').textContent=DATOS[r.k];
-    saltable=true;
+    saltable=true;saltableDesde=performance.now();
     timer=setTimeout(proximoTiro,3200);
   }else timer=setTimeout(proximoTiro,S.ultimo?1500:r.base===3?640:720);
 }
@@ -1162,14 +1178,14 @@ function crearEscena(){
       r.setRenderTarget(rt);r.render(esc,cam);
       r.setRenderTarget(null);r.render(escPost,camPost);
       if(fase==='tiro'&&S){
-        const v=S.tope?1:valorTiro(performance.now()-t0)+(S.racha>=RACHA_MAMBA?1:0);
+        const v=S.tope?1:valorTiro(performance.now()-t0);
         const txt='Vale '+v;
         if(E.valor!==txt){E.valor=txt;$('valor').textContent=txt;$('valor').dataset.v=S.tope?1:valorTiro(performance.now()-t0);}
       }
       E.cuadros++;
       if(now-E.marca>=1000){
         const fps=Math.round(E.cuadros*1000/(now-E.marca));
-        $('fps').textContent=`${fps} fps · ${E.W}×${E.H}`;
+        $('fps').textContent=`${fps} fps · ${E.W}×${E.H} · audio ${ac?ac.state:'apagado'}`;
         // Si el celular no da abasto, baja la resolución.
         if(fps>=5&&fps<26){E.lentos++;if(E.lentos>=2&&E.ancho>160){E.ancho=Math.round(E.ancho*.75);E.lentos=0;medir();}}else E.lentos=0;
         E.cuadros=0;E.marca=now;
@@ -1265,7 +1281,7 @@ function arrancar(){
   $('btn-gym').addEventListener('click',()=>iniciar('gym'));
   $('btn-salir').addEventListener('click',()=>{guardar(true);irAInicio();});
   document.querySelectorAll('.btn-sonido').forEach(b=>b.addEventListener('click',()=>{
-    const bloqueado=ac&&ac.state==='suspended';
+    const bloqueado=ac&&ac.state!=='running';
     if(!bloqueado)prog.sonido=!prog.sonido;
     audio();guardar(true);pintarSonido();
   }));
@@ -1294,16 +1310,19 @@ function arrancar(){
     $('confirmar').hidden=true;guardar(true);pintarInicio();
   });
   $('teclado').addEventListener('click',e=>{
+    // Este toque ya responde: no debe llegar a #juego, que lo tomaría como "saltar el dato".
+    e.stopPropagation();
     const t=e.target.closest('button');if(!t)return;
     audio();
+    if(saltarDato())return;
     if(t.dataset.d!==undefined)tecla(t.dataset.d);
     else if(t.dataset.a==='borrar')borrar();
     else if(t.dataset.a==='pasar')pasar('pasar');
   });
-  $('juego').addEventListener('click',()=>{if(fase==='feedback'&&saltable)proximoTiro();});
+  $('juego').addEventListener('click',()=>{saltarDato();});
   document.addEventListener('keydown',e=>{
     if(e.metaKey||e.ctrlKey||e.altKey)return;
-    if(fase==='feedback'&&saltable){e.preventDefault();proximoTiro();return;}
+    if(fase==='feedback'&&saltable){e.preventDefault();saltarDato();return;}
     if(fase!=='tiro'&&fase!=='correccion')return;
     audio();
     if(/^[0-9]$/.test(e.key)){e.preventDefault();tecla(e.key);}
@@ -1317,7 +1336,7 @@ function arrancar(){
       musicaParar();
     }else{
       if(oculto&&fase==='tiro')t0+=performance.now()-oculto;
-      if(fase!=='fuera')musicaIniciar();
+      if(fase!=='fuera'){audio();musicaIniciar();}
     }
   });
   if(matchMedia('(min-width:960px)').matches)$('como').open=true;
