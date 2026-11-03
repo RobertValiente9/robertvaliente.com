@@ -237,7 +237,7 @@ table.linea td:last-child{color:var(--ambar-led);font-weight:700}
         <dt>3 puntos</dt><dd>Respondes en 3 segundos o menos.</dd>
         <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
         <dt>1 punto</dt><dd>Respondes antes de que se acaben los 24.</dd>
-        <dt>Rebote</dt><dd>Si fallas, escribes la respuesta y esa cuenta vuelve dos tiros después.</dd>
+        <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 24 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
         <dt>Modo Mamba</dt><dd>Con 5 seguidas, cada canasta vale 1 punto más.</dd>
       </dl>
       <div class="records" id="records" hidden>
@@ -378,7 +378,7 @@ function crearSesion(modo,tablas,foco){
   const conFoco=!!(foco&&foco.length),pool=conFoco?foco.slice():poolDe(tablas);
   const total=modo==='partido'?CUARTOS*TIROS_CUARTO:conFoco?Math.min(SERIE_GYM,Math.max(8,pool.length*4)):SERIE_GYM;
   return{modo,pool,total,n:0,puntos:0,racha:0,mejorRacha:0,triples:0,dobles:0,libres:0,fallos:0,
-    porCuarto:[0,0,0,0],hist:[],rebotes:[],recientes:[],falladas:[],actual:null,esRebote:false,ultimo:false};
+    porCuarto:[0,0,0,0],hist:[],rebotes:[],recientes:[],falladas:[],actual:null,esRebote:false,ultimo:false,segundas:0,enRebote:false,tope:false};
 }
 function siguiente(s,facts,ahora,rng){
   s.n++;
@@ -389,28 +389,37 @@ function siguiente(s,facts,ahora,rng){
   if(ultimo&&s.pool.includes('9x9'))k='9x9';
   else if(i>=0){k=s.rebotes.splice(i,1)[0].k;esRebote=true;}
   else k=elegir(s.pool,facts,s.recientes.concat(s.rebotes.map(r=>r.k)),ahora,rng);
-  s.actual=k;s.esRebote=esRebote;s.ultimo=ultimo;
+  s.actual=k;s.esRebote=esRebote;s.ultimo=ultimo;s.enRebote=false;s.tope=esRebote;
   s.recientes.push(k);
   const max=Math.min(5,Math.max(0,s.pool.length-1));
   while(s.recientes.length>max)s.recientes.shift();
   return k;
 }
-function responder(s,facts,valor,ms,ahora){
-  const k=s.actual,ok=valor===producto(k);
-  registrar(facts,k,ok,ms,ahora);
-  s.hist.push(ok);
+// Fallar un tiro da otra oportunidad con la misma cuenta y el reloj completo, por 1 punto como máximo.
+// "No sé" y el reloj en cero no son tiros, así que van directo a la respuesta.
+function responder(s,facts,valor,ms,ahora,tipo='valor'){
+  const k=s.actual,ok=valor===producto(k),segunda=s.enRebote;
+  if(segunda){
+    // Acertar justo después de fallar no prueba dominio, y el error ya se descontó.
+    const f=facts[k];f.vistos++;f.ultimo=ahora;if(ok)f.hechos++;
+  }else registrar(facts,k,ok,ms,ahora);
   if(!ok){
-    s.fallos++;s.racha=0;
+    s.racha=0;
     if(!s.falladas.includes(k))s.falladas.push(k);
+    if(!segunda&&tipo==='valor'){s.enRebote=true;s.tope=true;return{ok:false,k,pts:0,ms,otraOportunidad:true};}
+    s.enRebote=false;
+    s.hist.push(false);s.fallos++;
     s.rebotes.push({k,tras:3});
-    return{ok:false,k,pts:0,ms};
+    return{ok:false,k,pts:0,ms,otraOportunidad:false};
   }
-  const base=valorTiro(ms),pts=base+(s.racha>=RACHA_MAMBA?1:0);
+  const tope=s.tope,base=tope?1:valorTiro(ms),pts=tope?1:base+(s.racha>=RACHA_MAMBA?1:0);
+  s.enRebote=false;
+  s.hist.push(true);
   s.racha++;s.mejorRacha=Math.max(s.mejorRacha,s.racha);
-  if(base===3)s.triples++;else if(base===2)s.dobles++;else s.libres++;
+  if(tope)s.segundas++;else if(base===3)s.triples++;else if(base===2)s.dobles++;else s.libres++;
   s.puntos+=pts;
   if(s.modo==='partido')s.porCuarto[Math.floor((s.n-1)/TIROS_CUARTO)]+=pts;
-  return{ok:true,k,pts,base,ms,entraMamba:s.racha===RACHA_MAMBA};
+  return{ok:true,k,pts,base,ms,tope,entraMamba:s.racha===RACHA_MAMBA};
 }
 // Lo que llevaba Kobe tras n tiros: reparte su anotación real de cada cuarto entre los 8 tiros.
 function ritmoKobe(n){
@@ -422,7 +431,8 @@ function ritmoKobe(n){
   return acum;
 }
 // Posición del balón en la cancha a escala: cruza cada línea justo cuando el tiro baja de valor.
-function xBalon(ms){
+function xBalon(ms,tope){
+  if(tope)return 559+(240-559)*Math.min(1,ms/T_RELOJ);
   const P=[[0,985],[T3,853],[T2,559],[T_RELOJ,240]];
   for(let i=1;i<P.length;i++)if(ms<=P[i][0]){const[a,x0]=P[i-1],[b,x1]=P[i];return x0+(x1-x0)*(ms-a)/(b-a);}
   return 240;
@@ -691,14 +701,14 @@ function proximoTiro(desdeEntre){
   siguiente(S,prog.facts,Date.now(),Math.random);
   entrada='';fase='tiro';ultimoSeg=null;
   pintarPregunta();pintarMarcador();
-  cancelAnimationFrame(vuelo);ponerBalon(xBalon(0),120,1);
+  cancelAnimationFrame(vuelo);ponerBalon(xBalon(0,S.tope),120,1);
   t0=performance.now();
   cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
 }
 function tick(now){
   if(fase!=='tiro')return;
   const ms=Math.max(0,now-t0);
-  ponerBalon(xBalon(ms),120,1);
+  ponerBalon(xBalon(ms,S.tope),120,1);
   if(S.modo==='partido'){
     const r=Math.max(0,Math.ceil((T_RELOJ-ms)/1000));
     if(r!==ultimoSeg){
@@ -719,7 +729,7 @@ function pintarPregunta(){
   $('nota').textContent='';
   $('plato').classList.remove('gritando');
   $('grito').className='grito';
-  $('tag').textContent=S.ultimo?'Último tiro':S.esRebote?'Rebote: te volvió esta':'';
+  $('tag').textContent=S.ultimo?'Último tiro':S.esRebote?'Rebote: esta vale 1 punto':'';
   $('anuncio').textContent=`${a} por ${b}`;
 }
 function pintarEntrada(){
@@ -736,7 +746,7 @@ function pintarMarcador(){
   }else{
     led($('led-a'),'04:'+String(n).padStart(2,'0'));
     led($('led-b'),String(S.total-n).padStart(2,'0'));
-    led($('led-c'),String(S.triples+S.dobles+S.libres).padStart(2,' '));
+    led($('led-c'),String(S.triples+S.dobles+S.libres+S.segundas).padStart(2,' '));
     $('periodo').textContent=`Tiro ${S.n} de ${S.total}`;
   }
   const tot=S.modo==='partido'?TIROS_CUARTO:S.total;
@@ -765,12 +775,29 @@ function borrar(){
 function evaluar(){
   const ms=performance.now()-t0;
   const r=responder(S,prog.facts,Number(entrada),ms,Date.now());
-  if(r.ok)acierto(r);else fallo(r,'valor',entrada);
+  if(r.ok)acierto(r);else if(r.otraOportunidad)otraOportunidad(entrada);else fallo(r,'valor',entrada);
 }
 function pasar(tipo){
   if(fase!=='tiro')return;
-  const r=responder(S,prog.facts,NaN,performance.now()-t0,Date.now());
+  const r=responder(S,prog.facts,NaN,performance.now()-t0,Date.now(),tipo);
   fallo(r,tipo,'');
+}
+function otraOportunidad(escrito){
+  fase='feedback';
+  guardar(false);
+  sonar('aro');
+  lanzar(false);
+  entrada='';pintarEntrada();
+  const p=$('pregunta');p.classList.remove('sacude');void p.offsetWidth;p.classList.add('sacude');
+  $('tag').textContent='Rebote: otra oportunidad por 1 punto';
+  $('nota').textContent=`Pusiste ${escrito}. Inténtalo de nuevo.`;
+  pintarMarcador();
+  $('anuncio').textContent='Incorrecto. Tienes otra oportunidad por 1 punto.';
+  timer=setTimeout(()=>{
+    cancelAnimationFrame(vuelo);
+    fase='tiro';ultimoSeg=null;t0=performance.now();
+    raf=requestAnimationFrame(tick);
+  },700);
 }
 function acierto(r){
   fase='feedback';
@@ -783,7 +810,7 @@ function acierto(r){
     gritar(partido?`¡KOBE! +${r.pts}`:`¡KOBE! ${seg}`,'kobe');
     sonar('publico');
     if(!reducir){const d=$('destello');d.classList.remove('on');void d.offsetWidth;d.classList.add('on');}
-  }else gritar(partido?`+${r.pts}`:seg,'');
+  }else gritar(partido?(r.tope?`Rebote +${r.pts}`:`+${r.pts}`):seg,'');
   if(r.entraMamba&&partido)sonar('mamba');
   pintarMarcador();
   $('anuncio').textContent=partido?`Correcto, ${r.pts} puntos`:'Correcto';
@@ -806,7 +833,7 @@ function fallo(r,tipo,escrito){
   const dato=DATOS[r.k]&&!vistos.has(r.k)?' '+DATOS[r.k]:'';
   vistos.add(r.k);
   $('nota').textContent=`${ini}${a} × ${b} = ${c}. Escríbelo para seguir.${dato}`;
-  $('tag').textContent='Rebote: esta cuenta vuelve pronto';
+  $('tag').textContent='Esta cuenta vuelve en dos tiros';
   pintarMarcador();
   $('anuncio').textContent=`Incorrecto. ${a} por ${b} es ${c}. Escríbelo para seguir.`;
 }
@@ -871,7 +898,7 @@ function mostrarEntre(){
 }
 function terminar(){
   const modo=S.modo,partido=modo==='partido';
-  const hechos=S.triples+S.dobles+S.libres,dom=dominadas(prog.facts,prog.tablas)-domInicial;
+  const hechos=S.triples+S.dobles+S.libres+S.segundas,dom=dominadas(prog.facts,prog.tablas)-domInicial;
   let record=false;
   if(partido){prog.partidos++;record=S.puntos>prog.mejor;if(record)prog.mejor=S.puntos;}
   guardar(true);
@@ -885,7 +912,7 @@ function terminar(){
     const pct=Math.round(hechos/S.total*100);
     const aMati=p>=81?'Mati, eso es nivel Kobe. Cuéntale a Roberto.':fall.length?'Buen partido, Mati. Entrena las que fallaste y vuelve por más.':'Buen partido, Mati. Ahora a bajar los tiempos.';
     cuerpo=`<p class="sena jersey">Mamba out.</p><h2>${p} puntos. ${tit}</h2>${lineaCuartos(CUARTOS)}
-      <dl class="caja"><div><dt>Triples</dt><dd>${S.triples}</dd></div><div><dt>Dobles</dt><dd>${S.dobles}</dd></div><div><dt>Libres</dt><dd>${S.libres}</dd></div><div><dt>Fallos</dt><dd>${S.fallos}</dd></div><div><dt>Acierto</dt><dd>${pct}%</dd></div><div><dt>Mejor racha</dt><dd>${S.mejorRacha}</dd></div></dl>
+      <dl class="caja"><div><dt>Triples</dt><dd>${S.triples}</dd></div><div><dt>Dobles</dt><dd>${S.dobles}</dd></div><div><dt>Libres</dt><dd>${S.libres}</dd></div><div><dt>Rebotes</dt><dd>${S.segundas}</dd></div><div><dt>Fallos</dt><dd>${S.fallos}</dd></div><div><dt>Acierto</dt><dd>${pct}%</dd></div></dl>
       <p>Esa noche Kobe metió 28 de 46 tiros de campo, 7 de 13 triples y 18 de 20 libres.${record?' Este es tu mejor partido.':` Tu mejor partido sigue en ${prog.mejor}.`}</p><p>${aMati}</p><div class="fin-record" id="fin-record"></div>`;
   }else{
     const hora='4:'+String(S.total).padStart(2,'0');
