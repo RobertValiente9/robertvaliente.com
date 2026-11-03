@@ -276,7 +276,6 @@ table.linea td:last-child{color:var(--ambar-led);font-weight:700}
 .escena .tag-fila{position:absolute;top:4px;left:8px;right:8px;min-height:0}
 .escena .etq{text-shadow:0 1px 0 #000,0 0 4px #000}
 .escena .grito{top:auto;bottom:7%;text-shadow:.05em .06em 0 var(--purpura),0 0 8px #000}
-.escena.gritando #valor{display:none}
 .escena .nota{position:absolute;left:0;right:0;bottom:0;min-height:0;padding:5px 10px;background:rgba(10,5,18,.84);font-size:14px}
 .escena .nota:empty{display:none}
 #valor{position:absolute;left:8px;bottom:6px;padding:3px 8px;font:800 17px/1 var(--f-display);letter-spacing:.03em;text-transform:uppercase;background:var(--oro);color:var(--c-osc);border-radius:2px}
@@ -295,6 +294,24 @@ table.linea td:last-child{color:var(--ambar-led);font-weight:700}
 @media (orientation:landscape) and (max-height:520px){
   .preg-caja .pregunta{font-size:min(calc(96cqw/(var(--n,10)*.42)),48px)}
 }
+
+.grito.pop{animation:pop .42s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.45) rotate(var(--giro,0deg))}to{opacity:1;transform:scale(1) rotate(var(--giro,0deg))}}
+.escena .grito{bottom:38px;padding-inline:6px}
+.grito.mamba4{color:#ffd23f;-webkit-text-stroke:.03em #b3330e;paint-order:stroke fill}
+.grito.grande{font-size:clamp(38px,calc(var(--vh)*9),72px)}
+.grito.doble{color:var(--crema)}
+.grito.libre{color:#d6c8f5}
+.grito.rebote{color:var(--mal)}
+.escena .grito.fallo{bottom:36px;color:#ff9b6b;font-size:clamp(24px,calc(var(--vh)*5),38px)}
+#valor[data-v="4"]{background:linear-gradient(#ffd23f,#ee5a1e)}
+body.gym #valor{display:none}
+body.gym .gritando #valor{display:block}
+.mamba .marcador{border-color:var(--oro);box-shadow:0 0 14px rgba(253,185,39,.45)}
+.mamba .pregunta{color:#ffd23f}
+.mamba .tecla{border-color:rgba(253,185,39,.55)}
+#led-a.sube{animation:sube .35s ease-out}
+@keyframes sube{30%{transform:scale(1.22)}}
 </style>
 </head>
 <body>
@@ -317,7 +334,7 @@ table.linea td:last-child{color:var(--ambar-led);font-weight:700}
         <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
         <dt>1 punto</dt><dd>Respondes antes de que se acaben los 24.</dd>
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 24 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
-        <dt>Modo Mamba</dt><dd>Con 5 seguidas, el balón se prende fuego.</dd>
+        <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
       </dl>
       </details>
       <div class="records" id="records" hidden>
@@ -404,7 +421,7 @@ table.linea td:last-child{color:var(--ambar-led);font-weight:700}
 const CUARTOS=4,TIROS_CUARTO=8,SERIE_GYM=24;
 const KOBE_CUARTOS=[14,12,27,28]; // 22-01-2006 contra Toronto, por cuarto
 const T3=3000,T2=7000,T_RELOJ=24000;
-const RACHA_MAMBA=5,CAJA_MAX=4;
+const TRIPLES_MAMBA=2,CAJA_MAX=4;
 const PESO=[5,4,2.5,1.5,.6],PESO_NUEVA=3.5,INTERVALO_DIAS=[0,1,2,4,8],DIA=864e5;
 
 const clave=(a,b)=>a+'x'+b;
@@ -444,7 +461,7 @@ function crearSesion(modo,tablas,foco){
   const conFoco=!!(foco&&foco.length),pool=conFoco?foco.slice():poolDe(tablas);
   const total=modo==='partido'?CUARTOS*TIROS_CUARTO:conFoco?Math.min(SERIE_GYM,Math.max(8,pool.length*4)):SERIE_GYM;
   return{modo,pool,total,n:0,puntos:0,racha:0,mejorRacha:0,triples:0,dobles:0,libres:0,fallos:0,
-    porCuarto:[0,0,0,0],hist:[],rebotes:[],recientes:[],falladas:[],actual:null,esRebote:false,ultimo:false,segundas:0,enRebote:false,tope:false};
+    porCuarto:[0,0,0,0],hist:[],rebotes:[],recientes:[],falladas:[],actual:null,esRebote:false,ultimo:false,segundas:0,enRebote:false,tope:false,triplesSeguidos:0};
 }
 function siguiente(s,facts,ahora,rng){
   s.n++;
@@ -470,7 +487,7 @@ function responder(s,facts,valor,ms,ahora,tipo='valor'){
     const f=facts[k];f.vistos++;f.ultimo=ahora;if(ok)f.hechos++;
   }else registrar(facts,k,ok,ms,ahora);
   if(!ok){
-    s.racha=0;
+    s.racha=0;s.triplesSeguidos=0;
     if(!s.falladas.includes(k))s.falladas.push(k);
     if(!segunda&&tipo==='valor'){s.enRebote=true;s.tope=true;return{ok:false,k,pts:0,ms,otraOportunidad:true};}
     s.enRebote=false;
@@ -478,14 +495,15 @@ function responder(s,facts,valor,ms,ahora,tipo='valor'){
     s.rebotes.push({k,tras:3});
     return{ok:false,k,pts:0,ms,otraOportunidad:false};
   }
-  const tope=s.tope,base=tope?1:valorTiro(ms),pts=base;
+  const tope=s.tope,base=tope?1:valorTiro(ms),pts=base===3&&s.triplesSeguidos>=TRIPLES_MAMBA?4:base;
   s.enRebote=false;
   s.hist.push(true);
   s.racha++;s.mejorRacha=Math.max(s.mejorRacha,s.racha);
+  s.triplesSeguidos=base===3?s.triplesSeguidos+1:0;
   if(tope)s.segundas++;else if(base===3)s.triples++;else if(base===2)s.dobles++;else s.libres++;
   s.puntos+=pts;
   if(s.modo==='partido')s.porCuarto[Math.floor((s.n-1)/TIROS_CUARTO)]+=pts;
-  return{ok:true,k,pts,base,ms,tope,entraMamba:s.racha===RACHA_MAMBA};
+  return{ok:true,k,pts,base,ms,tope,entraMamba:base===3&&s.triplesSeguidos===TRIPLES_MAMBA};
 }
 // Lo que llevaba Kobe tras n tiros: reparte su anotación real de cada cuarto entre los 8 tiros.
 function ritmoKobe(n){
@@ -642,6 +660,8 @@ function ruido(d,fc,vol,filtro='bandpass',dest=busSfx,t=ac.currentTime){
 const SONIDOS={
   swish(){ruido(.24,4200,.9);},
   publico(){ruido(.7,1100,.35);},
+  rugido(){ruido(1,900,.6);ruido(.6,2300,.22);},
+  ooh(){tono(330,170,.5,'sawtooth',.07);ruido(.4,650,.22);},
   aro(){tono(190,90,.18,'triangle',.7);tono(1400,1100,.05,'square',.06);},
   bocina(){tono(120,116,.7,'sawtooth',.28);},
   tic(){tono(1000,1000,.04,'square',.07);},
@@ -831,9 +851,9 @@ function pintarMarcador(){
     const j=ini+i,r=S.hist[j];
     return `<i class="${r===true?'ok':r===false?'no':j===S.n-1?'act':''}"></i>`;
   }).join('');
-  const enMamba=S.modo==='partido'&&S.racha>=RACHA_MAMBA;
+  const enMamba=S.modo==='partido'&&S.triplesSeguidos>=TRIPLES_MAMBA;
   document.body.classList.toggle('mamba',enMamba);
-  $('racha').textContent=enMamba?'Modo Mamba':S.racha>=2?`Racha de ${S.racha}`:'';
+  $('racha').textContent=enMamba?'Modo Mamba: el triple vale 4':S.modo==='partido'&&S.triplesSeguidos===1?'Otro triple y entras en Modo Mamba':S.racha>=2?`Racha de ${S.racha}`:'';
 }
 // Deja ver el tiro antes de permitir que se salte el dato.
 let saltableDesde=0;
@@ -872,11 +892,13 @@ function otraOportunidad(escrito){
   entrada='';pintarEntrada();
   const p=$('pregunta');p.classList.remove('sacude');void p.offsetWidth;p.classList.add('sacude');
   $('tag').textContent='Rebote: otra oportunidad por 1 punto';
+  const gf=$('grito');gf.textContent=elegirGrito(GRITOS.fallo);gf.className='grito fallo';void gf.offsetWidth;gf.classList.add('pop');
   $('nota').textContent=`Pusiste ${escrito}. Inténtalo de nuevo.`;
   pintarMarcador();
   $('anuncio').textContent='Incorrecto. Tienes otra oportunidad por 1 punto.';
   timer=setTimeout(()=>{
     cancelAnimationFrame(vuelo);
+    $('grito').className='grito';
     fase='tiro';ultimoSeg=null;t0=performance.now();
     raf=requestAnimationFrame(tick);
   },700);
@@ -885,14 +907,17 @@ function acierto(r){
   fase='feedback';
   prog.hechos++;guardar(false);
   $('pregunta').classList.add('bien');
-  E.valorTiro=r.base;lanzar(true);
+  E.valorTiro=r.base;E.puntosTiro=r.pts;E.entraMamba=!!r.entraMamba&&S.modo==='partido';lanzar(true);
   const partido=S.modo==='partido';
   const seg=(r.ms/1000).toFixed(1).replace('.',',')+' s';
+  const g=gritoDe(r);
+  gritar(g.txt,g.clase);
+  $('valor').textContent=partido?'+'+r.pts:seg;$('valor').dataset.v=r.pts;
+  const a=$('led-a');a.classList.remove('sube');void a.offsetWidth;a.classList.add('sube');
   if(r.base===3){
-    gritar(partido?`¡KOBE! +${r.pts}`:`¡KOBE! ${seg}`,'kobe');
     sonar('publico');
     if(!reducir){const d=$('destello');d.classList.remove('on');void d.offsetWidth;d.classList.add('on');}
-  }else gritar(partido?(r.tope?`Rebote +${r.pts}`:`+${r.pts}`):seg,'');
+  }
   if(r.entraMamba&&partido)sonar('mamba');
   pintarMarcador();
   $('anuncio').textContent=partido?`Correcto, ${r.pts} puntos`:'Correcto';
@@ -901,7 +926,7 @@ function acierto(r){
     $('nota').textContent=DATOS[r.k];
     saltable=true;saltableDesde=performance.now();
     timer=setTimeout(proximoTiro,3200);
-  }else timer=setTimeout(proximoTiro,S.ultimo?1500:r.base===3?640:720);
+  }else timer=setTimeout(proximoTiro,S.ultimo?1500:E.entraMamba?950:r.pts===4?780:r.base===3?640:720);
 }
 function fallo(r,tipo,escrito){
   fase='correccion';
@@ -931,12 +956,12 @@ function corregir(){
 }
 function gritar(txt,clase){
   const g=$('grito');
-  g.textContent=txt;g.className='grito '+clase;void g.offsetWidth;g.classList.add('pop');
+  g.textContent=txt;g.className='grito '+clase;g.style.setProperty('--giro',(Math.random()*6-3).toFixed(1)+'deg');void g.offsetWidth;g.classList.add('pop');
   $('plato').classList.add('gritando');
 }
 
 /* Escena 3D retro: 256 píxeles de ancho, 12 bits de color (4 por canal) y tramado. Medidas reales de la NBA, en pies. */
-const E={ok:false,activa:false,d:28,dVis:28,ang:.3,angVis:.3,anim:null,flash:0,temblor:0,fiesta:0,mamba:0,aroTiembla:0,redOnda:0,ancho:256,cuadros:0,marca:0,lentos:0,previo:0,raf:0,valor:''};
+const E={ok:false,activa:false,d:28,dVis:28,ang:.3,angVis:.3,anim:null,flash:0,temblor:0,fiesta:0,mamba:0,aroTiembla:0,redOnda:0,ondaT:0,golpe:0,inv:0,rojo:0,serpiente:0,puntosTiro:0,entraMamba:false,ancho:256,cuadros:0,marca:0,lentos:0,previo:0,raf:0,valor:''};
 function lienzo(w,h,dibujar,repetir){
   const c=document.createElement('canvas');c.width=w;c.height=h;
   dibujar(c.getContext('2d'),w,h);
@@ -1037,7 +1062,7 @@ function crearEscena(){
     sombra.rotation.x=-Math.PI/2;sombra.position.y=.03;esc.add(sombra);
 
     // Fuego y papel picado
-    const N=90,pos=new Float32Array(N*3).fill(-999),col=new Float32Array(N*3),vel=new Float32Array(N*3),vida=new Float32Array(N),tipo=new Uint8Array(N);
+    const N=170,pos=new Float32Array(N*3).fill(-999),col=new Float32Array(N*3),vel=new Float32Array(N*3),vida=new Float32Array(N),tipo=new Uint8Array(N);
     const geo=new THREE.BufferGeometry();
     geo.setAttribute('position',new THREE.BufferAttribute(pos,3));geo.setAttribute('color',new THREE.BufferAttribute(col,3));
     const chispas=new THREE.Points(geo,new THREE.PointsMaterial({size:3,sizeAttenuation:false,vertexColors:true}));
@@ -1057,19 +1082,38 @@ function crearEscena(){
     const flashes=new THREE.Points(fGeo,new THREE.PointsMaterial({size:2,sizeAttenuation:false,vertexColors:true}));
     flashes.frustumCulled=false;esc.add(flashes);
 
+    // Onda de choque en el aro
+    const anillo=new THREE.Mesh(new THREE.RingGeometry(.86,1,24),new THREE.MeshBasicMaterial({color:0xfdb927,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));
+    anillo.rotation.x=-Math.PI/2;anillo.position.set(0,10,5.25);esc.add(anillo);
+    // Piel de mamba sobre la cancha
+    const pielT=lienzo(128,128,(g,w,h2)=>{
+      g.clearRect(0,0,w,h2);g.strokeStyle='#fdb927';g.lineWidth=2;
+      for(let f=0;f<8;f++)for(let k=-1;k<5;k++){g.beginPath();g.arc(k*32+(f%2?32:16),f*16+16,16,Math.PI,0);g.stroke();}
+    },true);
+    pielT.repeat.set(6,6);
+    const piel=plano(50,47,pielT,0,.03,23.5,{transparent:true,opacity:0,depthWrite:false});piel.rotation.x=-Math.PI/2;
+    // Focos de la arena
+    const focos=[[-26,-8,0xfdb927],[26,-8,0x9a5cff],[0,-14,0xfff4d6]].map(([x,z,co])=>{
+      const m=new THREE.Mesh(new THREE.ConeGeometry(7,46,12,1,true),new THREE.MeshBasicMaterial({color:co,transparent:true,opacity:0,blending:THREE.AdditiveBlending,side:THREE.DoubleSide,depthWrite:false}));
+      m.position.set(x,23,z);esc.add(m);return m;
+    });
+
     // Reducción a 12 bits
     const rt=new THREE.WebGLRenderTarget(256,128,{minFilter:THREE.NearestFilter,magFilter:THREE.NearestFilter});
     const post=new THREE.ShaderMaterial({
-      uniforms:{t:{value:rt.texture},uFlash:{value:0},uMamba:{value:0}},
+      uniforms:{t:{value:rt.texture},uFlash:{value:0},uMamba:{value:0},uInv:{value:0},uRojo:{value:0}},
       vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',
-      fragmentShader:`uniform sampler2D t;uniform float uFlash;uniform float uMamba;varying vec2 vUv;
+      fragmentShader:`uniform sampler2D t;uniform float uFlash;uniform float uMamba;uniform float uInv;uniform float uRojo;varying vec2 vUv;
         float b2(vec2 a){a=floor(a);return fract(a.x/2.+a.y*a.y*.75);}
         float b4(vec2 a){return b2(.5*a)*.25+b2(a);}
         void main(){
           vec3 c=texture2D(t,vUv).rgb;
           float l=dot(c,vec3(.3,.59,.11));
           vec3 duo=mix(vec3(.16,.03,.32),vec3(1.,.78,.2),smoothstep(.05,.85,l));
-          c=mix(c,duo,uMamba*.6)+uFlash;
+          c=mix(c,duo,uMamba*.6);
+          c=mix(c,vec3(1.)-c,uInv);
+          c.r+=uRojo;c.gb*=1.-uRojo*.6;
+          c+=uFlash;
           vec2 q=vUv-.5;c*=1.-dot(q,q)*.75;
           c+=(b4(gl_FragCoord.xy)-.5)/15.;
           gl_FragColor=vec4(floor(clamp(c,0.,1.)*15.+.5)/15.,1.);
@@ -1104,6 +1148,7 @@ function crearEscena(){
       E.angVis+=(E.ang-E.angVis)*Math.min(1,dt*7);
       E.flash=Math.max(0,E.flash-dt*2.2);E.temblor=Math.max(0,E.temblor-dt*1.1);E.fiesta=Math.max(0,E.fiesta-dt);
       E.aroTiembla=Math.max(0,E.aroTiembla-dt*1.4);E.redOnda=Math.max(0,E.redOnda-dt*2.4);
+      E.ondaT=Math.max(0,E.ondaT-dt/.45);E.golpe=Math.max(0,E.golpe-dt*3.2);E.inv=Math.max(0,E.inv-dt);E.rojo=Math.max(0,E.rojo-dt*2);
       const quiereMamba=document.body.classList.contains('mamba')?1:0;
       E.mamba+=(quiereMamba-E.mamba)*Math.min(1,dt*4);
 
@@ -1115,16 +1160,22 @@ function crearEscena(){
         if(a.fase==='vuelo'){
           balon.position.set(a.x0+(a.x1-a.x0)*u,a.y0+(a.y1-a.y0)*u+a.h*4*u*(1-u),a.z0+(a.z1-a.z0)*u);
           balon.rotation.x-=dt*11;
+          if(!reducir)for(let i=0;i<2;i++)emitir(balon.position.x+azar(-.25,.25),balon.position.y+azar(-.25,.25),balon.position.z+azar(-.25,.25),0,0,0,.28,2);
           if(u>=1){
             if(a.ok){
               sonar('swish');
-              const v=E.valorTiro||1;
-              E.redOnda=1;E.flash=reducir?0:v===3?.42:v===2?.16:.05;E.temblor=reducir?0:v===3?.28:0;E.fiesta=v===3?1.3:v===2?.7:.3;
-              for(let i=0;i<(v===3?30:v===2?14:6);i++)emitir(0,10,5.25,azar(-5,5),azar(2,9),azar(-3,5),azar(.5,1),1);
+              const v=E.valorTiro||1,cuatro=E.puntosTiro===4,entra=E.entraMamba;
+              E.redOnda=1;E.flash=reducir?0:cuatro?.5:v===3?.42:v===2?.16:.05;E.temblor=reducir?0:cuatro?.4:v===3?.28:0;E.fiesta=cuatro?1.6:v===3?1.3:v===2?.7:.3;
+              E.golpe=reducir?0:cuatro?1:v===3?.7:v===2?.3:0;
+              if(v>=2){E.ondaT=v===3?1:.6;anillo.material.color.setHex(cuatro||entra?0xff7a1e:0xfdb927);}
+              if(cuatro||entra){E.serpiente=1;sonar('rugido');}
+              if(entra&&!reducir)E.inv=.12;
+              for(let i=0;i<(cuatro?50:v===3?30:v===2?14:6);i++)emitir(0,10,5.25,azar(-5,5),azar(2,9),azar(-3,5),azar(.5,1),1);
               E.anim={fase:'cae',ini:now,dur:210*a.lento,lento:a.lento};
             }else{
-              sonar('aro');
-              E.aroTiembla=1;
+              sonar('aro');sonar('ooh');
+              E.aroTiembla=1;E.rojo=reducir?0:.28;
+              for(let i=0;i<10;i++)emitir(a.x1,a.y1,a.z1,azar(-4,4),azar(0,5),azar(-4,4),azar(.25,.5),1);
               E.anim={fase:'rebote',ini:now,dur:300,x0:a.x1,y0:a.y1,z0:a.z1,h:3.2};
             }
           }
@@ -1139,6 +1190,12 @@ function crearEscena(){
       }
       sombra.position.x=balon.position.x;sombra.position.z=balon.position.z;
 
+      // Serpiente de chispas que sube desde el aro
+      if(E.serpiente>0){
+        E.serpiente=Math.max(0,E.serpiente-dt/.8);
+        const k=1-E.serpiente;
+        if(!reducir)for(let i=0;i<4;i++){const ang=now/70+i*.5,rad=2.6*(1-k)+.7;emitir(Math.cos(ang)*rad,10+k*7+i*.12,5.25+Math.sin(ang)*rad,0,.6,0,.38,3);}
+      }
       // Fuego del Modo Mamba
       if(quiereMamba&&!reducir)for(let i=0;i<3;i++)emitir(balon.position.x+azar(-.5,.5),balon.position.y+azar(-.4,.4),balon.position.z+azar(-.5,.5),azar(-.5,.5),azar(1.5,4),azar(-.5,.5),azar(.25,.55),0);
       for(let i=0;i<N;i++){
@@ -1146,9 +1203,20 @@ function crearEscena(){
         vida[i]-=dt;
         pos[i*3]+=vel[i*3]*dt;pos[i*3+1]+=vel[i*3+1]*dt;pos[i*3+2]+=vel[i*3+2]*dt;
         if(tipo[i]===1){vel[i*3+1]-=11*dt;const dorado=i%2;col[i*3]=dorado?1:.55;col[i*3+1]=dorado?.72:.3;col[i*3+2]=dorado?.15:.9;}
+        else if(tipo[i]===2){const f=Math.max(0,vida[i]/.28);col[i*3]=1;col[i*3+1]=.55+f*.35;col[i*3+2]=f*.25;}
+        else if(tipo[i]===3){const dorado=i%2;col[i*3]=dorado?1:.6;col[i*3+1]=dorado?.8:.3;col[i*3+2]=dorado?.2:1;}
         else{const f=Math.min(1,vida[i]/.4);col[i*3]=1;col[i*3+1]=.2+f*.7;col[i*3+2]=f*f*.3;}
       }
       geo.attributes.position.needsUpdate=true;geo.attributes.color.needsUpdate=true;
+
+      // Onda, piel, focos, balón encendido y letrero
+      anillo.material.opacity=E.ondaT;anillo.scale.setScalar(1+(1-E.ondaT)*6);
+      piel.material.opacity=E.mamba*.75;pielT.offset.y=-now/2600;
+      const luzFoco=reducir?0:Math.max(E.mamba*.2,E.fiesta>0?.1:0);
+      focos.forEach((m,i)=>{m.material.opacity=luzFoco;m.rotation.z=Math.sin(now/(700+i*170)+i*2)*.45;m.rotation.x=Math.cos(now/(900+i*120)+i)*.25;});
+      balon.material.emissive.setRGB(E.mamba*.55,E.mamba*.22,0);
+      led3d.offset.x=now/(E.mamba>.5?1500:9000);
+      const fov=30-E.golpe*5;if(cam.fov!==fov){cam.fov=fov;cam.updateProjectionMatrix();}
 
       // Público
       const prob=E.fiesta>0?.3:.012;
@@ -1167,7 +1235,7 @@ function crearEscena(){
       cam.position.set(sn*atras+tx,7.5+ty,5.25+cs*atras);
       cam.lookAt(0,6.7+cerca*2.6+ty*.4,5.25);
 
-      post.uniforms.uFlash.value=E.flash;post.uniforms.uMamba.value=E.mamba;
+      post.uniforms.uFlash.value=E.flash;post.uniforms.uMamba.value=E.mamba;post.uniforms.uInv.value=E.inv>0?1:0;post.uniforms.uRojo.value=E.rojo;
     }
 
     function dibujar(now){
@@ -1178,9 +1246,9 @@ function crearEscena(){
       r.setRenderTarget(rt);r.render(esc,cam);
       r.setRenderTarget(null);r.render(escPost,camPost);
       if(fase==='tiro'&&S){
-        const v=S.tope?1:valorTiro(performance.now()-t0);
+        const b=valorTiro(performance.now()-t0),v=S.tope?1:b===3&&S.triplesSeguidos>=TRIPLES_MAMBA?4:b;
         const txt='Vale '+v;
-        if(E.valor!==txt){E.valor=txt;$('valor').textContent=txt;$('valor').dataset.v=S.tope?1:valorTiro(performance.now()-t0);}
+        if(E.valor!==txt){E.valor=txt;$('valor').textContent=txt;$('valor').dataset.v=v;}
       }
       E.cuadros++;
       if(now-E.marca>=1000){
@@ -1217,6 +1285,33 @@ function lanzar(ok){
   cancelAnimationFrame(raf);
   if(!E.ok){sonar(ok?'swish':'aro');return;}
   E.lanzar(ok,S&&S.ultimo?2.2:1);
+}
+
+const GRITOS={
+  triple:['¡KOBE!','¡DESDE LEJOS!','¡PURA RED!','¡QUÉ TIRO!','¡SIN TOCAR EL ARO!','¡DE TRES!','¡FRÍO!'],
+  rayo:['¡UN RAYO!','¡QUÉ RÁPIDO!','¡NI LO PENSASTE!','¡KOBE!'],
+  mamba:['¡EN LLAMAS!','¡NADIE TE PARA!','¡MAMBA!','¡IMPARABLE!','¡OTRO MÁS!','¡QUÉ MANO!','¡KOBE!'],
+  doble:['¡ADENTRO!','¡BUENA!','¡SEGURO!','¡DE DOS!'],
+  libre:['¡SUMA!','¡VALE!','¡TRANQUILO!','¡A LA RED!'],
+  rebote:['¡DE REBOTE!','¡NO TE RINDES!','¡LO SALVASTE!','¡SEGUNDO INTENTO!'],
+  fallo:['¡AL ARO!','¡CASI!','¡OOOH!','¡TE QUEDA OTRA!']
+};
+let ultimoGrito='';
+function elegirGrito(lista){
+  const op=lista.filter(x=>x!==ultimoGrito),base=op.length?op:lista;
+  ultimoGrito=base[Math.floor(Math.random()*base.length)];
+  return ultimoGrito;
+}
+function gritoDe(r){
+  const partido=S.modo==='partido';
+  if(S.ultimo&&partido)return{txt:'¡TIRO FINAL!',clase:'mamba4 grande'};
+  if(r.entraMamba&&partido)return{txt:'¡MODO MAMBA!',clase:'mamba4 grande'};
+  if(S.racha>0&&S.racha%5===0)return{txt:`¡${S.racha} SEGUIDAS!`,clase:r.pts===4?'mamba4':'kobe'};
+  if(r.pts===4&&partido)return{txt:elegirGrito(GRITOS.mamba),clase:'mamba4'};
+  if(r.tope)return{txt:elegirGrito(GRITOS.rebote),clase:'rebote'};
+  if(r.base===3)return{txt:elegirGrito(r.ms<1200?GRITOS.rayo:GRITOS.triple),clase:'kobe'};
+  if(r.base===2)return{txt:elegirGrito(GRITOS.doble),clase:'doble'};
+  return{txt:elegirGrito(GRITOS.libre),clase:'libre'};
 }
 
 /* Entre cuartos y final */
