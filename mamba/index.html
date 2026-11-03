@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mamba 81</title>
+<meta name="description" content="Aprende las tablas de multiplicar tiro a tiro y compite contra los 81 puntos de Kobe Bryant.">
+<meta name="robots" content="noindex">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Mamba 81">
+<meta property="og:description" content="Aprende las tablas de multiplicar tiro a tiro. ¿Llegas a los 81 de Kobe?">
+<meta property="og:url" content="https://robertvaliente.com/mamba/">
+<meta property="og:image" content="https://robertvaliente.com/mamba/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Mamba 81: las tablas de multiplicar, tiro a tiro">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Mamba 81">
+<meta name="twitter:description" content="Aprende las tablas de multiplicar tiro a tiro. ¿Llegas a los 81 de Kobe?">
+<meta name="twitter:image" content="https://robertvaliente.com/mamba/og.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -30 60 60'%3E%3Ccircle r='26' fill='%23e8742c' stroke='%235b2a0c' stroke-width='3'/%3E%3Cpath d='M-26 0H26M0 -26V26M-18 -18Q-6 0 -18 18M18 -18Q6 0 18 18' fill='none' stroke='%235b2a0c' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Big+Shoulders+Display:wght@700;800;900&display=swap">
+<style>
+/* Arena de noche: piel de mamba de fondo, marcador LED arriba y una franja de parquet a escala real que mide el tiempo del tiro. */
+:root{
+  color-scheme:dark;
+  --noche:#120822;--forum:#21103d;--forum-2:#2d1752;--purpura:#552583;--oro:#fdb927;--crema:#fff4d6;
+  --texto:#f4eefc;--tenue:#bcaed8;--linea:#45306b;--panel-led:#0a0512;
+  --rojo-led:#ff3a2a;--rojo-off:#2b0d10;--ambar-led:#ffb000;--ambar-off:#2a1d08;
+  --mal:#7cc4ff;--tinta:#2a1147;
+  --c0:#2a79c4;--c1:#5a55c4;--c2:#a24ab0;--c3:#ee7a2e;--c4:#fdb927;--c-osc:#1c0d33;
+  --parquet-a:#d9a66c;--parquet-b:#cf9a5e;--parquet-c:#c48e52;
+  --f-display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
+  --f-texto:"Barlow","Helvetica Neue",Arial,sans-serif;
+  --f-etq:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --escamas:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='24'%3E%3Cg fill='none' stroke='%23a98be0' stroke-opacity='.1' stroke-width='1.2'%3E%3Cpath d='M0 24A22 24 0 0 1 44 24M-22 12A22 24 0 0 1 22 12M22 12A22 24 0 0 1 66 12'/%3E%3C/g%3E%3C/svg%3E");
+  --escamas-oro:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='24'%3E%3Cg fill='none' stroke='%23fdb927' stroke-opacity='.42' stroke-width='1.3'%3E%3Cpath d='M0 24A22 24 0 0 1 44 24M-22 12A22 24 0 0 1 22 12M22 12A22 24 0 0 1 66 12'/%3E%3C/g%3E%3C/svg%3E");
+}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--noche) var(--escamas);color:var(--texto);font:400 16px/1.45 var(--f-texto);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));-webkit-tap-highlight-color:transparent}
+body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;background:var(--escamas-oro);opacity:0;transition:opacity .5s}
+body.mamba::after{opacity:.6;animation:serpentea 9s linear infinite}
+@keyframes serpentea{to{background-position:44px 48px}}
+#app{position:relative;z-index:1;height:100%;max-width:1180px;margin-inline:auto}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--crema);outline-offset:2px}
+.etq{font:600 13px/1.1 var(--f-etq);letter-spacing:.09em;text-transform:uppercase;color:var(--tenue)}
+.jersey{color:var(--oro);-webkit-text-stroke:.03em var(--crema);paint-order:stroke fill;text-shadow:.045em .055em 0 var(--purpura)}
+.btn{font:800 22px/1 var(--f-display);letter-spacing:.03em;text-transform:uppercase;padding:15px 20px;border:2px solid var(--oro);background:transparent;color:var(--oro);cursor:pointer;border-radius:3px;touch-action:manipulation}
+.btn:hover{background:rgba(253,185,39,.12)}
+.btn.oro{background:var(--oro);color:var(--c-osc)}
+.btn.oro:hover{background:#ffcb52}
+.enlace{background:none;border:0;padding:6px 0;cursor:pointer;font:600 14px/1 var(--f-etq);letter-spacing:.06em;text-transform:uppercase;color:var(--tenue)}
+.enlace:hover{color:var(--texto)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Inicio */
+#inicio{display:grid;gap:28px;padding-block:20px 32px}
+.ini-izq{position:relative;min-width:0}
+.ini-der{container-type:inline-size;min-width:0}
+.banderas{position:absolute;top:-20px;right:0;display:flex;gap:8px}
+.bandera{display:grid;width:clamp(46px,12vw,62px);height:clamp(74px,19vw,98px);background:var(--oro);clip-path:polygon(0 0,100% 0,100% 80%,50% 100%,0 80%);padding:0 2px 2px}
+.bandera b{display:grid;place-items:center;padding-bottom:12px;background:var(--purpura);clip-path:polygon(0 0,100% 0,100% 80%,50% 100%,0 80%);font:900 clamp(26px,7vw,36px)/1 var(--f-display);color:var(--oro)}
+.logo{margin:0 0 12px;font:900 clamp(52px,15vw,84px)/.88 var(--f-display);letter-spacing:.01em}
+.logo span{display:block;font-size:1.72em;line-height:.86}
+.lema{margin:0 0 16px;max-width:46ch;font-size:17px;text-wrap:pretty}
+.dedica{margin:0 0 10px;max-width:calc(100% - 130px);font:700 15px/1.2 var(--f-etq);letter-spacing:.08em;text-transform:uppercase;color:var(--oro)}
+.carta{margin:0 0 18px;max-width:46ch;padding:12px 14px;background:var(--crema);color:var(--tinta);font-size:15px;font-weight:500;line-height:1.4;transform:rotate(-.5deg);text-wrap:pretty}
+.carta b{font-weight:700}
+.acciones{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:10px}
+.acciones .btn{flex:1 1 170px}
+.sub{margin:0 0 20px;max-width:50ch;color:var(--tenue);font-size:15px}
+.reglas{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin:0;align-items:baseline}
+.reglas dt{font:800 19px/1.1 var(--f-display);color:var(--oro);letter-spacing:.02em;text-transform:uppercase}
+.reglas dd{margin:0;font-size:15px}
+.mapa-cab{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.mapa-cab h2{margin:0;font:900 30px/1 var(--f-display);text-transform:uppercase;letter-spacing:.015em}
+.presets{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:10px;font-size:14px;color:var(--tenue)}
+.chip-btn{border:1px solid var(--linea);background:var(--forum);padding:6px 10px;border-radius:3px;cursor:pointer;font:600 14px/1 var(--f-etq);letter-spacing:.05em;text-transform:uppercase;color:var(--texto)}
+.chip-btn:hover{border-color:var(--oro)}
+#mapa{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:2px;font:600 clamp(11px,3.3cqw,17px)/1 var(--f-etq);font-variant-numeric:tabular-nums}
+#mapa th{font-weight:700;color:var(--tenue);padding:0;text-align:center}
+#mapa thead th{padding-bottom:3px}
+#mapa td{padding:0}
+.fila{width:100%;aspect-ratio:1;display:block;padding:0;border:1px solid var(--oro);background:var(--oro);color:var(--c-osc);border-radius:2px;cursor:pointer;font:800 clamp(13px,3.6cqw,20px)/1 var(--f-display)}
+tr.fuera .fila{background:transparent;color:var(--tenue);border-color:var(--linea)}
+.celda{position:relative;width:100%;aspect-ratio:1;display:block;padding:0;background:rgba(33,16,61,.72);border:1px solid var(--linea);color:var(--tenue);border-radius:2px;cursor:pointer;font:inherit}
+tr.fuera .celda{opacity:.32}
+.celda:hover{border-color:var(--crema)}
+.celda.sel{outline:2px solid var(--crema);outline-offset:0}
+.celda.dato::after{content:"";position:absolute;top:0;right:0;border:3px solid;border-color:var(--oro) var(--oro) transparent transparent}
+.celda[data-caja="0"]{background:var(--c0);color:#fff;border-color:transparent}
+.celda[data-caja="1"]{background:var(--c1);color:#fff;border-color:transparent}
+.celda[data-caja="2"]{background:var(--c2);color:#fff;border-color:transparent}
+.celda[data-caja="3"]{background:var(--c3);color:var(--c-osc);border-color:transparent}
+.celda[data-caja="4"]{background:var(--c4);color:var(--c-osc);border-color:transparent}
+.celda[data-caja="3"].dato::after,.celda[data-caja="4"].dato::after{border-color:var(--c-osc) var(--c-osc) transparent transparent}
+.leyenda{display:flex;flex-wrap:wrap;gap:4px 12px;margin:10px 0;font-size:13px;color:var(--tenue)}
+.leyenda span{display:inline-flex;align-items:center;gap:5px}
+.leyenda i{width:13px;height:13px;border-radius:2px;display:inline-block;border:1px solid transparent}
+#detalle{display:grid;gap:2px;background:var(--forum);border:1px solid var(--linea);border-radius:3px;padding:12px 14px;min-height:96px}
+.det-fact{font:900 30px/1.05 var(--f-display);color:var(--oro)}
+.det-est{color:var(--tenue);font-size:14px}
+.pie{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 18px;margin-top:12px;font-size:14px;color:var(--tenue)}
+.pie b{color:var(--texto);font-weight:600}
+.legal{margin:14px 0 0;font-size:13px;color:var(--tenue)}
+#confirmar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;font-size:14px}
+
+/* Juego */
+#juego{height:100%;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto 1fr auto;gap:8px;padding-block:6px 10px}
+.barra{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.barra-der{display:flex;gap:14px}
+@media (max-width:440px){#modo-label{display:none}}
+.marcador{background:var(--panel-led);border:1px solid var(--linea);border-radius:4px;padding:8px 10px;display:grid;grid-template-columns:1fr auto 1fr;gap:6px 10px;align-items:end}
+.casilla{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.led{--h:clamp(32px,6.2vh,54px);--off:var(--ambar-off);color:var(--ambar-led);max-width:100%}
+.led svg{display:block;height:var(--h);width:auto;max-width:100%;transform:skewX(-5deg)}
+.led.rojo{--h:clamp(44px,9vh,78px);--off:var(--rojo-off);color:var(--rojo-led)}
+.gym .led.rojo{--off:var(--ambar-off);color:var(--ambar-led)}
+.apag{fill:var(--off)}
+.enc{fill:currentColor;filter:drop-shadow(0 0 3px currentColor)}
+.periodo{grid-column:1/-1;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#pips{display:flex;gap:3px;flex:1;max-width:58%}
+#pips i{flex:1;height:7px;background:var(--linea);border-radius:1px}
+#pips .ok{background:var(--oro)}
+#pips .no{background:var(--c0)}
+#pips .act{background:var(--crema)}
+.campo{display:flex;flex-direction:column;gap:8px;min-height:0}
+.plato{position:relative;flex:1;min-height:118px;display:flex;flex-direction:column;justify-content:center;gap:2px;container-type:inline-size}
+.tag-fila{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:clamp(28px,5.6vh,48px)}
+#tag{color:var(--crema)}
+#racha{color:var(--oro)}
+.plato.gritando .tag-fila{visibility:hidden}
+.grito{position:absolute;top:0;left:0;right:0;text-align:center;font:900 clamp(30px,7vh,54px)/1 var(--f-display);letter-spacing:.015em;color:var(--crema);pointer-events:none;opacity:0}
+.grito.kobe{color:var(--oro)}
+.grito.pop{animation:pop .5s cubic-bezier(.2,1.5,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.55)}to{opacity:1;transform:scale(1)}}
+.pregunta{font-family:var(--f-display);font-weight:900;font-size:min(calc(96cqw/(var(--n,10)*.42)),17vh,128px);line-height:1.02;text-align:center;white-space:nowrap;font-variant-numeric:tabular-nums}
+.pregunta.mal{color:var(--mal)}
+.pregunta.bien #resp{color:var(--crema)}
+.pregunta.sacude{animation:sacude .28s}
+@keyframes sacude{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.slot{display:inline-block;min-width:.48em;text-align:center;border-bottom:.055em solid currentColor;margin-left:.03em;line-height:.95}
+.slot:empty::before{content:"\00a0"}
+.nota{min-height:2.7em;text-align:center;font:500 15px/1.3 var(--f-texto);text-wrap:balance}
+.cancha{width:100%;aspect-ratio:1000/240;border-radius:3px;overflow:hidden;background:repeating-linear-gradient(0deg,var(--parquet-a) 0 9px,var(--parquet-b) 9px 19px,var(--parquet-c) 19px 28px,var(--parquet-b) 28px 38px)}
+.cancha svg{display:block;width:100%;height:100%}
+.lin{fill:none;stroke:var(--oro);stroke-width:5}
+.lin-osc{fill:none;stroke:var(--tinta);stroke-width:5}
+.tablero{stroke:var(--crema);stroke-width:8}
+.aro{fill:none;stroke:var(--c3);stroke-width:7}
+.aro.flash{animation:aro .42s ease-out}
+@keyframes aro{0%{stroke:var(--crema);stroke-width:18}100%{stroke:var(--c3);stroke-width:7}}
+.zona{font:800 38px/1 var(--f-display);text-anchor:middle;fill:var(--tinta);letter-spacing:.02em}
+.zona.oro{fill:var(--oro)}
+.teclado{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.tecla{height:clamp(42px,7.6vh,72px);font:800 clamp(26px,4.4vh,38px)/1 var(--f-display);background:var(--forum-2);color:var(--oro);border:1px solid var(--linea);border-bottom:3px solid #06030c;border-radius:4px;cursor:pointer;touch-action:manipulation}
+.tecla:hover{background:#38206a}
+.tecla:active{transform:translateY(2px);border-bottom-width:1px}
+.tecla.txt{font:600 15px/1 var(--f-etq);letter-spacing:.07em;text-transform:uppercase;color:var(--texto)}
+#destello{position:fixed;inset:0;z-index:5;pointer-events:none;background:radial-gradient(circle at 50% 42%,rgba(253,185,39,.55),transparent 66%);opacity:0}
+#destello.on{animation:destella .45s ease-out}
+@keyframes destella{from{opacity:1}to{opacity:0}}
+
+/* Entre cuartos y final */
+.tablero-fin{max-width:640px;margin-inline:auto;padding-block:28px;display:grid;gap:18px}
+.tablero-fin h2{margin:0;font:900 clamp(40px,10vw,68px)/.95 var(--f-display);text-transform:uppercase;text-wrap:balance}
+.sena{margin:0;font:900 clamp(30px,8vw,44px)/1 var(--f-display)}
+.tablero-fin p{margin:0;font-size:17px;text-wrap:pretty}
+.linea-w{overflow-x:auto}
+table.linea{width:100%;border-collapse:collapse;background:var(--panel-led);font:600 19px/1 var(--f-etq);font-variant-numeric:tabular-nums}
+table.linea th,table.linea td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--linea)}
+table.linea th:first-child{text-align:left;color:var(--crema)}
+table.linea thead th{font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--tenue)}
+table.linea td:last-child{color:var(--ambar-led);font-weight:700}
+.caja{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0}
+.caja div{display:grid;gap:2px}
+.caja dt{font:600 13px/1.1 var(--f-etq);letter-spacing:.09em;text-transform:uppercase;color:var(--tenue)}
+.caja dd{margin:0;font:900 34px/1 var(--f-display);color:var(--oro);font-variant-numeric:tabular-nums}
+.falladas{display:flex;flex-wrap:wrap;gap:6px;margin:0;padding:0;list-style:none}
+.falladas li{background:var(--c0);color:#fff;padding:5px 9px;border-radius:2px;font:600 16px/1 var(--f-etq);font-variant-numeric:tabular-nums}
+.botones{display:flex;flex-wrap:wrap;gap:10px}
+.botones .btn{flex:1 1 190px}
+
+.records{margin-top:24px}
+.records h2{margin:0 0 8px;font:900 30px/1 var(--f-display);text-transform:uppercase;letter-spacing:.015em}
+.records .sub{margin:10px 0 0}
+.tabla-records{width:100%;border-collapse:collapse;font:600 17px/1.2 var(--f-etq);font-variant-numeric:tabular-nums}
+.tabla-records th{padding:0 8px 6px;font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:var(--tenue);text-align:right}
+.tabla-records td{padding:7px 8px;border-top:1px solid var(--linea);text-align:right}
+.tabla-records th:nth-child(2),.tabla-records td:nth-child(2){text-align:left;width:100%}
+.tabla-records td:nth-child(3){color:var(--oro);font-weight:700}
+.tabla-records .kobe td{background:var(--purpura);color:var(--crema)}
+.tabla-records .kobe td:nth-child(3){color:var(--oro)}
+.fin-record{display:grid;gap:8px;justify-items:start;font-size:17px}
+.fin-record p{margin:0}
+.fin-record #aviso-record{color:var(--mal)}
+.form-apodo{display:flex;flex-wrap:wrap;gap:8px;width:100%}
+.form-apodo label{flex:1 0 100%;font-size:16px}
+#apodo{flex:1 1 170px;min-width:0;padding:12px;font:500 18px/1 var(--f-texto);background:var(--forum);color:var(--texto);border:1px solid var(--tenue);border-radius:3px}
+
+@media (min-width:960px){
+  #inicio{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:56px;align-items:start;padding-block:40px}
+  .banderas{top:-40px}
+  #juego{grid-template-columns:minmax(0,1fr) minmax(260px,320px);grid-template-rows:auto auto 1fr;padding-block:12px 16px;gap:12px 20px;max-height:860px}
+  .barra,.marcador{grid-column:1/-1}
+  .teclado{align-self:center}
+  .tecla{height:clamp(52px,9.4vh,78px)}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::after{animation:none!important;transition:none!important}
+  .grito.pop{opacity:1}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <section id="inicio">
+    <div class="ini-izq">
+      <div class="banderas" aria-hidden="true"><span class="bandera"><b>8</b></span><span class="bandera"><b>24</b></span></div>
+      <p class="dedica">Creado por Roberto para Matías</p>
+      <h1 class="logo">Mamba <span class="jersey">81</span></h1>
+      <p class="lema">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una multiplicación. Llega a 81 y te sabes las tablas.</p>
+      <p class="carta"><b>Mati:</b> Kobe entrenaba todos los días, incluso cuando ya era el mejor. Con las tablas es igual. Juega un partido al día y vas a ver cómo se te quedan. Confío en ti. <b>Roberto</b></p>
+      <div class="acciones">
+        <button id="btn-partido" class="btn oro">Jugar partido</button>
+        <button id="btn-gym" class="btn">Gimnasio 4 AM</button>
+      </div>
+      <p class="sub">El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj, enfocados en lo que más te cuesta.</p>
+      <dl class="reglas">
+        <dt>3 puntos</dt><dd>Respondes en 3 segundos o menos.</dd>
+        <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
+        <dt>1 punto</dt><dd>Respondes antes de que se acaben los 24.</dd>
+        <dt>Rebote</dt><dd>Si fallas, escribes la respuesta y esa cuenta vuelve dos tiros después.</dd>
+        <dt>Modo Mamba</dt><dd>Con 5 seguidas, cada canasta vale 1 punto más.</dd>
+      </dl>
+      <div class="records" id="records" hidden>
+        <h2>Récords</h2>
+        <div class="linea-w"><table class="tabla-records">
+          <thead><tr><th scope="col"></th><th scope="col">Apodo</th><th scope="col">Récord</th><th scope="col">Último</th><th scope="col">Partidos</th></tr></thead>
+          <tbody id="filas-records"></tbody>
+        </table></div>
+        <p class="sub" id="records-vacio">Termina un partido y aparece aquí.</p>
+      </div>
+    </div>
+    <div class="ini-der">
+      <div class="mapa-cab"><h2>Mapa de tiros</h2><span class="etq" id="dominadas"></span></div>
+      <div class="presets">
+        <button class="chip-btn" data-preset="todas">Todas</button>
+        <button class="chip-btn" data-preset="dificiles">Solo 6 a 9</button>
+        <span>Toca un número de la izquierda para sacar o meter esa tabla.</span>
+      </div>
+      <table id="mapa" aria-label="Tablas del 1 al 10 según cuánto las dominas"></table>
+      <div class="leyenda" aria-hidden="true">
+        <span><i style="background:rgba(33,16,61,.72);border-color:var(--linea)"></i>Sin tirar</span>
+        <span><i style="background:var(--c0)"></i>Fría</span>
+        <span><i style="background:var(--c1)"></i></span>
+        <span><i style="background:var(--c2)"></i></span>
+        <span><i style="background:var(--c3)"></i>Caliente</span>
+        <span><i style="background:var(--c4)"></i>Dominada</span>
+      </div>
+      <div id="detalle" aria-live="polite"></div>
+      <div class="pie">
+        <span>Mejor partido: <b id="st-mejor">–</b></span>
+        <span>Tiros encestados: <b id="st-hechos">0</b></span>
+        <span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span>
+      </div>
+      <div class="pie"><span>Tu avance se guarda en este navegador.</span><button id="btn-borrar" class="enlace">Borrar mi avance</button></div>
+      <div id="confirmar" hidden>
+        <span>Esto deja tu mapa en blanco.</span>
+        <button id="borrar-si" class="chip-btn">Sí, borrar</button>
+        <button id="borrar-no" class="chip-btn">No</button>
+      </div>
+      <p class="legal">Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
+    </div>
+  </section>
+
+  <section id="juego" hidden>
+    <div class="barra">
+      <button id="btn-salir" class="enlace">← Salir</button>
+      <span class="etq" id="modo-label"></span>
+      <span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span>
+    </div>
+    <div class="marcador">
+      <div class="casilla"><span class="etq" id="lab-a">Tú</span><div class="led" id="led-a" role="img"></div></div>
+      <div class="casilla"><span class="etq" id="lab-b">Reloj</span><div class="led rojo" id="led-b" role="img"></div></div>
+      <div class="casilla"><span class="etq" id="lab-c">Kobe</span><div class="led" id="led-c" role="img"></div></div>
+      <div class="periodo"><span class="etq" id="periodo"></span><div id="pips" aria-hidden="true"></div></div>
+    </div>
+    <div class="campo">
+      <div class="plato" id="plato">
+        <div class="tag-fila"><span class="etq" id="tag"></span><span class="etq" id="racha"></span></div>
+        <div class="grito" id="grito" aria-hidden="true"></div>
+        <div class="pregunta jersey" id="pregunta"><span id="factores"></span> = <span id="resp"></span></div>
+        <div class="nota" id="nota"></div>
+      </div>
+      <div class="cancha">
+        <svg viewBox="0 0 1000 240" role="img" aria-label="Cancha a escala: el balón se acerca al aro a medida que pasa el tiempo y el tiro vale menos">
+          <rect x="0" y="0" width="559" height="240" fill="var(--purpura)"/>
+          <circle cx="559" cy="120" r="176" class="lin-osc"/>
+          <line x1="559" y1="0" x2="559" y2="240" class="lin"/>
+          <circle cx="154.4" cy="120" r="117.6" class="lin"/>
+          <circle cx="154.4" cy="120" r="698.5" class="lin-osc"/>
+          <text x="420" y="134" class="zona oro">1 PT</text>
+          <text x="712" y="134" class="zona">2 PTS</text>
+          <text x="930" y="134" class="zona">3 PTS</text>
+          <line x1="117.6" y1="32" x2="117.6" y2="208" class="tablero"/>
+          <circle id="aro" cx="154.4" cy="120" r="22" class="aro"/>
+          <g id="balon" transform="translate(985 120)">
+            <circle r="26" fill="#e8742c" stroke="#5b2a0c" stroke-width="3"/>
+            <path d="M-26 0H26M0 -26V26M-18 -18Q-6 0 -18 18M18 -18Q6 0 18 18" fill="none" stroke="#5b2a0c" stroke-width="3"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="teclado" id="teclado">
+      <button class="tecla" data-d="1">1</button><button class="tecla" data-d="2">2</button><button class="tecla" data-d="3">3</button>
+      <button class="tecla" data-d="4">4</button><button class="tecla" data-d="5">5</button><button class="tecla" data-d="6">6</button>
+      <button class="tecla" data-d="7">7</button><button class="tecla" data-d="8">8</button><button class="tecla" data-d="9">9</button>
+      <button class="tecla txt" data-a="borrar">Borrar</button><button class="tecla" data-d="0">0</button><button class="tecla txt" data-a="pasar">No sé</button>
+    </div>
+    <div class="sr" aria-live="polite" id="anuncio"></div>
+  </section>
+
+  <section id="entre" class="tablero-fin" hidden></section>
+  <section id="final" class="tablero-fin" hidden></section>
+</div>
+<div id="destello" aria-hidden="true"></div>
+
+<script>
+/*MOTOR*/
+const CUARTOS=4,TIROS_CUARTO=8,SERIE_GYM=24;
+const KOBE_CUARTOS=[14,12,27,28]; // 22-01-2006 contra Toronto, por cuarto
+const T3=3000,T2=7000,T_RELOJ=24000;
+const RACHA_MAMBA=5,CAJA_MAX=4;
+const PESO=[5,4,2.5,1.5,.6],PESO_NUEVA=3.5,INTERVALO_DIAS=[0,1,2,4,8],DIA=864e5;
+
+const clave=(a,b)=>a+'x'+b;
+const partes=k=>k.split('x').map(Number);
+const producto=k=>{const[a,b]=partes(k);return a*b;};
+const valorTiro=ms=>ms<=T3?3:ms<=T2?2:1;
+
+function poolDe(tablas){const r=[];for(const a of tablas)for(let b=1;b<=10;b++)r.push(clave(a,b));return r;}
+function dominadas(facts,tablas){return poolDe(tablas).filter(k=>facts[k]&&facts[k].caja===CAJA_MAX).length;}
+
+function peso(f,ahora){
+  if(!f||!f.vistos)return PESO_NUEVA;
+  const vencida=ahora-f.ultimo>INTERVALO_DIAS[f.caja]*DIA;
+  return PESO[f.caja]*(vencida&&f.caja>0?2:1);
+}
+function elegir(pool,facts,evitar,ahora,rng){
+  let c=pool.filter(k=>!evitar.includes(k));
+  if(!c.length)c=pool;
+  const pesos=c.map(k=>peso(facts[k],ahora));
+  let r=rng()*pesos.reduce((s,p)=>s+p,0);
+  for(let i=0;i<c.length;i++){r-=pesos[i];if(r<=0)return c[i];}
+  return c[c.length-1];
+}
+// Una cuenta solo queda dominada (caja 4) si la aciertas en 3 segundos o menos.
+function registrar(facts,k,ok,ms,ahora){
+  const f=facts[k]||(facts[k]={caja:0,vistos:0,hechos:0,mejor:null,ultimo:0});
+  f.vistos++;f.ultimo=ahora;
+  if(!ok){f.caja=Math.max(0,f.caja-2);return f;}
+  f.hechos++;
+  if(f.mejor===null||ms<f.mejor)f.mejor=ms;
+  if(ms<=T3)f.caja=Math.min(CAJA_MAX,f.caja+1);
+  else if(ms<=T2)f.caja=Math.max(f.caja,Math.min(3,f.caja+1));
+  else f.caja=Math.max(1,f.caja-(f.caja>=3?1:0));
+  return f;
+}
+function crearSesion(modo,tablas,foco){
+  const conFoco=!!(foco&&foco.length),pool=conFoco?foco.slice():poolDe(tablas);
+  const total=modo==='partido'?CUARTOS*TIROS_CUARTO:conFoco?Math.min(SERIE_GYM,Math.max(8,pool.length*4)):SERIE_GYM;
+  return{modo,pool,total,n:0,puntos:0,racha:0,mejorRacha:0,triples:0,dobles:0,libres:0,fallos:0,
+    porCuarto:[0,0,0,0],hist:[],rebotes:[],recientes:[],falladas:[],actual:null,esRebote:false,ultimo:false};
+}
+function siguiente(s,facts,ahora,rng){
+  s.n++;
+  const ultimo=s.modo==='partido'&&s.n===s.total;
+  s.rebotes.forEach(r=>r.tras--);
+  const i=s.rebotes.findIndex(r=>r.tras<=0);
+  let k,esRebote=false;
+  if(ultimo&&s.pool.includes('9x9'))k='9x9';
+  else if(i>=0){k=s.rebotes.splice(i,1)[0].k;esRebote=true;}
+  else k=elegir(s.pool,facts,s.recientes.concat(s.rebotes.map(r=>r.k)),ahora,rng);
+  s.actual=k;s.esRebote=esRebote;s.ultimo=ultimo;
+  s.recientes.push(k);
+  const max=Math.min(5,Math.max(0,s.pool.length-1));
+  while(s.recientes.length>max)s.recientes.shift();
+  return k;
+}
+function responder(s,facts,valor,ms,ahora){
+  const k=s.actual,ok=valor===producto(k);
+  registrar(facts,k,ok,ms,ahora);
+  s.hist.push(ok);
+  if(!ok){
+    s.fallos++;s.racha=0;
+    if(!s.falladas.includes(k))s.falladas.push(k);
+    s.rebotes.push({k,tras:3});
+    return{ok:false,k,pts:0,ms};
+  }
+  const base=valorTiro(ms),pts=base+(s.racha>=RACHA_MAMBA?1:0);
+  s.racha++;s.mejorRacha=Math.max(s.mejorRacha,s.racha);
+  if(base===3)s.triples++;else if(base===2)s.dobles++;else s.libres++;
+  s.puntos+=pts;
+  if(s.modo==='partido')s.porCuarto[Math.floor((s.n-1)/TIROS_CUARTO)]+=pts;
+  return{ok:true,k,pts,base,ms,entraMamba:s.racha===RACHA_MAMBA};
+}
+// Lo que llevaba Kobe tras n tiros: reparte su anotación real de cada cuarto entre los 8 tiros.
+function ritmoKobe(n){
+  let acum=0;
+  for(let q=0;q<CUARTOS;q++){
+    const enEste=Math.min(TIROS_CUARTO,Math.max(0,n-q*TIROS_CUARTO));
+    acum+=Math.round(KOBE_CUARTOS[q]*enEste/TIROS_CUARTO);
+  }
+  return acum;
+}
+// Posición del balón en la cancha a escala: cruza cada línea justo cuando el tiro baja de valor.
+function xBalon(ms){
+  const P=[[0,985],[T3,853],[T2,559],[T_RELOJ,240]];
+  for(let i=1;i<P.length;i++)if(ms<=P[i][0]){const[a,x0]=P[i-1],[b,x1]=P[i];return x0+(x1-x0)*(ms-a)/(b-a);}
+  return 240;
+}
+/*FIN MOTOR*/
+
+const DATOS={
+  '9x9':'81: los puntos de Kobe contra Toronto el 22 de enero de 2006.',
+  '8x3':'8 y 24, sus dos números, en una sola cuenta.','3x8':'3 × 8 da 24, y 24 fue su segundo número. El primero fue el 8.',
+  '4x6':'24: el número que usó desde 2006 hasta su retiro.','6x4':'24: el número que usó desde 2006 hasta su retiro.',
+  '6x10':'60: los puntos de su último partido, el 13 de abril de 2016.','10x6':'60: los puntos de su último partido, el 13 de abril de 2016.',
+  '2x4':'8: el número con el que ganó sus primeros tres anillos.','4x2':'8: el número con el que ganó sus primeros tres anillos.',
+  '1x5':'5: los anillos que ganó con los Lakers.','5x1':'5: los anillos que ganó con los Lakers.',
+  '2x9':'18: sus selecciones al Juego de las Estrellas.','9x2':'18: sus selecciones al Juego de las Estrellas.','3x6':'18: sus selecciones al Juego de las Estrellas.','6x3':'18: sus selecciones al Juego de las Estrellas.',
+  '2x10':'20: las temporadas que jugó, todas con los Lakers.','10x2':'20: las temporadas que jugó, todas con los Lakers.','4x5':'20: las temporadas que jugó, todas con los Lakers.','5x4':'20: las temporadas que jugó, todas con los Lakers.',
+  '2x2':'4: la hora a la que, según la leyenda, empezaba a entrenar.',
+  '1x4':'4: sus premios MVP del Juego de las Estrellas.','4x1':'4: sus premios MVP del Juego de las Estrellas.',
+  '3x5':'15: sus selecciones a los equipos All-NBA.','5x3':'15: sus selecciones a los equipos All-NBA.',
+  '2x6':'12: sus selecciones a los equipos All-Defensive.','6x2':'12: sus selecciones a los equipos All-Defensive.','3x4':'12: sus selecciones a los equipos All-Defensive.','4x3':'12: sus selecciones a los equipos All-Defensive.',
+  '6x8':'48: los minutos de un partido de la NBA.','8x6':'48: los minutos de un partido de la NBA.',
+  '1x2':'2: sus premios MVP de las Finales, en 2009 y 2010.','2x1':'2: sus premios MVP de las Finales, en 2009 y 2010.',
+  '1x1':'1: su MVP de la temporada regular, en 2008.',
+  '2x7':'14: lo que anotó en el primer cuarto de los 81.','7x2':'14: lo que anotó en el primer cuarto de los 81.',
+  '3x9':'27: lo que anotó en el tercer cuarto de los 81.','9x3':'27: lo que anotó en el tercer cuarto de los 81.',
+  '4x7':'28: lo que anotó en el último cuarto de los 81.','7x4':'28: lo que anotó en el último cuarto de los 81.'
+};
+const ORD=['1.er','2.º','3.er','4.º'];
+const NOTA_CUARTO=['Kobe abrió con 14 puntos ante Toronto.','Al descanso llevaba 26 y los Lakers iban perdiendo.','Metió 27 en el tercero y ya sumaba 53.'];
+const $=id=>document.getElementById(id);
+const reducir=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Avance: se guarda en este navegador */
+const normalizar=o=>{
+  const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,apodo:'',actualizado:0},o||{});
+  p.facts=o&&o.facts?JSON.parse(JSON.stringify(o.facts)):{};
+  p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():[2,3,4,5,6,7,8,9,10];
+  return p;
+};
+let prog;
+function leerLocal(){try{return JSON.parse(localStorage.getItem('mamba81')||'null');}catch(e){return null;}}
+function guardarLocal(){try{localStorage.setItem('mamba81',JSON.stringify(prog));}catch(e){}}
+function guardar(){prog.actualizado=Date.now();guardarLocal();}
+
+/* Ranking: si el sitio no tiene el almacenamiento conectado, queda solo el récord personal */
+const API='/api/records';
+let ranking={activo:false,top:[]};
+async function cargarRanking(){
+  try{
+    const r=await fetch(API,{headers:{accept:'application/json'}});
+    if(!r.ok)throw new Error('ranking');
+    const d=await r.json();
+    ranking={activo:!!d.activo,top:Array.isArray(d.top)?d.top:[]};
+  }catch(e){ranking={activo:false,top:[]};}
+  pintarRanking();
+}
+function pintarRanking(){
+  $('records').hidden=!ranking.activo;
+  if(!ranking.activo)return;
+  $('records-vacio').hidden=ranking.top.length>0;
+  const filas=[...ranking.top.slice(0,10),{apodo:'Kobe Bryant',puntos:81,kobe:true}].sort((a,b)=>b.puntos-a.puntos);
+  const tb=$('filas-records');tb.textContent='';
+  let puesto=0;
+  filas.forEach(f=>{
+    const tr=tb.insertRow();
+    if(f.kobe)tr.className='kobe';else puesto++;
+    [f.kobe?'':puesto,f.apodo,f.puntos,f.kobe?'':f.ultimo,f.kobe?'2006':f.partidos].forEach(v=>{tr.insertCell().textContent=v;});
+  });
+}
+function pintarFinRecord(pts){
+  if(!ranking.activo)return;
+  if(prog.apodo)guardarEnRanking(prog.apodo,pts);else formApodo(pts);
+}
+function formApodo(pts,aviso){
+  const c=$('fin-record');
+  c.innerHTML='<form class="form-apodo" id="form-apodo"><label for="apodo">Elige un apodo para el ranking. No uses tu nombre completo.</label><input id="apodo" maxlength="14" autocomplete="off" required><button class="btn">Guardar puntaje</button></form><p id="aviso-record"></p>';
+  $('apodo').value=prog.apodo||'';
+  $('aviso-record').textContent=aviso||'';
+  $('form-apodo').addEventListener('submit',e=>{e.preventDefault();guardarEnRanking($('apodo').value.trim(),pts);});
+}
+async function guardarEnRanking(apodo,pts){
+  const c=$('fin-record');
+  c.textContent='Guardando tu puntaje…';
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({apodo,puntos:pts})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||'No se pudo guardar tu puntaje. Inténtalo de nuevo.');
+    prog.apodo=apodo;guardar();
+    ranking={activo:true,top:d.top||[]};
+    c.textContent='';
+    const p=document.createElement('p');
+    p.textContent=`Guardado como ${apodo}.`+(d.puesto?` Vas ${d.puesto}.º en el ranking.`:'');
+    const b=document.createElement('button');
+    b.className='enlace';b.textContent='Cambiar apodo';
+    b.addEventListener('click',()=>formApodo(pts));
+    c.append(p,b);
+  }catch(e){formApodo(pts,e.message==='Failed to fetch'?'No se pudo guardar tu puntaje. Revisa tu conexión.':e.message);}
+}
+
+/* Sonido: efectos y una base de hip-hop original, todo generado en el navegador */
+let ac=null,busSfx=null,busMus=null,bufRuido=null;
+function audio(){
+  try{
+    if(!ac){
+      ac=new(window.AudioContext||window.webkitAudioContext)();
+      const comp=ac.createDynamicsCompressor();comp.connect(ac.destination);
+      busSfx=ac.createGain();busSfx.connect(comp);
+      busMus=ac.createGain();busMus.gain.value=.4;busMus.connect(comp);
+      bufRuido=ac.createBuffer(1,ac.sampleRate,ac.sampleRate);
+      const a=bufRuido.getChannelData(0);
+      for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;
+      // Safari libera el audio recién al reproducir algo dentro del gesto
+      const s=ac.createBufferSource();s.buffer=ac.createBuffer(1,1,ac.sampleRate);s.connect(ac.destination);s.start();
+      ac.onstatechange=pintarSonido;
+    }
+    if(ac.state==='suspended'){const r=ac.resume();if(r&&r.catch)r.catch(()=>{});}
+  }catch(e){ac=null;}
+  return ac;
+}
+function tono(f0,f1,d,tipo,vol,dest=busSfx,t=ac.currentTime){
+  const o=ac.createOscillator(),g=ac.createGain();
+  o.type=tipo;o.frequency.setValueAtTime(f0,t);
+  if(f1!==f0)o.frequency.exponentialRampToValueAtTime(f1,t+d);
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g).connect(dest);o.start(t);o.stop(t+d+.02);
+}
+function ruido(d,fc,vol,filtro='bandpass',dest=busSfx,t=ac.currentTime){
+  const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();
+  s.buffer=bufRuido;f.type=filtro;f.frequency.setValueAtTime(fc,t);f.Q.value=.9;
+  g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  s.connect(f).connect(g).connect(dest);s.start(t,Math.random()*.4,d+.02);
+}
+const SONIDOS={
+  swish(){ruido(.24,4200,.9);},
+  publico(){ruido(.7,1100,.35);},
+  aro(){tono(190,90,.18,'triangle',.7);tono(1400,1100,.05,'square',.06);},
+  bocina(){tono(120,116,.7,'sawtooth',.28);},
+  tic(){tono(1000,1000,.04,'square',.07);},
+  mamba(){[392,523,659].forEach((f,i)=>setTimeout(()=>{if(ac)tono(f,f,.13,'triangle',.3);},i*90));}
+};
+function sonar(n){if(!prog.sonido||!ac)return;try{SONIDOS[n]();}catch(e){console.warn(e);}}
+
+// Base de 4 compases a 94 BPM: Am7, Dm7, Fmaj7, E7. El Modo Mamba le suma hi-hats y una melodía.
+const PASO=60/94/4,COMPAS=16;
+const ACORDES=[[220,261.63,329.63,392],[220,261.63,293.66,349.23],[220,261.63,329.63,349.23],[207.65,246.94,293.66,329.63]];
+const BAJOS=[55,73.42,87.31,82.41];
+const MELODIA=[880,0,0,659.25,0,783.99,0,0,880,0,1046.5,0,783.99,0,659.25,0];
+const P_BOMBO=new Set([0,7,10]),P_CAJA=new Set([4,12]),P_BAJO=new Set([0,3,10,14]);
+const M={timer:0,n:0,t:0};
+function tocarPaso(n,t0){
+  const p=n%COMPAS,c=Math.floor(n/COMPAS)%ACORDES.length,t=t0+(p%2?.018:0),mamba=document.body.classList.contains('mamba');
+  if(P_BOMBO.has(p))tono(130,45,.2,'sine',.95,busMus,t);
+  if(P_CAJA.has(p)){ruido(.16,1900,.6,'bandpass',busMus,t);tono(200,150,.08,'triangle',.25,busMus,t);}
+  if(p%2===0||mamba)ruido(.045,8000,p%4===2?.22:.12,'highpass',busMus,t);
+  if(P_BAJO.has(p))tono(BAJOS[c],BAJOS[c],.24,'triangle',.55,busMus,t);
+  if(p===0||p===6||p===11)ACORDES[c].forEach(f=>tono(f,f,p===0?.7:.3,'triangle',.07,busMus,t));
+  if(mamba&&MELODIA[p])tono(MELODIA[p],MELODIA[p],.16,'square',.05,busMus,t);
+}
+function musicaProgramar(){
+  if(!ac)return;
+  if(M.t<ac.currentTime-.1)M.t=ac.currentTime+.05;
+  while(M.t<ac.currentTime+.22){
+    try{tocarPaso(M.n,M.t);}catch(e){console.warn(e);}
+    M.t+=PASO;M.n++;
+  }
+}
+function musicaIniciar(){
+  if(!ac||!prog.musica||M.timer)return;
+  M.n=0;M.t=ac.currentTime+.05;
+  M.timer=setInterval(musicaProgramar,60);musicaProgramar();
+}
+function musicaParar(){clearInterval(M.timer);M.timer=0;}
+function pintarSonido(){
+  const bloqueado=ac&&ac.state==='suspended';
+  document.querySelectorAll('.btn-sonido').forEach(b=>b.textContent='Sonido: '+(bloqueado?'bloqueado':prog.sonido?'sí':'no'));
+  document.querySelectorAll('.btn-musica').forEach(b=>b.textContent='Música: '+(prog.musica?'sí':'no'));
+}
+
+/* LED de siete segmentos */
+const SEG={a:'13,3 47,3 52,8 47,13 13,13 8,8',b:'49,15 54,10 59,15 59,43 54,48 49,43',c:'49,57 54,52 59,57 59,85 54,90 49,85',d:'13,87 47,87 52,92 47,97 13,97 8,92',e:'1,57 6,52 11,57 11,85 6,90 1,85',f:'1,15 6,10 11,15 11,43 6,48 1,43',g:'13,45 47,45 52,50 47,55 13,55 8,50'};
+const DIG={0:'abcdef',1:'bc',2:'abged',3:'abgcd',4:'fgbc',5:'afgcd',6:'afgedc',7:'abc',8:'abcdefg',9:'abcdfg',' ':''};
+function led(el,txt){
+  if(el.dataset.v===txt)return;
+  let x=0,off='',on='';
+  for(const ch of txt){
+    if(ch===':'){on+=`<circle cx="${x+9}" cy="32" r="5"/><circle cx="${x+9}" cy="68" r="5"/>`;x+=22;continue;}
+    const pg=s=>`<polygon points="${SEG[s]}" transform="translate(${x} 0)"/>`;
+    off+=Object.keys(SEG).map(pg).join('');
+    on+=[...DIG[ch]].map(pg).join('');
+    x+=70;
+  }
+  el.innerHTML=`<svg viewBox="0 0 ${x-10} 100" aria-hidden="true"><g class="apag">${off}</g><g class="enc">${on}</g></svg>`;
+  el.dataset.v=txt;el.setAttribute('aria-label',txt.trim());
+}
+
+/* Pantallas */
+function mostrar(id){
+  ['inicio','juego','entre','final'].forEach(s=>{$(s).hidden=s!==id;});
+  window.scrollTo(0,0);
+}
+let detalle='9x9';
+function pintarMapa(){
+  const sel=new Set(prog.tablas);
+  let h='<thead><tr><th scope="col">×</th>';
+  for(let b=1;b<=10;b++)h+=`<th scope="col">${b}</th>`;
+  h+='</tr></thead><tbody>';
+  for(let a=1;a<=10;a++){
+    const on=sel.has(a);
+    h+=`<tr class="${on?'':'fuera'}"><th scope="row"><button class="fila" data-tabla="${a}" aria-pressed="${on}" aria-label="Tabla del ${a}">${a}</button></th>`;
+    for(let b=1;b<=10;b++){
+      const k=clave(a,b),f=prog.facts[k],caja=f&&f.vistos?` data-caja="${f.caja}"`:'';
+      h+=`<td><button class="celda${DATOS[k]?' dato':''}${k===detalle?' sel':''}" data-k="${k}"${caja} aria-label="${a} por ${b} es ${a*b}">${a*b}</button></td>`;
+    }
+    h+='</tr>';
+  }
+  $('mapa').innerHTML=h+'</tbody>';
+}
+function pintarDetalle(){
+  const[a,b]=partes(detalle),f=prog.facts[detalle];
+  let est='Todavía sin tirar.';
+  if(f&&f.vistos){
+    const mejor=f.mejor!=null?(f.mejor/1000).toFixed(1).replace('.',',')+' s':'sin tiempo';
+    est=`${f.hechos} de ${f.vistos} encestados. Mejor tiempo: ${mejor}.${f.caja===CAJA_MAX?' Dominada.':''}`;
+  }
+  $('detalle').innerHTML=`<b class="det-fact">${a} × ${b} = ${a*b}</b><span>${DATOS[detalle]||''}</span><span class="det-est">${est}</span>`;
+}
+function pintarInicio(){
+  pintarMapa();pintarDetalle();pintarSonido();
+  $('dominadas').textContent=`${dominadas(prog.facts,prog.tablas)} de ${prog.tablas.length*10} dominadas`;
+  $('st-mejor').textContent=prog.partidos?`${prog.mejor} puntos`:'–';
+  $('st-hechos').textContent=prog.hechos;
+}
+function irAInicio(){
+  salirDeSesion();
+  pintarInicio();mostrar('inicio');cargarRanking();
+}
+
+/* Partido y gimnasio */
+let S=null,fase='fuera',entrada='',t0=0,raf=0,vuelo=0,timer=0,ultimoSeg=null,saltable=false,oculto=0,vistos=new Set(),domInicial=0,balonX=985;
+
+function iniciar(modo,foco){
+  audio();
+  salirDeSesion();
+  S=crearSesion(modo,prog.tablas,foco);
+  vistos=new Set();domInicial=dominadas(prog.facts,prog.tablas);
+  const gym=modo==='gym';
+  document.body.classList.toggle('gym',gym);
+  $('modo-label').textContent=gym?'Gimnasio 4 AM':'Partido';
+  $('lab-a').textContent=gym?'Hora':'Tú';
+  $('lab-b').textContent=gym?'Faltan':'Reloj';
+  $('lab-c').textContent=gym?'Hechos':'Kobe';
+  pintarSonido();
+  mostrar('juego');
+  musicaIniciar();
+  proximoTiro();
+}
+function salirDeSesion(){
+  fase='fuera';saltable=false;
+  musicaParar();
+  clearTimeout(timer);cancelAnimationFrame(raf);cancelAnimationFrame(vuelo);
+  document.body.classList.remove('mamba','gym');
+}
+function proximoTiro(desdeEntre){
+  clearTimeout(timer);saltable=false;
+  if(S.n>=S.total){terminar();return;}
+  if(!desdeEntre&&S.modo==='partido'&&S.n>0&&S.n%TIROS_CUARTO===0){mostrarEntre();return;}
+  siguiente(S,prog.facts,Date.now(),Math.random);
+  entrada='';fase='tiro';ultimoSeg=null;
+  pintarPregunta();pintarMarcador();
+  cancelAnimationFrame(vuelo);ponerBalon(xBalon(0),120,1);
+  t0=performance.now();
+  cancelAnimationFrame(raf);raf=requestAnimationFrame(tick);
+}
+function tick(now){
+  if(fase!=='tiro')return;
+  const ms=Math.max(0,now-t0);
+  ponerBalon(xBalon(ms),120,1);
+  if(S.modo==='partido'){
+    const r=Math.max(0,Math.ceil((T_RELOJ-ms)/1000));
+    if(r!==ultimoSeg){
+      led($('led-b'),String(r).padStart(2,'0'));
+      if(r<=5&&r>0&&ultimoSeg!==null)sonar('tic');
+      ultimoSeg=r;
+    }
+    if(ms>=T_RELOJ){pasar('reloj');return;}
+  }
+  raf=requestAnimationFrame(tick);
+}
+function pintarPregunta(){
+  const[a,b]=partes(S.actual),obj=String(a*b);
+  $('pregunta').style.setProperty('--n',`${a} × ${b} = ${obj}`.length);
+  $('pregunta').classList.remove('bien','mal','sacude');
+  $('factores').textContent=`${a} × ${b}`;
+  pintarEntrada();
+  $('nota').textContent='';
+  $('plato').classList.remove('gritando');
+  $('grito').className='grito';
+  $('tag').textContent=S.ultimo?'Último tiro':S.esRebote?'Rebote: te volvió esta':'';
+  $('anuncio').textContent=`${a} por ${b}`;
+}
+function pintarEntrada(){
+  const obj=String(producto(S.actual));
+  $('resp').innerHTML=[...obj].map((_,i)=>`<span class="slot">${entrada[i]??''}</span>`).join('');
+}
+function pintarMarcador(){
+  const n=S.hist.length;
+  if(S.modo==='partido'){
+    led($('led-a'),String(S.puntos).padStart(3,' '));
+    led($('led-c'),String(ritmoKobe(n)).padStart(2,' '));
+    const q=Math.floor((S.n-1)/TIROS_CUARTO);
+    $('periodo').textContent=`${ORD[q]} cuarto · Tiro ${S.n-q*TIROS_CUARTO} de ${TIROS_CUARTO}`;
+  }else{
+    led($('led-a'),'04:'+String(n).padStart(2,'0'));
+    led($('led-b'),String(S.total-n).padStart(2,'0'));
+    led($('led-c'),String(S.triples+S.dobles+S.libres).padStart(2,' '));
+    $('periodo').textContent=`Tiro ${S.n} de ${S.total}`;
+  }
+  const tot=S.modo==='partido'?TIROS_CUARTO:S.total;
+  const ini=S.modo==='partido'?Math.floor((S.n-1)/TIROS_CUARTO)*TIROS_CUARTO:0;
+  $('pips').innerHTML=Array.from({length:tot},(_,i)=>{
+    const j=ini+i,r=S.hist[j];
+    return `<i class="${r===true?'ok':r===false?'no':j===S.n-1?'act':''}"></i>`;
+  }).join('');
+  const enMamba=S.modo==='partido'&&S.racha>=RACHA_MAMBA;
+  document.body.classList.toggle('mamba',enMamba);
+  $('racha').textContent=enMamba?'Modo Mamba: +1':S.racha>=2?`Racha de ${S.racha}`:'';
+}
+function tecla(d){
+  if(fase!=='tiro'&&fase!=='correccion')return;
+  const obj=String(producto(S.actual));
+  if(entrada.length>=obj.length)return;
+  entrada+=d;pintarEntrada();
+  if(entrada.length===obj.length){
+    if(fase==='tiro')evaluar();else corregir();
+  }
+}
+function borrar(){
+  if(fase!=='tiro'&&fase!=='correccion')return;
+  entrada=entrada.slice(0,-1);pintarEntrada();
+}
+function evaluar(){
+  const ms=performance.now()-t0;
+  const r=responder(S,prog.facts,Number(entrada),ms,Date.now());
+  if(r.ok)acierto(r);else fallo(r,'valor',entrada);
+}
+function pasar(tipo){
+  if(fase!=='tiro')return;
+  const r=responder(S,prog.facts,NaN,performance.now()-t0,Date.now());
+  fallo(r,tipo,'');
+}
+function acierto(r){
+  fase='feedback';
+  prog.hechos++;guardar(false);
+  $('pregunta').classList.add('bien');
+  lanzar(true);sonar('swish');
+  const partido=S.modo==='partido';
+  const seg=(r.ms/1000).toFixed(1).replace('.',',')+' s';
+  if(r.base===3){
+    gritar(partido?`¡KOBE! +${r.pts}`:`¡KOBE! ${seg}`,'kobe');
+    sonar('publico');
+    if(!reducir){const d=$('destello');d.classList.remove('on');void d.offsetWidth;d.classList.add('on');}
+  }else gritar(partido?`+${r.pts}`:seg,'');
+  if(r.entraMamba&&partido)sonar('mamba');
+  pintarMarcador();
+  $('anuncio').textContent=partido?`Correcto, ${r.pts} puntos`:'Correcto';
+  if(DATOS[r.k]&&!vistos.has(r.k)){
+    vistos.add(r.k);
+    $('nota').textContent=DATOS[r.k];
+    saltable=true;
+    timer=setTimeout(proximoTiro,3200);
+  }else timer=setTimeout(proximoTiro,r.base===3?560:680);
+}
+function fallo(r,tipo,escrito){
+  fase='correccion';
+  guardar(false);
+  const[a,b]=partes(r.k),c=a*b;
+  sonar(tipo==='reloj'?'bocina':'aro');
+  lanzar(false);
+  entrada='';pintarEntrada();
+  $('pregunta').classList.add('mal');
+  const ini=tipo==='reloj'?'Se acabaron los 24 segundos. ':tipo==='valor'?`Pusiste ${escrito}. `:'';
+  const dato=DATOS[r.k]&&!vistos.has(r.k)?' '+DATOS[r.k]:'';
+  vistos.add(r.k);
+  $('nota').textContent=`${ini}${a} × ${b} = ${c}. Escríbelo para seguir.${dato}`;
+  $('tag').textContent='Rebote: esta cuenta vuelve pronto';
+  pintarMarcador();
+  $('anuncio').textContent=`Incorrecto. ${a} por ${b} es ${c}. Escríbelo para seguir.`;
+}
+function corregir(){
+  if(entrada===String(producto(S.actual))){
+    fase='feedback';
+    $('pregunta').classList.remove('mal');$('pregunta').classList.add('bien');
+    timer=setTimeout(proximoTiro,350);
+  }else{
+    entrada='';pintarEntrada();
+    const p=$('pregunta');p.classList.remove('sacude');void p.offsetWidth;p.classList.add('sacude');
+  }
+}
+function gritar(txt,clase){
+  const g=$('grito');
+  g.textContent=txt;g.className='grito '+clase;void g.offsetWidth;g.classList.add('pop');
+  $('plato').classList.add('gritando');
+}
+
+/* Balón */
+function ponerBalon(x,y,s){balonX=x;$('balon').setAttribute('transform',`translate(${x} ${y}) scale(${s})`);}
+function flashAro(){const a=$('aro');a.classList.remove('flash');void a.getBoundingClientRect();a.classList.add('flash');}
+function lanzar(ok){
+  cancelAnimationFrame(raf);cancelAnimationFrame(vuelo);
+  const aroX=154.4;
+  if(reducir){ponerBalon(ok?aroX:balonX,120,1);return;}
+  const x0=balonX,ini=performance.now(),d=400;
+  const paso=now=>{
+    const t=Math.min(1,Math.max(0,(now-ini)/d)),h=Math.sin(Math.PI*t);
+    ponerBalon(x0+(aroX-x0)*t,120-h*34,1+h*1.05);
+    if(t<1){vuelo=requestAnimationFrame(paso);return;}
+    if(ok){flashAro();ponerBalon(aroX,120,.7);return;}
+    const ini2=performance.now();
+    const bote=now2=>{
+      const u=Math.min(1,Math.max(0,(now2-ini2)/260));
+      ponerBalon(aroX+u*190,120-u*88,1-u*.15);
+      if(u<1)vuelo=requestAnimationFrame(bote);
+    };
+    vuelo=requestAnimationFrame(bote);
+  };
+  vuelo=requestAnimationFrame(paso);
+}
+
+/* Entre cuartos y final */
+function lineaCuartos(hasta){
+  const c=(arr)=>arr.map((p,i)=>`<td>${i<hasta?p:'–'}</td>`).join('');
+  return `<div class="linea-w"><table class="linea"><thead><tr><th scope="col"></th><th scope="col">1</th><th scope="col">2</th><th scope="col">3</th><th scope="col">4</th><th scope="col">Total</th></tr></thead><tbody>
+    <tr><th scope="row">Tú</th>${c(S.porCuarto)}<td>${S.puntos}</td></tr>
+    <tr><th scope="row">Kobe</th>${c(KOBE_CUARTOS)}<td>${ritmoKobe(hasta*TIROS_CUARTO)}</td></tr>
+  </tbody></table></div>`;
+}
+function mostrarEntre(){
+  fase='entre';
+  document.body.classList.remove('mamba');
+  guardar(true);
+  const q=S.n/TIROS_CUARTO,d=S.puntos-ritmoKobe(S.n);
+  const vas=d>0?`Vas ${d} arriba de su ritmo.`:d<0?`Vas ${-d} abajo de su ritmo.`:'Vas igual que él.';
+  $('entre').innerHTML=`<h2>Fin del ${ORD[q-1]} cuarto</h2>${lineaCuartos(q)}<p>${NOTA_CUARTO[q-1]} ${vas}</p><div class="botones"><button class="btn oro" id="btn-seguir">Jugar el ${ORD[q]} cuarto</button></div>`;
+  mostrar('entre');
+  $('btn-seguir').addEventListener('click',()=>{mostrar('juego');proximoTiro(true);});
+  $('btn-seguir').focus();
+}
+function terminar(){
+  const modo=S.modo,partido=modo==='partido';
+  const hechos=S.triples+S.dobles+S.libres,dom=dominadas(prog.facts,prog.tablas)-domInicial;
+  let record=false;
+  if(partido){prog.partidos++;record=S.puntos>prog.mejor;if(record)prog.mejor=S.puntos;}
+  guardar(true);
+  const fall=S.falladas,lista=fall.length?`<ul class="falladas">${fall.map(k=>{const[a,b]=partes(k);return `<li>${a} × ${b} = ${a*b}</li>`;}).join('')}</ul>`:'';
+  const entrenar=fall.length?`<button class="btn oro" id="fin-entrenar">Entrenar las que fallé (${fall.length})</button>`:'';
+  const otra=`<button class="btn${fall.length?'':' oro'}" id="fin-otra">${partido?'Otro partido':'Otra serie'}</button>`;
+  const mapa=`<button class="btn" id="fin-mapa">Ver el mapa</button>`;
+  let cuerpo;
+  if(partido){
+    const p=S.puntos,tit=p>81?'Pasaste los 81.':p===81?'Exactamente 81.':`Te faltaron ${81-p} para 81.`;
+    const pct=Math.round(hechos/S.total*100);
+    const aMati=p>=81?'Mati, eso es nivel Kobe. Cuéntale a Roberto.':fall.length?'Buen partido, Mati. Entrena las que fallaste y vuelve por más.':'Buen partido, Mati. Ahora a bajar los tiempos.';
+    cuerpo=`<p class="sena jersey">Mamba out.</p><h2>${p} puntos. ${tit}</h2>${lineaCuartos(CUARTOS)}
+      <dl class="caja"><div><dt>Triples</dt><dd>${S.triples}</dd></div><div><dt>Dobles</dt><dd>${S.dobles}</dd></div><div><dt>Libres</dt><dd>${S.libres}</dd></div><div><dt>Fallos</dt><dd>${S.fallos}</dd></div><div><dt>Acierto</dt><dd>${pct}%</dd></div><div><dt>Mejor racha</dt><dd>${S.mejorRacha}</dd></div></dl>
+      <p>Esa noche Kobe metió 28 de 46 tiros de campo, 7 de 13 triples y 18 de 20 libres.${record?' Este es tu mejor partido.':` Tu mejor partido sigue en ${prog.mejor}.`}</p><p>${aMati}</p><div class="fin-record" id="fin-record"></div>`;
+  }else{
+    const hora='4:'+String(S.total).padStart(2,'0');
+    const domTxt=dom>0?`Sumaste ${dom} ${dom===1?'dominada':'dominadas'}.`:'Hoy no sumaste dominadas nuevas. Para eso hay que responder en 3 segundos o menos.';
+    cuerpo=`<p class="sena jersey">Son las ${hora}.</p><h2>${hechos} de ${S.total} adentro.</h2><p>Buen entrenamiento, Mati. ${domTxt}</p>`;
+  }
+  if(fall.length)cuerpo+=`<p>Estas se te fueron:</p>${lista}`;
+  $('final').innerHTML=cuerpo+`<div class="botones">${entrenar}${otra}${mapa}</div>`;
+  const foco=fall.slice();
+  salirDeSesion();
+  sonar('bocina');
+  mostrar('final');
+  if(foco.length)$('fin-entrenar').addEventListener('click',()=>iniciar('gym',foco));
+  $('fin-otra').addEventListener('click',()=>iniciar(modo));
+  $('fin-mapa').addEventListener('click',irAInicio);
+  ($('fin-entrenar')||$('fin-otra')).focus();
+  if(partido)pintarFinRecord(S.puntos);
+}
+
+/* Eventos */
+function arrancar(){
+  prog=normalizar(leerLocal());
+  $('btn-partido').addEventListener('click',()=>iniciar('partido'));
+  $('btn-gym').addEventListener('click',()=>iniciar('gym'));
+  $('btn-salir').addEventListener('click',()=>{guardar(true);irAInicio();});
+  document.querySelectorAll('.btn-sonido').forEach(b=>b.addEventListener('click',()=>{
+    const bloqueado=ac&&ac.state==='suspended';
+    if(!bloqueado)prog.sonido=!prog.sonido;
+    audio();guardar(true);pintarSonido();
+  }));
+  document.querySelectorAll('.btn-musica').forEach(b=>b.addEventListener('click',()=>{
+    prog.musica=!prog.musica;audio();
+    if(prog.musica&&fase!=='fuera')musicaIniciar();else musicaParar();
+    guardar(true);pintarSonido();
+  }));
+  $('mapa').addEventListener('click',e=>{
+    const t=e.target.closest('button');if(!t)return;
+    if(t.dataset.tabla){
+      const a=Number(t.dataset.tabla),i=prog.tablas.indexOf(a);
+      if(i>=0&&prog.tablas.length===1)return;
+      if(i>=0)prog.tablas.splice(i,1);else{prog.tablas.push(a);prog.tablas.sort((x,y)=>x-y);}
+      guardar(true);pintarInicio();
+    }else if(t.dataset.k){detalle=t.dataset.k;pintarMapa();pintarDetalle();}
+  });
+  document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
+    prog.tablas=b.dataset.preset==='dificiles'?[6,7,8,9]:[1,2,3,4,5,6,7,8,9,10];
+    guardar(true);pintarInicio();
+  }));
+  $('btn-borrar').addEventListener('click',()=>{$('confirmar').hidden=false;});
+  $('borrar-no').addEventListener('click',()=>{$('confirmar').hidden=true;});
+  $('borrar-si').addEventListener('click',()=>{
+    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,apodo:prog.apodo});
+    $('confirmar').hidden=true;guardar(true);pintarInicio();
+  });
+  $('teclado').addEventListener('click',e=>{
+    const t=e.target.closest('button');if(!t)return;
+    audio();
+    if(t.dataset.d!==undefined)tecla(t.dataset.d);
+    else if(t.dataset.a==='borrar')borrar();
+    else if(t.dataset.a==='pasar')pasar('pasar');
+  });
+  $('juego').addEventListener('click',()=>{if(fase==='feedback'&&saltable)proximoTiro();});
+  document.addEventListener('keydown',e=>{
+    if(e.metaKey||e.ctrlKey||e.altKey)return;
+    if(fase==='feedback'&&saltable){e.preventDefault();proximoTiro();return;}
+    if(fase!=='tiro'&&fase!=='correccion')return;
+    audio();
+    if(/^[0-9]$/.test(e.key)){e.preventDefault();tecla(e.key);}
+    else if(e.key==='Backspace'){e.preventDefault();borrar();}
+    else if(e.key==='Enter'){e.preventDefault();}
+    else if(e.key==='Escape'){guardar(true);irAInicio();}
+  });
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden){
+      oculto=performance.now();
+      musicaParar();
+    }else{
+      if(oculto&&fase==='tiro')t0+=performance.now()-oculto;
+      if(fase!=='fuera')musicaIniciar();
+    }
+  });
+  pintarInicio();
+  cargarRanking();
+  if(location.hash==='#partido')iniciar('partido');
+  else if(location.hash==='#gimnasio')iniciar('gym');
+}
+arrancar();
+</script>
+</body>
+</html>
