@@ -492,7 +492,7 @@ function responder(s,facts,valor,ms,ahora,tipo='valor'){
     if(!segunda&&tipo==='valor'){s.enRebote=true;s.tope=true;return{ok:false,k,pts:0,ms,otraOportunidad:true};}
     s.enRebote=false;
     s.hist.push(false);s.fallos++;
-    s.rebotes.push({k,tras:3});
+    if(tipo==='valor')s.rebotes.push({k,tras:3});
     return{ok:false,k,pts:0,ms,otraOportunidad:false};
   }
   const tope=s.tope,base=tope?1:valorTiro(ms),pts=base===3&&s.triplesSeguidos>=TRIPLES_MAMBA?4:base;
@@ -940,7 +940,7 @@ function fallo(r,tipo,escrito){
   const dato=DATOS[r.k]&&!vistos.has(r.k)?' '+DATOS[r.k]:'';
   vistos.add(r.k);
   $('nota').textContent=`${ini}${a} × ${b} = ${c}. Escríbelo para seguir.${dato}`;
-  $('tag').textContent='Esta cuenta vuelve en dos tiros';
+  $('tag').textContent=tipo==='valor'?'Esta cuenta vuelve en dos tiros':'Escríbela para seguir';
   pintarMarcador();
   $('anuncio').textContent=`Incorrecto. ${a} por ${b} es ${c}. Escríbelo para seguir.`;
 }
