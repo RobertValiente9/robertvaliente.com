@@ -470,6 +470,20 @@ body.gym .gritando #valor{display:block}
 .camiseta:active svg{transform:scale(.94)}
 .mis-tablas .pista{margin:12px 0 0;font-size:13px;text-align:center}
 @media (hover:hover){.camiseta:hover svg{transform:rotate(-4deg)}}
+
+/* Foto en el escenario y explicación del dominio */
+.foto-kobe{position:absolute;top:0;right:0;width:auto;height:calc(100% - 24px);max-width:74%;object-fit:cover;object-position:50% 0;image-rendering:pixelated;-webkit-mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.3) 24%,#000 52%);mask-image:linear-gradient(90deg,transparent 0,rgba(0,0,0,.3) 24%,#000 52%)}
+.escenario .logo,.escenario .dedica{text-shadow:0 2px 7px rgba(10,5,18,.85)}
+.escenario .logo .jersey{text-shadow:.045em .055em 0 var(--purpura),0 2px 7px rgba(10,5,18,.85)}
+.cs-pct{display:block;margin-top:3px;font:700 13px/1 var(--f-etq);font-variant-numeric:tabular-nums;color:var(--tenue);text-align:center}
+.camiseta.llena .cs-pct{color:var(--oro)}
+.camiseta[aria-pressed="false"] .cs-pct{opacity:.4}
+.mis-tablas .pista{margin-top:10px}
+.mis-tablas .pista.explica{color:var(--texto);font-size:14px;line-height:1.35}
+.mis-tablas #tablas-aviso{margin-top:4px}
+@media (min-width:960px){
+  .foto-kobe{height:calc(100% - 30px)}
+}
 </style>
 </head>
 <body>
@@ -478,7 +492,7 @@ body.gym .gritando #valor{display:block}
     <div class="ini-izq">
       <div class="escenario">
         <i class="foco f1" aria-hidden="true"></i><i class="foco f2" aria-hidden="true"></i>
-        <div class="banderas" aria-hidden="true"><span class="bandera"><b>8</b></span><span class="bandera"><b>24</b></span></div>
+        <img class="foto-kobe" src="kobe.png" alt="Kobe Bryant clavando el balón con la camiseta 24 de los Lakers, en píxeles" width="720" height="694">
         <h1 class="logo">Mamba <span class="jersey">81</span></h1>
         <p class="dedica">Creado por Roberto para Matías</p>
         <div class="mamba-inicio" id="mamba-inicio"></div>
@@ -495,6 +509,7 @@ body.gym .gritando #valor{display:block}
         <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
         <dt>1 punto</dt><dd>Respondes en 12 segundos o menos. Si se acaba el reloj, 0 puntos.</dd>
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 5 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
+        <dt>Dominio</dt><dd>Cuando aciertas rápido, esa cuenta sube. Si fallas, baja. Con todas arriba, la tabla queda dominada y su camiseta, dorada.</dd>
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
       </dl>
         <p class="pista">El partido siempre usa todas las tablas. Tu avance se guarda en este navegador y no se mezcla con el juego normal.</p>
@@ -512,9 +527,10 @@ body.gym .gritando #valor{display:block}
         <table class="podio" aria-label="Récords"><tbody id="filas-records"></tbody></table>
       </div>
       <div class="mis-tablas">
-        <div class="mapa-cab"><h2>Tus tablas</h2><span class="etq" id="dominadas"></span></div>
+        <div class="mapa-cab"><h2>¿Cuánto dominas cada tabla?</h2></div>
         <div class="tablas" id="tablas"></div>
-        <p class="pista">Toca una camiseta para sacarla o meterla al gimnasio.</p>
+        <p class="pista explica">Se llena cuando aciertas rápido. Para completarla, responde cada cuenta en 3 segundos o menos.</p>
+        <p class="pista" id="tablas-aviso">Toca una camiseta para sacarla o meterla al gimnasio.</p>
       </div>
       <div class="pie"><span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span></div>
       <p class="legal">Versión de prueba. Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
@@ -891,13 +907,12 @@ function pintarTablas(){
     let suma=0;
     for(let b=1;b<=10;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
     const pct=Math.round(suma/(10*CAJA_MAX)*100),alto=60*pct/100;
-    html+=`<button class="camiseta${pct===100?' llena':''}" data-tabla="${a}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><svg viewBox="0 0 60 66" aria-hidden="true"><defs><clipPath id="cs${a}"><path d="${CAMISETA}"/></clipPath></defs><path class="cs-base" d="${CAMISETA}"/><rect class="cs-nivel" x="0" y="${(63-alto).toFixed(1)}" width="60" height="${alto.toFixed(1)}" clip-path="url(#cs${a})"/><path class="cs-borde" d="${CAMISETA}"/><path class="cs-ribete" d="M24 3Q30 13 36 3M15 15Q13 23 6 27M45 15Q47 23 54 27"/><text class="cs-num" x="30" y="${a===10?49:50}">${a}</text></svg></button>`;
+    html+=`<button class="camiseta${pct===100?' llena':''}" data-tabla="${a}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><svg viewBox="0 0 60 66" aria-hidden="true"><defs><clipPath id="cs${a}"><path d="${CAMISETA}"/></clipPath></defs><path class="cs-base" d="${CAMISETA}"/><rect class="cs-nivel" x="0" y="${(63-alto).toFixed(1)}" width="60" height="${alto.toFixed(1)}" clip-path="url(#cs${a})"/><path class="cs-borde" d="${CAMISETA}"/><path class="cs-ribete" d="M24 3Q30 13 36 3M15 15Q13 23 6 27M45 15Q47 23 54 27"/><text class="cs-num" x="30" y="${a===10?49:50}">${a}</text></svg><small class="cs-pct">${pct}%</small></button>`;
   }
   $('tablas').innerHTML=html;
 }
 function pintarInicio(){
   pintarTablas();pintarSonido();pintarRanking();pintarMambaInicio();
-  $('dominadas').textContent=`${dominadas(prog.facts,TODAS_LAS_TABLAS)} de 100 dominadas`;
 }
 function irAInicio(){
   salirDeSesion();
@@ -1657,9 +1672,10 @@ function arrancar(){
   $('tablas').addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
     const a=Number(t.dataset.tabla),i=prog.tablas.indexOf(a);
-    if(i>=0&&prog.tablas.length===1)return;
+    if(i>=0&&prog.tablas.length===1){$('tablas-aviso').textContent='Deja al menos una tabla en el gimnasio.';return;}
     if(i>=0)prog.tablas.splice(i,1);else{prog.tablas.push(a);prog.tablas.sort((x,y)=>x-y);}
     guardar(true);pintarInicio();
+    $('tablas-aviso').textContent=`La tabla del ${a} ${i>=0?'salió del':'entró al'} gimnasio. El partido siempre usa todas.`;
   });
   $('btn-borrar').addEventListener('click',()=>{$('confirmar').hidden=false;});
   $('borrar-no').addEventListener('click',()=>{$('confirmar').hidden=true;});
