@@ -448,6 +448,28 @@ body.gym .gritando #valor{display:block}
   .acciones .btn.oro{font-size:29px}
   .records{padding:14px 16px 8px}
 }
+
+/* Tus tablas: vestuario de camisetas */
+.mis-tablas{margin-top:12px;padding:12px;background:var(--panel-led);border:1px solid var(--linea);border-radius:6px}
+.mis-tablas .mapa-cab{align-items:baseline;margin-bottom:10px}
+.mis-tablas .mapa-cab h2{font:700 13px/1.1 var(--f-etq);letter-spacing:.14em;color:var(--tenue)}
+.mis-tablas .mapa-cab .etq{font-size:12px;color:var(--oro)}
+.tablas{gap:12px 8px;padding-top:4px}
+.camiseta{position:relative;display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;touch-action:manipulation}
+.camiseta::before{content:"";position:absolute;top:-4px;left:-5px;right:-5px;height:2px;background:linear-gradient(#8f8aa8,#4a4560)}
+.camiseta::after{content:"";position:absolute;top:-4px;left:50%;width:2px;height:8px;margin-left:-1px;background:#8f8aa8}
+.camiseta svg{position:relative;z-index:1;display:block;width:100%;height:auto;overflow:visible;transform-origin:50% 4%;transition:transform .15s}
+.cs-base{fill:#3b1a66}
+.cs-nivel{fill:var(--oro)}
+.cs-borde{fill:none;stroke:var(--oro);stroke-width:1.6;stroke-linejoin:round}
+.cs-ribete{fill:none;stroke:var(--crema);stroke-width:1.6;stroke-linecap:round}
+.cs-num{font:900 31px/1 var(--f-display);text-anchor:middle;fill:var(--crema);stroke:#1c0d33;stroke-width:3px;paint-order:stroke fill}
+.camiseta.llena svg{filter:drop-shadow(0 0 5px rgba(253,185,39,.65))}
+.camiseta.llena .cs-num{fill:var(--purpura);stroke:var(--crema);stroke-width:2.4px}
+.camiseta[aria-pressed="false"] svg{opacity:.32}
+.camiseta:active svg{transform:scale(.94)}
+.mis-tablas .pista{margin:12px 0 0;font-size:13px;text-align:center}
+@media (hover:hover){.camiseta:hover svg{transform:rotate(-4deg)}}
 </style>
 </head>
 <body>
@@ -492,7 +514,7 @@ body.gym .gritando #valor{display:block}
       <div class="mis-tablas">
         <div class="mapa-cab"><h2>Tus tablas</h2><span class="etq" id="dominadas"></span></div>
         <div class="tablas" id="tablas"></div>
-        <p class="pista">Toca las tablas que quieres practicar en el Gimnasio 4 AM.</p>
+        <p class="pista">Toca una camiseta para sacarla o meterla al gimnasio.</p>
       </div>
       <div class="pie"><span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span></div>
       <p class="legal">Versión de prueba. Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
@@ -861,15 +883,15 @@ function mostrar(id){
   activarEscena(id==='juego');
   if(id==='inicio')animarMambas($('inicio'));
 }
+const CAMISETA='M17 3H24Q30 13 36 3H43L45 15Q47 23 54 27V63H6V27Q13 23 15 15Z';
 function pintarTablas(){
   const sel=new Set(prog.tablas);
   let html='';
   for(let a=1;a<=10;a++){
     let suma=0;
     for(let b=1;b<=10;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
-    const pct=Math.round(suma/(10*CAJA_MAX)*100);
-    const nivel=pct>=100?'max':pct>=67?'alto':pct>=34?'medio':pct>0?'bajo':'cero';
-    html+=`<button class="tabla-t" data-tabla="${a}" data-nivel="${nivel}" style="--p:${pct}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><b>${a}</b></button>`;
+    const pct=Math.round(suma/(10*CAJA_MAX)*100),alto=60*pct/100;
+    html+=`<button class="camiseta${pct===100?' llena':''}" data-tabla="${a}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><svg viewBox="0 0 60 66" aria-hidden="true"><defs><clipPath id="cs${a}"><path d="${CAMISETA}"/></clipPath></defs><path class="cs-base" d="${CAMISETA}"/><rect class="cs-nivel" x="0" y="${(63-alto).toFixed(1)}" width="60" height="${alto.toFixed(1)}" clip-path="url(#cs${a})"/><path class="cs-borde" d="${CAMISETA}"/><path class="cs-ribete" d="M24 3Q30 13 36 3M15 15Q13 23 6 27M45 15Q47 23 54 27"/><text class="cs-num" x="30" y="${a===10?49:50}">${a}</text></svg></button>`;
   }
   $('tablas').innerHTML=html;
 }
