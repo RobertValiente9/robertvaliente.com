@@ -337,6 +337,36 @@ body.gym .gritando #valor{display:block}
 .globo::before{content:"";position:absolute;left:-9px;top:50%;margin-top:-7px;border-style:solid;border-width:7px 10px 7px 0;border-color:transparent var(--crema) transparent transparent}
 .tablero-fin .adios{text-align:center;margin-top:6px}
 #confeti{position:fixed;inset:0;width:100%;height:100%;z-index:6;pointer-events:none;image-rendering:pixelated}
+
+/* Inicio breve */
+#inicio{gap:18px;padding-block:14px 18px}
+.dedica{font-size:13px;margin-bottom:6px}
+.logo{font-size:clamp(50px,15vw,76px);margin-bottom:10px}
+.logo span{display:inline;font-size:inherit;line-height:inherit}
+.banderas{top:-14px}
+.mamba-inicio{margin-bottom:12px}
+.mamba-inicio .mamba-c{width:96px;height:96px}
+.globo{position:relative;margin:0;min-width:0;padding:10px 12px;background:var(--crema);color:var(--tinta);font-size:15px;font-weight:600;line-height:1.35;border-radius:3px}
+.acciones{margin-bottom:6px}
+.como .sub{margin-bottom:12px}
+.como .pista{margin:12px 0 2px}
+.records .mapa-cab h2,.mis-tablas .mapa-cab h2{font-size:26px}
+.mi-record{margin:0;font-size:15px}
+.mis-tablas{margin-top:16px}
+.tabla-records td{padding:5px 8px}
+.tabla-records th{padding-bottom:3px}
+.tabla-t{padding:6px 4px 7px;gap:4px;position:relative}
+.tabla-t b{font-size:23px}
+.tabla-t[data-nivel="max"]::after{content:"★";position:absolute;top:2px;right:4px;font-size:11px;line-height:1;color:var(--oro)}
+#inicio .pie{margin-top:10px}
+#inicio .legal{margin-top:4px;font-size:12px}
+@media (min-width:960px){
+  #inicio{padding-block:40px;gap:56px}
+  .banderas{top:-40px}
+  .mamba-inicio .mamba-c{width:128px;height:128px}
+  .globo{font-size:17px}
+  .tablas{gap:8px}
+}
 </style>
 </head>
 <body>
@@ -344,16 +374,15 @@ body.gym .gritando #valor{display:block}
   <section id="inicio">
     <div class="ini-izq">
       <div class="banderas" aria-hidden="true"><span class="bandera"><b>8</b></span><span class="bandera"><b>24</b></span></div>
-      <p class="dedica">Prototipo 3D. Tu avance aquí no se mezcla con el juego.</p>
+      <p class="dedica">Creado por Roberto para Matías · Prototipo</p>
       <h1 class="logo">Mamba <span class="jersey">81</span></h1>
-      <p class="lema">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una multiplicación. Llega a 81 y te sabes las tablas.</p>
-      <p class="carta"><b>Mati:</b> Kobe entrenaba todos los días, incluso cuando ya era el mejor. Con las tablas es igual. Juega un partido al día y vas a ver cómo se te quedan. Confío en ti. <b>Roberto</b></p>
+      <div class="mamba-inicio" id="mamba-inicio"></div>
       <div class="acciones">
         <button id="btn-partido" class="btn oro">Jugar partido</button>
         <button id="btn-gym" class="btn">Gimnasio 4 AM</button>
       </div>
       <details class="como" id="como"><summary>Cómo se juega</summary>
-      <p class="sub">El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj, enfocados en lo que más te cuesta.</p>
+      <p class="sub">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una multiplicación. El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj, enfocados en lo que más te cuesta.</p>
       <dl class="reglas">
         <dt>3 puntos</dt><dd>Respondes en 3 segundos o menos.</dd>
         <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
@@ -361,12 +390,18 @@ body.gym .gritando #valor{display:block}
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 24 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
       </dl>
+        <p class="pista">Toca una tabla para sacarla o meterla al juego. Tu avance se guarda en este navegador y no se mezcla con el juego normal.</p>
+        <button id="btn-borrar" class="enlace">Borrar mi avance</button>
+        <div id="confirmar" hidden>
+          <span>Esto borra tu avance y tu mejor partido.</span>
+          <button id="borrar-si" class="chip-btn">Sí, borrar</button>
+          <button id="borrar-no" class="chip-btn">No</button>
+        </div>
       </details>
     </div>
     <div class="ini-der">
       <div class="records" id="records">
-        <h2>Récords</h2>
-        <p class="mi-record">Tu mejor partido: <b id="st-mejor">–</b></p>
+        <div class="mapa-cab"><h2>Récords</h2><p class="mi-record">Tu mejor: <b id="st-mejor">–</b></p></div>
         <div class="linea-w" id="tabla-records-caja" hidden><table class="tabla-records">
           <thead><tr><th scope="col"></th><th scope="col">Apodo</th><th scope="col">Récord</th><th scope="col">Partidos</th></tr></thead>
           <tbody id="filas-records"></tbody>
@@ -376,18 +411,8 @@ body.gym .gritando #valor{display:block}
       <div class="mis-tablas">
         <div class="mapa-cab"><h2>Tus tablas</h2><span class="etq" id="dominadas"></span></div>
         <div class="tablas" id="tablas"></div>
-        <p class="pista">Toca una tabla para sacarla o meterla al juego.</p>
       </div>
-      <div class="pie">
-        <span>Tiros encestados: <b id="st-hechos">0</b></span>
-        <span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span>
-      </div>
-      <div class="pie"><span>Tu avance se guarda en este navegador.</span><button id="btn-borrar" class="enlace">Borrar mi avance</button></div>
-      <div id="confirmar" hidden>
-        <span>Esto borra tu avance y tu mejor partido.</span>
-        <button id="borrar-si" class="chip-btn">Sí, borrar</button>
-        <button id="borrar-no" class="chip-btn">No</button>
-      </div>
+      <div class="pie"><span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span></div>
       <p class="legal">Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
     </div>
   </section>
@@ -591,7 +616,7 @@ function pintarRanking(){
   $('tabla-records-caja').hidden=!ranking.activo;
   if(!ranking.activo)return;
   $('records-vacio').hidden=ranking.top.length>0;
-  const filas=[...ranking.top.slice(0,5),{apodo:'Kobe Bryant',puntos:81,kobe:true}].sort((a,b)=>b.puntos-a.puntos);
+  const filas=[...ranking.top.slice(0,3),{apodo:'Kobe Bryant',puntos:81,kobe:true}].sort((a,b)=>b.puntos-a.puntos);
   const tb=$('filas-records');tb.textContent='';
   let puesto=0;
   filas.forEach(f=>{
@@ -742,6 +767,7 @@ function mostrar(id){
   ['inicio','juego','entre','final'].forEach(s=>{$(s).hidden=s!==id;});
   window.scrollTo(0,0);
   activarEscena(id==='juego');
+  if(id==='inicio')animarMambas($('inicio'));
 }
 function pintarTablas(){
   const sel=new Set(prog.tablas);
@@ -751,15 +777,14 @@ function pintarTablas(){
     for(let b=1;b<=10;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
     const pct=Math.round(suma/(10*CAJA_MAX)*100);
     const nivel=pct>=100?'max':pct>=67?'alto':pct>=34?'medio':'bajo';
-    html+=`<button class="tabla-t" data-tabla="${a}" data-nivel="${nivel}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento"><b>${a}</b><span class="barra-d"><i style="width:${pct}%"></i></span><small>${pct===100?'★':pct+'%'}</small></button>`;
+    html+=`<button class="tabla-t" data-tabla="${a}" data-nivel="${nivel}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento"><b>${a}</b><span class="barra-d"><i style="width:${pct}%"></i></span></button>`;
   }
   $('tablas').innerHTML=html;
 }
 function pintarInicio(){
-  pintarTablas();pintarSonido();pintarRanking();
+  pintarTablas();pintarSonido();pintarRanking();pintarMambaInicio();
   $('dominadas').textContent=`${dominadas(prog.facts,prog.tablas)} de ${prog.tablas.length*10} dominadas`;
   $('st-mejor').textContent=prog.partidos?`${prog.mejor} puntos`:'–';
-  $('st-hechos').textContent=prog.hechos;
 }
 function irAInicio(){
   salirDeSesion();
@@ -1426,6 +1451,18 @@ function confeti(){
     if(now-ini<3800&&!$('final').hidden)requestAnimationFrame(paso);else c.hidden=true;
   };
   requestAnimationFrame(paso);
+}
+
+function pintarMambaInicio(){
+  const m=prog.mejor,txt=!prog.partidos?'¡Hola, Mati! Roberto confía en ti. Cada tiro es una multiplicación. ¿Llegas a los 81 de Kobe?'
+    :m>=100?`¡Tu récord es ${m}! Ya pasaste los 100. ¿Puedes superarte?`
+    :m>=81?'¡Ya pasaste los 81 de Kobe! ¿Te atreves a llegar a 100?'
+    :`Tu récord es ${m}. Te faltan ${81-m} para los 81 de Kobe. ¡Vamos!`;
+  const c=$('mamba-inicio');
+  if(c.dataset.txt===txt)return;
+  c.dataset.txt=txt;
+  c.innerHTML=mambaHTML(txt,m>=81?'feliz':'normal');
+  animarMambas(c);
 }
 
 /* Entre cuartos y final */
