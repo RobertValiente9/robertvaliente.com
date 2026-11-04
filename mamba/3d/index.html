@@ -382,7 +382,7 @@ body.gym .gritando #valor{display:block}
         <button id="btn-gym" class="btn">Gimnasio 4 AM</button>
       </div>
       <details class="como" id="como"><summary>Cómo se juega</summary>
-      <p class="sub">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una multiplicación. El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj, enfocados en lo que más te cuesta.</p>
+      <p class="sub">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una multiplicación. El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj de las tablas que elijas, enfocados en lo que más te cuesta.</p>
       <dl class="reglas">
         <dt>3 puntos</dt><dd>Respondes en 3 segundos o menos.</dd>
         <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
@@ -390,7 +390,7 @@ body.gym .gritando #valor{display:block}
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 24 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
       </dl>
-        <p class="pista">Toca una tabla para sacarla o meterla al juego. Tu avance se guarda en este navegador y no se mezcla con el juego normal.</p>
+        <p class="pista">El partido siempre usa todas las tablas. Tu avance se guarda en este navegador y no se mezcla con el juego normal.</p>
         <button id="btn-borrar" class="enlace">Borrar mi avance</button>
         <div id="confirmar" hidden>
           <span>Esto borra tu avance y tu mejor partido.</span>
@@ -411,6 +411,7 @@ body.gym .gritando #valor{display:block}
       <div class="mis-tablas">
         <div class="mapa-cab"><h2>Tus tablas</h2><span class="etq" id="dominadas"></span></div>
         <div class="tablas" id="tablas"></div>
+        <p class="pista">Toca las tablas que quieres practicar en el Gimnasio 4 AM.</p>
       </div>
       <div class="pie"><span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span></div>
       <p class="legal">Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
@@ -459,6 +460,7 @@ body.gym .gritando #valor{display:block}
 <script>
 /*MOTOR*/
 const CUARTOS=4,TIROS_CUARTO=8,SERIE_GYM=24;
+const TODAS_LAS_TABLAS=[1,2,3,4,5,6,7,8,9,10];
 const KOBE_CUARTOS=[14,12,27,28]; // 22-01-2006 contra Toronto, por cuarto
 const T3=3000,T2=7000,T_RELOJ=24000;
 const TRIPLES_MAMBA=2,CAJA_MAX=4;
@@ -592,7 +594,7 @@ const reducir=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const normalizar=o=>{
   const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,apodo:'',actualizado:0},o||{});
   p.facts=o&&o.facts?JSON.parse(JSON.stringify(o.facts)):{};
-  p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():[2,3,4,5,6,7,8,9,10];
+  p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():TODAS_LAS_TABLAS.slice();
   return p;
 };
 let prog;
@@ -777,13 +779,13 @@ function pintarTablas(){
     for(let b=1;b<=10;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
     const pct=Math.round(suma/(10*CAJA_MAX)*100);
     const nivel=pct>=100?'max':pct>=67?'alto':pct>=34?'medio':'bajo';
-    html+=`<button class="tabla-t" data-tabla="${a}" data-nivel="${nivel}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento"><b>${a}</b><span class="barra-d"><i style="width:${pct}%"></i></span></button>`;
+    html+=`<button class="tabla-t" data-tabla="${a}" data-nivel="${nivel}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><b>${a}</b><span class="barra-d"><i style="width:${pct}%"></i></span></button>`;
   }
   $('tablas').innerHTML=html;
 }
 function pintarInicio(){
   pintarTablas();pintarSonido();pintarRanking();pintarMambaInicio();
-  $('dominadas').textContent=`${dominadas(prog.facts,prog.tablas)} de ${prog.tablas.length*10} dominadas`;
+  $('dominadas').textContent=`${dominadas(prog.facts,TODAS_LAS_TABLAS)} de 100 dominadas`;
   $('st-mejor').textContent=prog.partidos?`${prog.mejor} puntos`:'–';
 }
 function irAInicio(){
@@ -797,7 +799,7 @@ let S=null,fase='fuera',entrada='',t0=0,raf=0,vuelo=0,timer=0,ultimoSeg=null,sal
 function iniciar(modo,foco){
   audio();
   salirDeSesion();
-  S=crearSesion(modo,prog.tablas,foco);
+  S=crearSesion(modo,modo==='partido'?TODAS_LAS_TABLAS:prog.tablas,foco);
   vistos=new Set();domInicial=dominadas(prog.facts,prog.tablas);
   const gym=modo==='gym';
   document.body.classList.toggle('gym',gym);
