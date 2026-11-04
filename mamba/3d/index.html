@@ -312,6 +312,31 @@ body.gym .gritando #valor{display:block}
 .mamba .tecla{border-color:rgba(253,185,39,.55)}
 #led-a.sube{animation:sube .35s ease-out}
 @keyframes sube{30%{transform:scale(1.22)}}
+
+/* Inicio simple y mascota */
+.records{margin-top:0}
+.mi-record{margin:0 0 10px;font-size:17px}
+.mi-record b{color:var(--oro);font-weight:700}
+.mis-tablas{margin-top:24px}
+.mis-tablas .mapa-cab h2{font-size:30px}
+.tablas{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.tabla-t{display:grid;gap:5px;padding:9px 5px 7px;background:var(--forum);border:1px solid var(--linea);border-radius:3px;cursor:pointer;text-align:center;touch-action:manipulation}
+.tabla-t b{font:900 28px/1 var(--f-display);color:var(--oro)}
+.barra-d{display:block;height:6px;background:var(--panel-led);border-radius:1px;overflow:hidden}
+.barra-d i{display:block;height:100%;background:var(--c1)}
+.tabla-t[data-nivel="medio"] .barra-d i{background:var(--c3)}
+.tabla-t[data-nivel="alto"] .barra-d i,.tabla-t[data-nivel="max"] .barra-d i{background:var(--c4)}
+.tabla-t small{font:600 13px/1 var(--f-etq);color:var(--tenue);font-variant-numeric:tabular-nums}
+.tabla-t[data-nivel="max"]{border-color:var(--oro)}
+.tabla-t[data-nivel="max"] small{color:var(--oro)}
+.tabla-t[aria-pressed="false"]{opacity:.35}
+.pista{margin:8px 0 0;font-size:14px;color:var(--tenue)}
+.mamba-caja{display:flex;align-items:center;gap:14px}
+.mamba-c{flex:none;width:clamp(120px,36vw,160px);height:clamp(120px,36vw,160px);image-rendering:pixelated}
+.tablero-fin .globo{position:relative;margin:0;min-width:0;padding:12px 14px;background:var(--crema);color:var(--tinta);font-size:16px;font-weight:600;line-height:1.35;border-radius:3px}
+.globo::before{content:"";position:absolute;left:-9px;top:50%;margin-top:-7px;border-style:solid;border-width:7px 10px 7px 0;border-color:transparent var(--crema) transparent transparent}
+.tablero-fin .adios{text-align:center;margin-top:6px}
+#confeti{position:fixed;inset:0;width:100%;height:100%;z-index:6;pointer-events:none;image-rendering:pixelated}
 </style>
 </head>
 <body>
@@ -337,40 +362,29 @@ body.gym .gritando #valor{display:block}
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
       </dl>
       </details>
-      <div class="records" id="records" hidden>
-        <h2>Récords</h2>
-        <div class="linea-w"><table class="tabla-records">
-          <thead><tr><th scope="col"></th><th scope="col">Apodo</th><th scope="col">Récord</th><th scope="col">Último</th><th scope="col">Partidos</th></tr></thead>
-          <tbody id="filas-records"></tbody>
-        </table></div>
-        <p class="sub" id="records-vacio">Termina un partido y aparece aquí.</p>
-      </div>
     </div>
     <div class="ini-der">
-      <div class="mapa-cab"><h2>Mapa de tiros</h2><span class="etq" id="dominadas"></span></div>
-      <div class="presets">
-        <button class="chip-btn" data-preset="todas">Todas</button>
-        <button class="chip-btn" data-preset="dificiles">Solo 6 a 9</button>
-        <span>Toca un número de la izquierda para sacar o meter esa tabla.</span>
+      <div class="records" id="records">
+        <h2>Récords</h2>
+        <p class="mi-record">Tu mejor partido: <b id="st-mejor">–</b></p>
+        <div class="linea-w" id="tabla-records-caja" hidden><table class="tabla-records">
+          <thead><tr><th scope="col"></th><th scope="col">Apodo</th><th scope="col">Récord</th><th scope="col">Partidos</th></tr></thead>
+          <tbody id="filas-records"></tbody>
+        </table>
+        <p class="sub" id="records-vacio">Termina un partido y aparece aquí.</p></div>
       </div>
-      <table id="mapa" aria-label="Tablas del 1 al 10 según cuánto las dominas"></table>
-      <div class="leyenda" aria-hidden="true">
-        <span><i style="background:rgba(33,16,61,.72);border-color:var(--linea)"></i>Sin tirar</span>
-        <span><i style="background:var(--c0)"></i>Fría</span>
-        <span><i style="background:var(--c1)"></i></span>
-        <span><i style="background:var(--c2)"></i></span>
-        <span><i style="background:var(--c3)"></i>Caliente</span>
-        <span><i style="background:var(--c4)"></i>Dominada</span>
+      <div class="mis-tablas">
+        <div class="mapa-cab"><h2>Tus tablas</h2><span class="etq" id="dominadas"></span></div>
+        <div class="tablas" id="tablas"></div>
+        <p class="pista">Toca una tabla para sacarla o meterla al juego.</p>
       </div>
-      <div id="detalle" aria-live="polite"></div>
       <div class="pie">
-        <span>Mejor partido: <b id="st-mejor">–</b></span>
         <span>Tiros encestados: <b id="st-hechos">0</b></span>
         <span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span>
       </div>
       <div class="pie"><span>Tu avance se guarda en este navegador.</span><button id="btn-borrar" class="enlace">Borrar mi avance</button></div>
       <div id="confirmar" hidden>
-        <span>Esto deja tu mapa en blanco.</span>
+        <span>Esto borra tu avance y tu mejor partido.</span>
         <button id="borrar-si" class="chip-btn">Sí, borrar</button>
         <button id="borrar-no" class="chip-btn">No</button>
       </div>
@@ -414,6 +428,7 @@ body.gym .gritando #valor{display:block}
   <section id="final" class="tablero-fin" hidden></section>
 </div>
 <div id="destello" aria-hidden="true"></div>
+<canvas id="confeti" aria-hidden="true" hidden></canvas>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -573,21 +588,20 @@ async function cargarRanking(){
   pintarRanking();
 }
 function pintarRanking(){
-  $('records').hidden=!ranking.activo;
+  $('tabla-records-caja').hidden=!ranking.activo;
   if(!ranking.activo)return;
   $('records-vacio').hidden=ranking.top.length>0;
-  const filas=[...ranking.top.slice(0,10),{apodo:'Kobe Bryant',puntos:81,kobe:true}].sort((a,b)=>b.puntos-a.puntos);
+  const filas=[...ranking.top.slice(0,5),{apodo:'Kobe Bryant',puntos:81,kobe:true}].sort((a,b)=>b.puntos-a.puntos);
   const tb=$('filas-records');tb.textContent='';
   let puesto=0;
   filas.forEach(f=>{
     const tr=tb.insertRow();
     if(f.kobe)tr.className='kobe';else puesto++;
-    [f.kobe?'':puesto,f.kobe?'Kobe Bryant, 2006':f.apodo,f.puntos,f.kobe?'':f.ultimo,f.kobe?'':f.partidos].forEach(v=>{tr.insertCell().textContent=v;});
+    [f.kobe?'':puesto,f.kobe?'Kobe Bryant, 2006':f.apodo,f.puntos,f.kobe?'':f.partidos].forEach(v=>{tr.insertCell().textContent=v;});
   });
 }
 function pintarFinRecord(pts){
-  if(!ranking.activo)return;
-  if(prog.apodo)guardarEnRanking(prog.apodo,pts);else formApodo(pts);
+  $('fin-record').textContent='Esta versión de prueba todavía no guarda puntajes en el ranking.';
 }
 function formApodo(pts,aviso){
   const c=$('fin-record');
@@ -661,6 +675,7 @@ const SONIDOS={
   swish(){ruido(.24,4200,.9);},
   publico(){ruido(.7,1100,.35);},
   rugido(){ruido(1,900,.6);ruido(.6,2300,.22);},
+  fanfarria(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>{if(ac)tono(f,f,i===3?.5:.16,'square',.13);},300+i*130));},
   ooh(){tono(330,170,.5,'sawtooth',.07);ruido(.4,650,.22);},
   aro(){tono(190,90,.18,'triangle',.7);tono(1400,1100,.05,'square',.06);},
   bocina(){tono(120,116,.7,'sawtooth',.28);},
@@ -728,41 +743,27 @@ function mostrar(id){
   window.scrollTo(0,0);
   activarEscena(id==='juego');
 }
-let detalle='9x9';
-function pintarMapa(){
+function pintarTablas(){
   const sel=new Set(prog.tablas);
-  let h='<thead><tr><th scope="col">×</th>';
-  for(let b=1;b<=10;b++)h+=`<th scope="col">${b}</th>`;
-  h+='</tr></thead><tbody>';
+  let html='';
   for(let a=1;a<=10;a++){
-    const on=sel.has(a);
-    h+=`<tr class="${on?'':'fuera'}"><th scope="row"><button class="fila" data-tabla="${a}" aria-pressed="${on}" aria-label="Tabla del ${a}">${a}</button></th>`;
-    for(let b=1;b<=10;b++){
-      const k=clave(a,b),f=prog.facts[k],caja=f&&f.vistos?` data-caja="${f.caja}"`:'';
-      h+=`<td><button class="celda${DATOS[k]?' dato':''}${k===detalle?' sel':''}" data-k="${k}"${caja} aria-label="${a} por ${b} es ${a*b}">${a*b}</button></td>`;
-    }
-    h+='</tr>';
+    let suma=0;
+    for(let b=1;b<=10;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
+    const pct=Math.round(suma/(10*CAJA_MAX)*100);
+    const nivel=pct>=100?'max':pct>=67?'alto':pct>=34?'medio':'bajo';
+    html+=`<button class="tabla-t" data-tabla="${a}" data-nivel="${nivel}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento"><b>${a}</b><span class="barra-d"><i style="width:${pct}%"></i></span><small>${pct===100?'★':pct+'%'}</small></button>`;
   }
-  $('mapa').innerHTML=h+'</tbody>';
-}
-function pintarDetalle(){
-  const[a,b]=partes(detalle),f=prog.facts[detalle];
-  let est='Todavía sin tirar.';
-  if(f&&f.vistos){
-    const mejor=f.mejor!=null?(f.mejor/1000).toFixed(1).replace('.',',')+' s':'sin tiempo';
-    est=`${f.hechos} de ${f.vistos} encestados. Mejor tiempo: ${mejor}.${f.caja===CAJA_MAX?' Dominada.':''}`;
-  }
-  $('detalle').innerHTML=`<b class="det-fact">${a} × ${b} = ${a*b}</b><span>${DATOS[detalle]||''}</span><span class="det-est">${est}</span>`;
+  $('tablas').innerHTML=html;
 }
 function pintarInicio(){
-  pintarMapa();pintarDetalle();pintarSonido();
+  pintarTablas();pintarSonido();pintarRanking();
   $('dominadas').textContent=`${dominadas(prog.facts,prog.tablas)} de ${prog.tablas.length*10} dominadas`;
   $('st-mejor').textContent=prog.partidos?`${prog.mejor} puntos`:'–';
   $('st-hechos').textContent=prog.hechos;
 }
 function irAInicio(){
   salirDeSesion();
-  pintarInicio();mostrar('inicio');
+  pintarInicio();mostrar('inicio');cargarRanking();
 }
 
 /* Partido y gimnasio */
@@ -1314,6 +1315,119 @@ function gritoDe(r){
   return{txt:elegirGrito(GRITOS.libre),clase:'libre'};
 }
 
+/* Mamba, la mascota: una serpiente de píxeles dibujada a 64×64 y agrandada sin suavizar */
+function mambaHTML(texto,animo){
+  return `<div class="mamba-caja"><canvas class="mamba-c" data-animo="${animo}" width="64" height="64" aria-hidden="true"></canvas><p class="globo">${texto}</p></div>`;
+}
+function animarMambas(cont){cont.querySelectorAll('.mamba-c').forEach(iniciarMascota);}
+function iniciarMascota(c){
+  const g=c.getContext('2d'),feliz=c.dataset.animo==='feliz';
+  const P=(x,y,w,h,col)=>{g.fillStyle=col;g.fillRect(Math.round(x),Math.round(y),w,h);};
+  const elipse=(x,y,rx,ry,col)=>{
+    g.fillStyle=col;
+    const cx=Math.round(x),cy=Math.round(y),R=Math.round(ry);
+    for(let dy=-R;dy<=R;dy++){const w=Math.round(rx*Math.sqrt(Math.max(0,1-(dy*dy)/(ry*ry))));g.fillRect(cx-w,cy+dy,w*2+1,1);}
+  };
+  const disco=(x,y,r,col)=>elipse(x,y,r,r,col);
+  let ultimo=0;
+  const cuadro=now=>{
+    if(!c.isConnected||c.offsetParent===null)return;
+    requestAnimationFrame(cuadro);
+    if(now-ultimo<80)return;
+    ultimo=now;
+    const t=reducir?0:now/1000;
+    g.clearRect(0,0,64,64);
+
+    // Cuerpo: dos vueltas enrolladas y un cuello que se mueve
+    const amp=feliz?6:3,vel=feliz?6:2.4,pts=[];
+    for(let i=0;i<=70;i++){
+      const u=i/70;
+      if(u<.6){
+        const v=u/.6,ang=Math.PI*.5+v*Math.PI*3.4,rad=20-v*10;
+        pts.push([31+Math.cos(ang)*rad,55-v*9+Math.sin(ang)*rad*.34,4.8-v*.5]);
+      }else{
+        const v=(u-.6)/.4,base=40.5+(31-40.5)*Math.min(1,v/.45);
+        pts.push([base+Math.sin(v*Math.PI*1.6+t*vel)*amp*v,45-v*26,4.3-v*.8]);
+      }
+    }
+    const tramo=(a,b)=>{
+      for(let i=a;i<=b;i++)disco(pts[i][0],pts[i][1],pts[i][2]+1,'#fdb927');
+      for(let i=a;i<=b;i++)disco(pts[i][0],pts[i][1],pts[i][2],'#5b2a93');
+      for(let i=a;i<=b;i++)P(pts[i][0],pts[i][1]-Math.round(pts[i][2]*.45),1,1,'#8a55c8');
+      for(let i=a;i<=b;i+=6)P(pts[i][0]-1,pts[i][1]-1,3,3,'#fdb927');
+    };
+    tramo(0,21);tramo(21,42);tramo(42,70);
+
+    // Balón que rebota a su lado
+    const bx=9,by=52-Math.abs(Math.sin(t*(feliz?5:3)))*12;
+    disco(bx,by,5,'#5b2a0c');disco(bx,by,4,'#e8742c');P(bx-4,by,9,1,'#5b2a0c');P(bx,by-4,1,9,'#5b2a0c');
+
+    // Cabeza
+    const[hx,hy]=pts[70];
+    elipse(hx,hy,11,9,'#fdb927');elipse(hx,hy,10,8,'#6a35a8');elipse(hx,hy+3,8,4,'#8a55c8');
+    // Cintillo
+    P(hx-10,hy-6,21,3,'#fdb927');P(hx+9,hy-7,4,1,'#fdb927');P(hx+11,hy-5,3,1,'#fdb927');
+    // Ojos
+    const parpadea=!feliz&&(t%3.2)<.14;
+    if(feliz){
+      for(const s of[-1,1]){
+        const ex=hx+s*5;
+        P(ex-2,hy,1,1,'#fff4d6');P(ex-1,hy-1,1,1,'#fff4d6');P(ex,hy-2,1,1,'#fff4d6');P(ex+1,hy-1,1,1,'#fff4d6');P(ex+2,hy,1,1,'#fff4d6');
+      }
+    }else if(parpadea){
+      P(hx-7,hy-1,4,1,'#120822');P(hx+4,hy-1,4,1,'#120822');
+    }else{
+      P(hx-7,hy-3,4,4,'#fff4d6');P(hx+4,hy-3,4,4,'#fff4d6');P(hx-6,hy-2,2,2,'#120822');P(hx+5,hy-2,2,2,'#120822');
+    }
+    // Boca: la mamba negra debe su nombre a su boca oscura
+    if(feliz){
+      P(hx-4,hy+3,9,1,'#120822');P(hx-3,hy+4,7,1,'#120822');P(hx-2,hy+5,5,1,'#120822');
+    }else{
+      P(hx-3,hy+4,7,1,'#120822');P(hx-4,hy+3,1,1,'#120822');P(hx+4,hy+3,1,1,'#120822');
+    }
+    // Lengua
+    if(Math.floor(t*1.4)%3===0){
+      const l=feliz?hy+6:hy+5;
+      P(hx,l,1,3,'#ff3a2a');P(hx-1,l+3,1,1,'#ff3a2a');P(hx+1,l+3,1,1,'#ff3a2a');
+    }
+    if(feliz){
+      // Corona y destellos
+      const cy=hy-13;
+      P(hx-6,cy+2,13,3,'#fdb927');P(hx-6,cy,2,2,'#fdb927');P(hx-1,cy-1,3,3,'#fdb927');P(hx+5,cy,2,2,'#fdb927');P(hx,cy+3,1,1,'#ff3a2a');
+      for(let i=0;i<5;i++){
+        if(Math.sin(t*5+i*2.1)>.55){
+          const sx=6+((i*23)%52),sy=4+((i*17)%30);
+          P(sx,sy,1,3,'#fff4d6');P(sx-1,sy+1,3,1,'#fff4d6');
+        }
+      }
+    }
+  };
+  requestAnimationFrame(cuadro);
+}
+function mensajeMamba(p,fallos){
+  if(p>=100)return `¡${p} puntos! ¡Ssssensacional! Dejaste atrás los 81 de Kobe. Esto hay que contárselo a Roberto.`;
+  if(p>81)return `¡Pasaste los 81! Eres puro veneno. ¿Te atreves a llegar a 100?`;
+  if(p===81)return '¡81 exactos, igual que Kobe! Ssssensacional.';
+  if(p>=60)return `Te faltaron ${81-p} puntos. Estás cerca: unos triples más y llegas. Pasa por el Gimnasio 4 AM y vuelve.`;
+  return `Todavía no llegas a 81, y eso se entrena. ${fallos?'Practica las que fallaste en el Gimnasio 4 AM':'Anda al Gimnasio 4 AM'} y vuelve por más.`;
+}
+function confeti(){
+  if(reducir)return;
+  const c=$('confeti');
+  c.hidden=false;c.width=Math.round(innerWidth/3);c.height=Math.round(innerHeight/3);
+  const g=c.getContext('2d'),cols=['#fdb927','#7a45b8','#fff4d6','#ee7a2e','#9a5cff'];
+  const v=Array.from({length:120},()=>({x:Math.random()*c.width,y:-Math.random()*c.height,vy:22+Math.random()*50,vx:(Math.random()-.5)*16,col:cols[Math.floor(Math.random()*cols.length)]}));
+  const ini=performance.now();
+  let prev=ini;
+  const paso=now=>{
+    const dt=Math.min(.05,(now-prev)/1000);prev=now;
+    g.clearRect(0,0,c.width,c.height);
+    for(const p of v){p.y+=p.vy*dt;p.x+=p.vx*dt;g.fillStyle=p.col;g.fillRect(Math.round(p.x),Math.round(p.y),2,2);}
+    if(now-ini<3800&&!$('final').hidden)requestAnimationFrame(paso);else c.hidden=true;
+  };
+  requestAnimationFrame(paso);
+}
+
 /* Entre cuartos y final */
 function lineaCuartos(hasta){
   const c=(arr)=>arr.map((p,i)=>`<td>${i<hasta?p:'–'}</td>`).join('');
@@ -1328,10 +1442,11 @@ function mostrarEntre(){
   guardar(true);
   const q=S.n/TIROS_CUARTO,d=S.puntos-ritmoKobe(S.n);
   const vas=d>0?`Vas ${d} arriba de su ritmo.`:d<0?`Vas ${-d} abajo de su ritmo.`:'Vas igual que él.';
-  $('entre').innerHTML=`<h2>Fin del ${ORD[q-1]} cuarto</h2>${lineaCuartos(q)}<p>${NOTA_CUARTO[q-1]} ${vas}</p><div class="botones"><button class="btn oro" id="btn-seguir">Jugar el ${ORD[q]} cuarto</button></div>`;
+  $('entre').innerHTML=`<h2>Fin del ${ORD[q-1]} cuarto</h2>${lineaCuartos(q)}${mambaHTML(`${NOTA_CUARTO[q-1]} ${vas}${d<0&&q<=2?' Todavía se puede: Kobe metió 55 en el segundo tiempo.':''}`,d>=0?'feliz':'normal')}<div class="botones"><button class="btn oro" id="btn-seguir">Jugar el ${ORD[q]} cuarto</button></div>`;
   mostrar('entre');
+  animarMambas($('entre'));
   $('btn-seguir').addEventListener('click',()=>{mostrar('juego');proximoTiro(true);});
-  $('btn-seguir').focus();
+  $('btn-seguir').focus({preventScroll:true});
 }
 function terminar(){
   const modo=S.modo,partido=modo==='partido';
@@ -1341,31 +1456,34 @@ function terminar(){
   guardar(true);
   const fall=S.falladas,lista=fall.length?`<ul class="falladas">${fall.map(k=>{const[a,b]=partes(k);return `<li>${a} × ${b} = ${a*b}</li>`;}).join('')}</ul>`:'';
   const entrenar=fall.length?`<button class="btn oro" id="fin-entrenar">Entrenar las que fallé (${fall.length})</button>`:'';
-  const otra=`<button class="btn${fall.length?'':' oro'}" id="fin-otra">${partido?'Otro partido':'Otra serie'}</button>`;
-  const mapa=`<button class="btn" id="fin-mapa">Ver el mapa</button>`;
+  const aGym=partido&&!fall.length&&S.puntos<81?'<button class="btn oro" id="fin-gym">Ir al Gimnasio 4 AM</button>':'';
+  const otra=`<button class="btn${fall.length||aGym?'':' oro'}" id="fin-otra">${partido?'Otro partido':'Otra serie'}</button>`;
+  const mapa=`<button class="btn" id="fin-mapa">Volver al inicio</button>`;
   let cuerpo;
   if(partido){
     const p=S.puntos,tit=p>81?'Pasaste los 81.':p===81?'Exactamente 81.':`Te faltaron ${81-p} para 81.`;
     const pct=Math.round(hechos/S.total*100);
-    const aMati=p>=81?'Mati, eso es nivel Kobe. Cuéntale a Roberto.':fall.length?'Buen partido, Mati. Entrena las que fallaste y vuelve por más.':'Buen partido, Mati. Ahora a bajar los tiempos.';
-    cuerpo=`<p class="sena jersey">Mamba out.</p><h2>${p} puntos. ${tit}</h2>${lineaCuartos(CUARTOS)}
+    cuerpo=`${mambaHTML(mensajeMamba(p,fall.length),p>=81?'feliz':'normal')}<h2>${p} puntos. ${tit}</h2>${lineaCuartos(CUARTOS)}
       <dl class="caja"><div><dt>Triples</dt><dd>${S.triples}</dd></div><div><dt>Dobles</dt><dd>${S.dobles}</dd></div><div><dt>Libres</dt><dd>${S.libres}</dd></div><div><dt>Rebotes</dt><dd>${S.segundas}</dd></div><div><dt>Fallos</dt><dd>${S.fallos}</dd></div><div><dt>Acierto</dt><dd>${pct}%</dd></div></dl>
-      <p>Esa noche Kobe metió 28 de 46 tiros de campo, 7 de 13 triples y 18 de 20 libres.${record?' Este es tu mejor partido.':` Tu mejor partido sigue en ${prog.mejor}.`}</p><p>${aMati}</p><div class="fin-record" id="fin-record"></div>`;
+      <p>${record?'Este es tu mejor partido.':`Tu mejor partido sigue en ${prog.mejor} puntos.`}</p><div class="fin-record" id="fin-record"></div>`;
   }else{
     const hora='4:'+String(S.total).padStart(2,'0');
     const domTxt=dom>0?`Sumaste ${dom} ${dom===1?'dominada':'dominadas'}.`:'Hoy no sumaste dominadas nuevas. Para eso hay que responder en 3 segundos o menos.';
-    cuerpo=`<p class="sena jersey">Son las ${hora}.</p><h2>${hechos} de ${S.total} adentro.</h2><p>Buen entrenamiento, Mati. ${domTxt}</p>`;
+    cuerpo=`<p class="sena jersey">Son las ${hora}.</p><h2>${hechos} de ${S.total} adentro.</h2>${mambaHTML(`${hechos===S.total?'¡Serie perfecta! Ssssúper.':'Buen entrenamiento.'} ${domTxt}`,hechos===S.total?'feliz':'normal')}`;
   }
   if(fall.length)cuerpo+=`<p>Estas se te fueron:</p>${lista}`;
-  $('final').innerHTML=cuerpo+`<div class="botones">${entrenar}${otra}${mapa}</div>`;
+  $('final').innerHTML=cuerpo+`<div class="botones">${entrenar}${aGym}${otra}${mapa}</div>${partido?'<p class="sena jersey adios">Mamba out.</p>':''}`;
   const foco=fall.slice();
   salirDeSesion();
   sonar('bocina');
   mostrar('final');
+  animarMambas($('final'));
+  if(partido&&S.puntos>=81){sonar('fanfarria');confeti();}
+  if($('fin-gym'))$('fin-gym').addEventListener('click',()=>iniciar('gym'));
   if(foco.length)$('fin-entrenar').addEventListener('click',()=>iniciar('gym',foco));
   $('fin-otra').addEventListener('click',()=>iniciar(modo));
   $('fin-mapa').addEventListener('click',irAInicio);
-  ($('fin-entrenar')||$('fin-otra')).focus();
+  ($('fin-entrenar')||$('fin-gym')||$('fin-otra')).focus({preventScroll:true});
   if(partido)pintarFinRecord(S.puntos);
 }
 
@@ -1385,19 +1503,13 @@ function arrancar(){
     if(prog.musica&&fase!=='fuera')musicaIniciar();else musicaParar();
     guardar(true);pintarSonido();
   }));
-  $('mapa').addEventListener('click',e=>{
+  $('tablas').addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
-    if(t.dataset.tabla){
-      const a=Number(t.dataset.tabla),i=prog.tablas.indexOf(a);
-      if(i>=0&&prog.tablas.length===1)return;
-      if(i>=0)prog.tablas.splice(i,1);else{prog.tablas.push(a);prog.tablas.sort((x,y)=>x-y);}
-      guardar(true);pintarInicio();
-    }else if(t.dataset.k){detalle=t.dataset.k;pintarMapa();pintarDetalle();}
-  });
-  document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
-    prog.tablas=b.dataset.preset==='dificiles'?[6,7,8,9]:[1,2,3,4,5,6,7,8,9,10];
+    const a=Number(t.dataset.tabla),i=prog.tablas.indexOf(a);
+    if(i>=0&&prog.tablas.length===1)return;
+    if(i>=0)prog.tablas.splice(i,1);else{prog.tablas.push(a);prog.tablas.sort((x,y)=>x-y);}
     guardar(true);pintarInicio();
-  }));
+  });
   $('btn-borrar').addEventListener('click',()=>{$('confirmar').hidden=false;});
   $('borrar-no').addEventListener('click',()=>{$('confirmar').hidden=true;});
   $('borrar-si').addEventListener('click',()=>{
@@ -1434,9 +1546,9 @@ function arrancar(){
       if(fase!=='fuera'){audio();musicaIniciar();}
     }
   });
-  if(matchMedia('(min-width:960px)').matches)$('como').open=true;
   crearEscena();
   pintarInicio();
+  cargarRanking();
   if(location.hash==='#partido')iniciar('partido');
   else if(location.hash==='#gimnasio')iniciar('gym');
 }
