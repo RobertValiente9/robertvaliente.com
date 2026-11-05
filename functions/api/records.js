@@ -1,5 +1,5 @@
 // Ranking de Mamba 81. Guarda en KV (binding RECORDS) un solo documento con los mejores puntajes.
-const MAX_PUNTOS = 123; // 5 triples y luego 27 triples con el bono del Modo Mamba
+const MAX_PUNTOS = 126; // 2 triples de 3 y luego 30 de 4 en Modo Mamba
 const MAX_FILAS = 50;
 const ESPERA_MS = 15000;
 const APODO = /^[\p{L}\p{N}][\p{L}\p{N} ._-]{1,13}$/u;

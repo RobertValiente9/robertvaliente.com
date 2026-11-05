@@ -486,6 +486,9 @@ body.gym .gritando #valor{display:block}
 }
 .foto-kobe{right:-30px}
 @media (min-width:960px){.foto-kobe{right:-44px}}
+.tablas{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px 6px}
+.camiseta::before{left:-3px;right:-3px}
+.cs-pct{font-size:12px}
 </style>
 </head>
 <body>
@@ -535,7 +538,7 @@ body.gym .gritando #valor{display:block}
         <p class="pista" id="tablas-aviso">Toca una camiseta para sacarla o meterla al gimnasio.</p>
       </div>
       <div class="pie"><span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span></div>
-      <p class="legal">Versión de prueba. Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
+      <p class="legal">Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
     </div>
   </section>
 
@@ -581,7 +584,7 @@ body.gym .gritando #valor{display:block}
 <script>
 /*MOTOR*/
 const CUARTOS=4,TIROS_CUARTO=8,SERIE_GYM=24;
-const TODAS_LAS_TABLAS=[1,2,3,4,5,6,7,8,9,10];
+const TODAS_LAS_TABLAS=[1,2,3,4,5,6,7,8,9,10,11,12];
 const KOBE_CUARTOS=[14,12,27,28]; // 22-01-2006 contra Toronto, por cuarto
 const T3=3000,T2=7000,T_RELOJ=12000,T_REBOTE=5000;
 const TRIPLES_MAMBA=2,CAJA_MAX=4;
@@ -702,6 +705,11 @@ const DATOS={
   '6x8':'48: los minutos de un partido de la NBA.','8x6':'48: los minutos de un partido de la NBA.',
   '1x2':'2: sus premios MVP de las Finales, en 2009 y 2010.','2x1':'2: sus premios MVP de las Finales, en 2009 y 2010.',
   '1x1':'1: su MVP de la temporada regular, en 2008.',
+  '12x1':'12: los minutos de cada cuarto en la NBA.',
+  '12x2':'24: el número que usó desde 2006 hasta su retiro.',
+  '12x4':'48: los minutos de un partido de la NBA.',
+  '12x5':'60: los puntos de su último partido, el 13 de abril de 2016.',
+  '11x5':'55: lo que anotó en el segundo tiempo de los 81.',
   '2x7':'14: lo que anotó en el primer cuarto de los 81.','7x2':'14: lo que anotó en el primer cuarto de los 81.',
   '3x9':'27: lo que anotó en el tercer cuarto de los 81.','9x3':'27: lo que anotó en el tercer cuarto de los 81.',
   '4x7':'28: lo que anotó en el último cuarto de los 81.','7x4':'28: lo que anotó en el último cuarto de los 81.'
@@ -716,6 +724,9 @@ const normalizar=o=>{
   const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,apodo:'',actualizado:0},o||{});
   p.facts=o&&o.facts?JSON.parse(JSON.stringify(o.facts)):{};
   p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():TODAS_LAS_TABLAS.slice();
+  // Quien ya jugaba antes de las tablas del 11 y del 12 también las tiene en el gimnasio.
+  if(o&&(o.v||1)<2)p.tablas=[...new Set([...p.tablas,11,12])];
+  p.v=2;
   return p;
 };
 let prog;
@@ -758,11 +769,12 @@ function pintarRanking(){
   fila('Tú','tu','Tu mejor partido',prog.partidos?veces(prog.partidos):'Todavía sin jugar',prog.partidos?prog.mejor:'');
 }
 function pintarFinRecord(pts){
-  $('fin-record').textContent='Esta versión de prueba todavía no guarda puntajes en el ranking.';
+  if(!ranking.activo)return;
+  if(prog.apodo)guardarEnRanking(prog.apodo,pts);else formApodo(pts);
 }
 function formApodo(pts,aviso){
   const c=$('fin-record');
-  c.innerHTML='<form class="form-apodo" id="form-apodo"><label for="apodo">Elige un apodo para el ranking. No uses tu nombre completo.</label><input id="apodo" maxlength="14" autocomplete="off" required><button class="btn">Guardar puntaje</button></form><p id="aviso-record"></p>';
+  c.innerHTML='<form class="form-apodo" id="form-apodo"><label for="apodo">Escribe tu nombre para el ranking. Solo el primero o un apodo.</label><input id="apodo" maxlength="14" autocomplete="off" required><button class="btn">Guardar puntaje</button></form><p id="aviso-record"></p>';
   $('apodo').value=prog.apodo||'';
   $('aviso-record').textContent=aviso||'';
   $('form-apodo').addEventListener('submit',e=>{e.preventDefault();guardarEnRanking($('apodo').value.trim(),pts);});
@@ -905,11 +917,11 @@ const CAMISETA='M17 3H24Q30 13 36 3H43L45 15Q47 23 54 27V63H6V27Q13 23 15 15Z';
 function pintarTablas(){
   const sel=new Set(prog.tablas);
   let html='';
-  for(let a=1;a<=10;a++){
+  for(let a=1;a<=12;a++){
     let suma=0;
     for(let b=1;b<=10;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
     const pct=Math.round(suma/(10*CAJA_MAX)*100),alto=60*pct/100;
-    html+=`<button class="camiseta${pct===100?' llena':''}" data-tabla="${a}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><svg viewBox="0 0 60 66" aria-hidden="true"><defs><clipPath id="cs${a}"><path d="${CAMISETA}"/></clipPath></defs><path class="cs-base" d="${CAMISETA}"/><rect class="cs-nivel" x="0" y="${(63-alto).toFixed(1)}" width="60" height="${alto.toFixed(1)}" clip-path="url(#cs${a})"/><path class="cs-borde" d="${CAMISETA}"/><path class="cs-ribete" d="M24 3Q30 13 36 3M15 15Q13 23 6 27M45 15Q47 23 54 27"/><text class="cs-num" x="30" y="${a===10?49:50}">${a}</text></svg><small class="cs-pct">${pct}%</small></button>`;
+    html+=`<button class="camiseta${pct===100?' llena':''}" data-tabla="${a}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><svg viewBox="0 0 60 66" aria-hidden="true"><defs><clipPath id="cs${a}"><path d="${CAMISETA}"/></clipPath></defs><path class="cs-base" d="${CAMISETA}"/><rect class="cs-nivel" x="0" y="${(63-alto).toFixed(1)}" width="60" height="${alto.toFixed(1)}" clip-path="url(#cs${a})"/><path class="cs-borde" d="${CAMISETA}"/><path class="cs-ribete" d="M24 3Q30 13 36 3M15 15Q13 23 6 27M45 15Q47 23 54 27"/><text class="cs-num" x="30" y="${a>=10?49:50}">${a}</text></svg><small class="cs-pct">${pct}%</small></button>`;
   }
   $('tablas').innerHTML=html;
 }
