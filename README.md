@@ -9,7 +9,8 @@ index.html              portada — bio, notas, menciones y contacto
 recursos-ia/index.html  nota — ¿Deberíamos tenerle miedo a la IA?
 recursos-ia/mitchell/    redirige a /recursos-ia/#mitchell (la mini nota se integró a la nota como mirada 3)
 recursos-ia/audio/       podcasts en español (mp3 mono 64k; Pages no acepta archivos de más de 25 MB)
-mamba/index.html        Mamba 81, juego de las tablas de multiplicar (noindex, sin link desde la portada)
+juegomati/index.html    Mamba 81, juego de las tablas de multiplicar para Mati, en 3D con Three.js desde cdnjs (noindex, sin link desde la portada)
+_redirects              /mamba y /mamba/* redirigen a /juegomati/ para que no se rompan los links antiguos
 functions/api/records.js  ranking del juego (Pages Function + KV)
 ```
 

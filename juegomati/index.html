@@ -3,21 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Mamba 81 3D</title>
+<title>Mamba 81</title>
 <meta name="description" content="Aprende las tablas de multiplicar tiro a tiro y compite contra los 81 puntos de Kobe Bryant.">
 <meta name="robots" content="noindex">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Mamba 81">
 <meta property="og:description" content="Aprende las tablas de multiplicar tiro a tiro. ¿Llegas a los 81 de Kobe?">
-<meta property="og:url" content="https://robertvaliente.com/mamba/3d/">
-<meta property="og:image" content="https://robertvaliente.com/mamba/og.png">
+<meta property="og:url" content="https://robertvaliente.com/juegomati/">
+<meta property="og:image" content="https://robertvaliente.com/juegomati/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Mamba 81: las tablas de multiplicar, tiro a tiro">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mamba 81">
 <meta name="twitter:description" content="Aprende las tablas de multiplicar tiro a tiro. ¿Llegas a los 81 de Kobe?">
-<meta name="twitter:image" content="https://robertvaliente.com/mamba/og.png">
+<meta name="twitter:image" content="https://robertvaliente.com/juegomati/og.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -30 60 60'%3E%3Ccircle r='26' fill='%23e8742c' stroke='%235b2a0c' stroke-width='3'/%3E%3Cpath d='M-26 0H26M0 -26V26M-18 -18Q-6 0 -18 18M18 -18Q6 0 18 18' fill='none' stroke='%235b2a0c' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -489,6 +489,8 @@ body.gym .gritando #valor{display:block}
 .tablas{grid-template-columns:repeat(6,minmax(0,1fr));gap:12px 6px}
 .camiseta::before{left:-3px;right:-3px}
 .cs-pct{font-size:12px}
+#fps{display:none}
+body.debug #fps{display:block}
 </style>
 </head>
 <body>
@@ -517,7 +519,7 @@ body.gym .gritando #valor{display:block}
         <dt>Dominio</dt><dd>Cuando aciertas rápido, esa cuenta sube. Si fallas, baja. Con todas arriba, la tabla queda dominada y su camiseta, dorada.</dd>
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
       </dl>
-        <p class="pista">El partido siempre usa todas las tablas. Tu avance se guarda en este navegador y no se mezcla con el juego normal.</p>
+        <p class="pista">El partido siempre usa todas las tablas. Tu avance se guarda en este navegador.</p>
         <button id="btn-borrar" class="enlace">Borrar mi avance</button>
         <div id="confirmar" hidden>
           <span>Esto borra tu avance y tu mejor partido.</span>
@@ -595,7 +597,8 @@ const partes=k=>k.split('x').map(Number);
 const producto=k=>{const[a,b]=partes(k);return a*b;};
 const valorTiro=ms=>ms<=T3?3:ms<=T2?2:1;
 
-function poolDe(tablas){const r=[];for(const a of tablas)for(let b=1;b<=10;b++)r.push(clave(a,b));return r;}
+const hastaPor=a=>a>=11?12:10;
+function poolDe(tablas){const r=[];for(const a of tablas)for(let b=1;b<=hastaPor(a);b++)r.push(clave(a,b));return r;}
 function dominadas(facts,tablas){return poolDe(tablas).filter(k=>facts[k]&&facts[k].caja===CAJA_MAX).length;}
 
 function peso(f,ahora){
@@ -730,8 +733,14 @@ const normalizar=o=>{
   return p;
 };
 let prog;
-function leerLocal(){try{return JSON.parse(localStorage.getItem('mamba81-3d')||'null');}catch(e){return null;}}
-function guardarLocal(){try{localStorage.setItem('mamba81-3d',JSON.stringify(prog));}catch(e){}}
+function leerLocal(){
+  try{
+    const a=JSON.parse(localStorage.getItem('mamba81')||'null'),b=JSON.parse(localStorage.getItem('mamba81-3d')||'null');
+    localStorage.removeItem('mamba81-3d');
+    return b&&(!a||(b.actualizado||0)>(a.actualizado||0))?b:a;
+  }catch(e){return null;}
+}
+function guardarLocal(){try{localStorage.setItem('mamba81',JSON.stringify(prog));}catch(e){}}
 function guardar(){prog.actualizado=Date.now();guardarLocal();}
 
 /* Ranking: si el sitio no tiene el almacenamiento conectado, queda solo el récord personal */
@@ -919,8 +928,9 @@ function pintarTablas(){
   let html='';
   for(let a=1;a<=12;a++){
     let suma=0;
-    for(let b=1;b<=10;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
-    const pct=Math.round(suma/(10*CAJA_MAX)*100),alto=60*pct/100;
+    const n=hastaPor(a);
+    for(let b=1;b<=n;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
+    const pct=Math.round(suma/(n*CAJA_MAX)*100),alto=60*pct/100;
     html+=`<button class="camiseta${pct===100?' llena':''}" data-tabla="${a}" aria-pressed="${sel.has(a)}" aria-label="Tabla del ${a}: ${pct} por ciento. ${sel.has(a)?'Incluida':'Fuera'} del gimnasio"><svg viewBox="0 0 60 66" aria-hidden="true"><defs><clipPath id="cs${a}"><path d="${CAMISETA}"/></clipPath></defs><path class="cs-base" d="${CAMISETA}"/><rect class="cs-nivel" x="0" y="${(63-alto).toFixed(1)}" width="60" height="${alto.toFixed(1)}" clip-path="url(#cs${a})"/><path class="cs-borde" d="${CAMISETA}"/><path class="cs-ribete" d="M24 3Q30 13 36 3M15 15Q13 23 6 27M45 15Q47 23 54 27"/><text class="cs-num" x="30" y="${a>=10?49:50}">${a}</text></svg><small class="cs-pct">${pct}%</small></button>`;
   }
   $('tablas').innerHTML=html;
@@ -1433,7 +1443,7 @@ function crearEscena(){
     E.ok=true;
   }catch(e){
     console.warn(e);
-    $('fps').textContent='Este navegador no pudo mostrar el 3D.';
+    document.body.classList.add('debug');$('fps').textContent='Este navegador no pudo mostrar el 3D.';
   }
 }
 function activarEscena(si){
@@ -1669,6 +1679,7 @@ function terminar(){
 
 /* Eventos */
 function arrancar(){
+  if(/[?&]debug\b/.test(location.search))document.body.classList.add('debug');
   prog=normalizar(leerLocal());
   $('btn-partido').addEventListener('click',()=>iniciar('partido'));
   $('btn-gym').addEventListener('click',()=>iniciar('gym'));
