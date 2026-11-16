@@ -491,6 +491,27 @@ body.gym .gritando #valor{display:block}
 .cs-pct{font-size:12px}
 #fps{display:none}
 body.debug #fps{display:block}
+
+/* Modo mezcla: un interruptor discreto y un color por signo */
+.experimental{margin-top:12px;padding:10px 12px;border:1px dashed var(--linea);border-radius:6px}
+.interruptor{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:0;border:0;background:none;cursor:pointer;text-align:left;touch-action:manipulation}
+.int-txt{display:grid;gap:3px}
+.int-txt .etq{font-size:11px;letter-spacing:.14em}
+.int-txt b{font:800 21px/1 var(--f-display);letter-spacing:.02em;text-transform:uppercase;color:var(--texto)}
+.signos{display:inline-flex;gap:5px;margin-left:6px;vertical-align:1px}
+.signos i{font-style:normal;font-size:.95em}
+.int-pill{flex:none;position:relative;width:50px;height:28px;border-radius:14px;background:var(--forum-2);border:1px solid var(--linea);transition:background .2s}
+.int-pill i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--tenue);transition:transform .2s,background .2s}
+.interruptor[aria-checked="true"] .int-pill{background:var(--purpura);border-color:var(--oro)}
+.interruptor[aria-checked="true"] .int-pill i{transform:translateX(22px);background:var(--oro)}
+.interruptor[aria-checked="false"] .signos i:not([data-op="x"]){opacity:.35}
+.experimental .pista{margin:4px 0 0;font-size:13px}
+[data-op="+"]{color:#6fe3a0}
+[data-op="-"]{color:#ff9bd2}
+[data-op="x"]{color:var(--oro)}
+[data-op="/"]{color:#c9a8ff}
+.op[data-op=""]{color:inherit}
+.op[data-op]:not([data-op=""]){-webkit-text-stroke:0;text-shadow:.045em .055em 0 var(--c-osc)}
 </style>
 </head>
 <body>
@@ -518,6 +539,7 @@ body.debug #fps{display:block}
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 5 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
         <dt>Dominio</dt><dd>Cuando aciertas rápido, esa cuenta sube. Si fallas, baja. Con todas arriba, la tabla queda dominada y su camiseta, dorada.</dd>
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
+        <dt>Mezcla</dt><dd>Experimental. Si lo prendes, además de multiplicaciones salen sumas, restas y divisiones, todas con las tablas del 1 al 12. Mira bien el signo: cada uno tiene su color.</dd>
       </dl>
         <p class="pista">El partido siempre usa todas las tablas. Tu avance se guarda en este navegador.</p>
         <button id="btn-borrar" class="enlace">Borrar mi avance</button>
@@ -538,6 +560,13 @@ body.debug #fps{display:block}
         <div class="tablas" id="tablas"></div>
         <p class="pista explica">Se llena cuando aciertas rápido. Para completarla, responde cada cuenta en 3 segundos o menos.</p>
         <p class="pista" id="tablas-aviso">Toca una camiseta para sacarla o meterla al gimnasio.</p>
+      </div>
+      <div class="experimental">
+        <button id="btn-mezcla" class="interruptor" role="switch" aria-checked="false" aria-describedby="mezcla-txt">
+          <span class="int-txt"><span class="etq">Experimental</span><b>Modo mezcla <span class="signos" aria-hidden="true"><i data-op="+">+</i><i data-op="-">−</i><i data-op="x">×</i><i data-op="/">÷</i></span></b></span>
+          <span class="int-pill" aria-hidden="true"><i></i></span>
+        </button>
+        <p class="pista" id="mezcla-txt">Apagado: todo es multiplicación.</p>
       </div>
       <div class="pie"><span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span></div>
       <p class="legal">Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
@@ -592,14 +621,34 @@ const T3=3000,T2=7000,T_RELOJ=12000,T_REBOTE=5000;
 const TRIPLES_MAMBA=2,CAJA_MAX=4;
 const PESO=[5,4,2.5,1.5,.6],PESO_NUEVA=3.5,INTERVALO_DIAS=[0,1,2,4,8],DIA=864e5;
 
-const clave=(a,b)=>a+'x'+b;
-const partes=k=>k.split('x').map(Number);
-const producto=k=>{const[a,b]=partes(k);return a*b;};
+// Cada cuenta es una clave de texto: '7x8', y en el modo mezcla también '7+8', '15-7' y '56/7'.
+// La resta y la división son las inversas de la suma y la multiplicación: el resultado siempre va del 1 al 12.
+const OPS={
+  'x':{signo:'×',f:(a,b)=>a*b,dice:'por',nombre:'multiplicación'},
+  '+':{signo:'+',f:(a,b)=>a+b,dice:'más',nombre:'suma'},
+  '-':{signo:'−',f:(a,b)=>a-b,dice:'menos',nombre:'resta'},
+  '/':{signo:'÷',f:(a,b)=>a/b,dice:'dividido por',nombre:'división'}
+};
+const clave=(a,b,op='x')=>a+op+b;
+const opDe=k=>k.match(/[x+\-\/]/)[0];
+const partes=k=>k.split(/[x+\-\/]/).map(Number);
+const resultado=k=>{const[a,b]=partes(k);return OPS[opDe(k)].f(a,b);};
+const textoCuenta=k=>{const[a,b]=partes(k);return `${a} ${OPS[opDe(k)].signo} ${b}`;};
 const valorTiro=ms=>ms<=T3?3:ms<=T2?2:1;
 
 const hastaPor=a=>a>=11?12:10;
-function poolDe(tablas){const r=[];for(const a of tablas)for(let b=1;b<=hastaPor(a);b++)r.push(clave(a,b));return r;}
-function dominadas(facts,tablas){return poolDe(tablas).filter(k=>facts[k]&&facts[k].caja===CAJA_MAX).length;}
+// Con la mezcla, la tabla del a también trae a + b, (a + b) − a y (a × b) ÷ a.
+function poolDe(tablas,mezcla){
+  const r=[];
+  for(const a of tablas)for(let b=1;b<=hastaPor(a);b++){
+    r.push(clave(a,b));
+    if(mezcla)r.push(clave(a,b,'+'),clave(a+b,a,'-'),clave(a*b,a,'/'));
+  }
+  return r;
+}
+function dominadas(facts,tablas,mezcla){return poolDe(tablas,mezcla).filter(k=>facts[k]&&facts[k].caja===CAJA_MAX).length;}
+// La misma pareja con la otra operación: 6 × 7 y 6 + 7. Es la confusión que más cuesta.
+const gemelo=k=>{const o=opDe(k),[a,b]=partes(k);return o==='x'?clave(a,b,'+'):o==='+'?clave(a,b):null;};
 
 function peso(f,ahora){
   if(!f||!f.vistos)return PESO_NUEVA;
@@ -609,6 +658,9 @@ function peso(f,ahora){
 function elegir(pool,facts,evitar,ahora,rng){
   let c=pool.filter(k=>!evitar.includes(k));
   if(!c.length)c=pool;
+  // Primero la operación, con la misma probabilidad cada una; después la cuenta, según lo que más le cuesta.
+  const ops=[...new Set(c.map(opDe))];
+  if(ops.length>1){const op=ops[Math.floor(rng()*ops.length)];c=c.filter(k=>opDe(k)===op);}
   const pesos=c.map(k=>peso(facts[k],ahora));
   let r=rng()*pesos.reduce((s,p)=>s+p,0);
   for(let i=0;i<c.length;i++){r-=pesos[i];if(r<=0)return c[i];}
@@ -626,10 +678,10 @@ function registrar(facts,k,ok,ms,ahora){
   else f.caja=Math.max(1,f.caja-(f.caja>=3?1:0));
   return f;
 }
-function crearSesion(modo,tablas,foco){
-  const conFoco=!!(foco&&foco.length),pool=conFoco?foco.slice():poolDe(tablas);
+function crearSesion(modo,tablas,foco,mezcla=false){
+  const conFoco=!!(foco&&foco.length),pool=conFoco?foco.slice():poolDe(tablas,mezcla);
   const total=modo==='partido'?CUARTOS*TIROS_CUARTO:conFoco?Math.min(SERIE_GYM,Math.max(8,pool.length*4)):SERIE_GYM;
-  return{modo,pool,total,n:0,puntos:0,racha:0,mejorRacha:0,triples:0,dobles:0,libres:0,fallos:0,
+  return{modo,mezcla,pool,total,n:0,puntos:0,racha:0,mejorRacha:0,triples:0,dobles:0,libres:0,fallos:0,
     porCuarto:[0,0,0,0],hist:[],rebotes:[],recientes:[],falladas:[],actual:null,esRebote:false,ultimo:false,segundas:0,enRebote:false,tope:false,triplesSeguidos:0};
 }
 function siguiente(s,facts,ahora,rng){
@@ -640,7 +692,11 @@ function siguiente(s,facts,ahora,rng){
   let k,esRebote=false;
   if(ultimo&&s.pool.includes('9x9'))k='9x9';
   else if(i>=0){k=s.rebotes.splice(i,1)[0].k;esRebote=true;}
-  else k=elegir(s.pool,facts,s.recientes.concat(s.rebotes.map(r=>r.k)),ahora,rng);
+  else{
+    const g=s.mezcla&&s.recientes.length?gemelo(s.recientes[s.recientes.length-1]):null;
+    if(g&&s.pool.includes(g)&&!s.recientes.includes(g)&&rng()<.3)k=g;
+    else k=elegir(s.pool,facts,s.recientes.concat(s.rebotes.map(r=>r.k)),ahora,rng);
+  }
   s.actual=k;s.esRebote=esRebote;s.ultimo=ultimo;s.enRebote=false;s.tope=esRebote;
   s.recientes.push(k);
   const max=Math.min(5,Math.max(0,s.pool.length-1));
@@ -650,7 +706,7 @@ function siguiente(s,facts,ahora,rng){
 // Fallar un tiro da otra oportunidad con la misma cuenta y el reloj completo, por 1 punto como máximo.
 // "No sé" y el reloj en cero no son tiros, así que van directo a la respuesta.
 function responder(s,facts,valor,ms,ahora,tipo='valor'){
-  const k=s.actual,ok=valor===producto(k),segunda=s.enRebote;
+  const k=s.actual,ok=valor===resultado(k),segunda=s.enRebote;
   if(segunda){
     // Acertar justo después de fallar no prueba dominio, y el error ya se descontó.
     const f=facts[k];f.vistos++;f.ultimo=ahora;if(ok)f.hechos++;
@@ -715,8 +771,25 @@ const DATOS={
   '11x5':'55: lo que anotó en el segundo tiempo de los 81.',
   '2x7':'14: lo que anotó en el primer cuarto de los 81.','7x2':'14: lo que anotó en el primer cuarto de los 81.',
   '3x9':'27: lo que anotó en el tercer cuarto de los 81.','9x3':'27: lo que anotó en el tercer cuarto de los 81.',
-  '4x7':'28: lo que anotó en el último cuarto de los 81.','7x4':'28: lo que anotó en el último cuarto de los 81.'
+  '4x7':'28: lo que anotó en el último cuarto de los 81.','7x4':'28: lo que anotó en el último cuarto de los 81.',
+  '12+12':'24: el número que usó desde 2006 hasta su retiro.',
+  '4+4':'8: el número con el que ganó sus primeros tres anillos.',
+  '9+9':'18: sus selecciones al Juego de las Estrellas.',
+  '10+10':'20: las temporadas que jugó, todas con los Lakers.',
+  '7+7':'14: lo que anotó en el primer cuarto de los 81.',
+  '24/3':'24 y 8, sus dos números: del segundo al primero se llega dividiendo por 3.'
 };
+// Si la respuesta equivocada es el resultado de otra operación, se lo decimos: así ve qué confundió.
+function pistaConfusion(k,valor){
+  const o=opDe(k),[a,b]=partes(k),es=(txt)=>` Ojo: ${valor} es ${txt}. Esta es una ${OPS[o].nombre}.`;
+  if(!Number.isFinite(valor))return '';
+  if(o==='x'&&valor===a+b)return es(`${a} + ${b}`);
+  if(o==='+'&&valor===a*b)return es(`${a} × ${b}`);
+  if(o==='-'&&valor===a+b)return es(`${a} + ${b}`);
+  if(o==='/'&&valor===a-b)return es(`${a} − ${b}`);
+  if(o==='/'&&valor===a*b)return es(`${a} × ${b}`);
+  return '';
+}
 const ORD=['1.er','2.º','3.er','4.º'];
 const NOTA_CUARTO=['Kobe abrió con 14 puntos ante Toronto.','Al descanso llevaba 26 y los Lakers iban perdiendo.','Metió 27 en el tercero y ya sumaba 53.'];
 const $=id=>document.getElementById(id);
@@ -724,7 +797,7 @@ const reducir=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Avance: se guarda en este navegador */
 const normalizar=o=>{
-  const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,apodo:'',actualizado:0},o||{});
+  const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,mezcla:false,apodo:'',actualizado:0},o||{});
   p.facts=o&&o.facts?JSON.parse(JSON.stringify(o.facts)):{};
   p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():TODAS_LAS_TABLAS.slice();
   // Quien ya jugaba antes de las tablas del 11 y del 12 también las tiene en el gimnasio.
@@ -935,8 +1008,12 @@ function pintarTablas(){
   }
   $('tablas').innerHTML=html;
 }
+function pintarMezcla(){
+  $('btn-mezcla').setAttribute('aria-checked',String(!!prog.mezcla));
+  $('mezcla-txt').textContent=prog.mezcla?'Prendido: salen sumas, restas, multiplicaciones y divisiones, del 1 al 12.':'Apagado: todo es multiplicación.';
+}
 function pintarInicio(){
-  pintarTablas();pintarSonido();pintarRanking();pintarMambaInicio();
+  pintarTablas();pintarSonido();pintarRanking();pintarMambaInicio();pintarMezcla();
 }
 function irAInicio(){
   salirDeSesion();
@@ -949,11 +1026,11 @@ let S=null,fase='fuera',entrada='',t0=0,raf=0,vuelo=0,timer=0,ultimoSeg=null,sal
 function iniciar(modo,foco){
   audio();
   salirDeSesion();
-  S=crearSesion(modo,modo==='partido'?TODAS_LAS_TABLAS:prog.tablas,foco);
-  vistos=new Set();domInicial=dominadas(prog.facts,prog.tablas);
+  S=crearSesion(modo,modo==='partido'?TODAS_LAS_TABLAS:prog.tablas,foco,prog.mezcla);
+  vistos=new Set();domInicial=dominadas(prog.facts,prog.tablas,prog.mezcla);
   const gym=modo==='gym';
   document.body.classList.toggle('gym',gym);
-  $('modo-label').textContent=gym?'Gimnasio 4 AM':'Partido';
+  $('modo-label').textContent=(gym?'Gimnasio 4 AM':'Partido')+(prog.mezcla?' · Mezcla':'');
   $('lab-a').textContent=gym?'Hora':'Tú';
   $('lab-b').textContent=gym?'Faltan':'Reloj';
   $('lab-c').textContent=gym?'Hechos':'Kobe';
@@ -996,19 +1073,19 @@ function tick(now){
   raf=requestAnimationFrame(tick);
 }
 function pintarPregunta(){
-  const[a,b]=partes(S.actual),obj=String(a*b);
-  $('pregunta').style.setProperty('--n',`${a} × ${b} = ${obj}`.length);
+  const k=S.actual,[a,b]=partes(k),o=opDe(k),obj=String(resultado(k));
+  $('pregunta').style.setProperty('--n',`${textoCuenta(k)} = ${obj}`.length);
   $('pregunta').classList.remove('bien','mal','sacude');
-  $('factores').textContent=`${a} × ${b}`;
+  $('factores').innerHTML=`${a} <span class="op" data-op="${S.mezcla?o:''}">${OPS[o].signo}</span> ${b}`;
   pintarEntrada();
   $('nota').textContent='';
   $('plato').classList.remove('gritando');
   $('grito').className='grito';
   $('tag').textContent=S.ultimo?'Último tiro':S.esRebote?'Volvió esta cuenta: vale 1 punto':'';
-  $('anuncio').textContent=`${a} por ${b}`;
+  $('anuncio').textContent=`${a} ${OPS[o].dice} ${b}`;
 }
 function pintarEntrada(){
-  const obj=String(producto(S.actual));
+  const obj=String(resultado(S.actual));
   $('resp').innerHTML=[...obj].map((_,i)=>`<span class="slot">${entrada[i]??''}</span>`).join('');
 }
 function pintarMarcador(){
@@ -1043,7 +1120,7 @@ function saltarDato(){
 }
 function tecla(d){
   if(fase!=='tiro'&&fase!=='correccion')return;
-  const obj=String(producto(S.actual));
+  const obj=String(resultado(S.actual));
   if(entrada.length>=obj.length)return;
   entrada+=d;pintarEntrada();
   if(entrada.length===obj.length){
@@ -1072,7 +1149,7 @@ function otraOportunidad(escrito){
   const p=$('pregunta');p.classList.remove('sacude');void p.offsetWidth;p.classList.add('sacude');
   $('tag').textContent=S.modo==='partido'?'Rebote: 5 segundos por 1 punto':'Rebote: otra oportunidad';
   const gf=$('grito');gf.textContent=elegirGrito(GRITOS.fallo);gf.className='grito fallo';void gf.offsetWidth;gf.classList.add('pop');
-  $('nota').textContent=`Pusiste ${escrito}. Inténtalo de nuevo.`;
+  $('nota').textContent=`Pusiste ${escrito}.${pistaConfusion(S.actual,Number(escrito))} Inténtalo de nuevo.`;
   pintarMarcador();
   $('anuncio').textContent='Incorrecto. Tienes otra oportunidad por 1 punto.';
   timer=setTimeout(()=>{
@@ -1110,21 +1187,21 @@ function acierto(r){
 function fallo(r,tipo,escrito){
   fase='correccion';
   guardar(false);
-  const[a,b]=partes(r.k),c=a*b;
+  const[a,b]=partes(r.k),c=resultado(r.k),cuenta=textoCuenta(r.k);
   if(tipo==='reloj')sonar('bocina');
   if(tipo==='valor')lanzar(false);else cancelAnimationFrame(raf);
   entrada='';pintarEntrada();
   $('pregunta').classList.add('mal');
-  const ini=tipo==='reloj'?'Se acabó el tiempo. ':tipo==='valor'?`Pusiste ${escrito}. `:'';
+  const ini=tipo==='reloj'?'Se acabó el tiempo. ':tipo==='valor'?`Pusiste ${escrito}.${pistaConfusion(r.k,Number(escrito))} `:'';
   const dato=DATOS[r.k]&&!vistos.has(r.k)?' '+DATOS[r.k]:'';
   vistos.add(r.k);
-  $('nota').textContent=`${ini}${a} × ${b} = ${c}. Escríbelo para seguir.${dato}`;
+  $('nota').textContent=`${ini}${cuenta} = ${c}. Escríbelo para seguir.${dato}`;
   $('tag').textContent=tipo==='valor'?'Esta cuenta vuelve en dos tiros':'Escríbela para seguir';
   pintarMarcador();
-  $('anuncio').textContent=`Incorrecto. ${a} por ${b} es ${c}. Escríbelo para seguir.`;
+  $('anuncio').textContent=`Incorrecto. ${a} ${OPS[opDe(r.k)].dice} ${b} es ${c}. Escríbelo para seguir.`;
 }
 function corregir(){
-  if(entrada===String(producto(S.actual))){
+  if(entrada===String(resultado(S.actual))){
     fase='feedback';
     $('pregunta').classList.remove('mal');$('pregunta').classList.add('bien');
     timer=setTimeout(proximoTiro,350);
@@ -1640,11 +1717,11 @@ function mostrarEntre(){
 }
 function terminar(){
   const modo=S.modo,partido=modo==='partido';
-  const hechos=S.triples+S.dobles+S.libres+S.segundas,dom=dominadas(prog.facts,prog.tablas)-domInicial;
+  const hechos=S.triples+S.dobles+S.libres+S.segundas,dom=dominadas(prog.facts,prog.tablas,S.mezcla)-domInicial;
   let record=false;
   if(partido){prog.partidos++;record=S.puntos>prog.mejor;if(record)prog.mejor=S.puntos;}
   guardar(true);
-  const fall=S.falladas,lista=fall.length?`<ul class="falladas">${fall.map(k=>{const[a,b]=partes(k);return `<li>${a} × ${b} = ${a*b}</li>`;}).join('')}</ul>`:'';
+  const fall=S.falladas,lista=fall.length?`<ul class="falladas">${fall.map(k=>`<li>${textoCuenta(k)} = ${resultado(k)}</li>`).join('')}</ul>`:'';
   const entrenar=fall.length?`<button class="btn oro" id="fin-entrenar">Entrenar las que fallé (${fall.length})</button>`:'';
   const aGym=partido&&!fall.length&&S.puntos<81?'<button class="btn oro" id="fin-gym">Ir al Gimnasio 4 AM</button>':'';
   const otra=`<button class="btn${fall.length||aGym?'':' oro'}" id="fin-otra">${partido?'Otro partido':'Otra serie'}</button>`;
@@ -1702,10 +1779,11 @@ function arrancar(){
     guardar(true);pintarInicio();
     $('tablas-aviso').textContent=`La tabla del ${a} ${i>=0?'salió del':'entró al'} gimnasio. El partido siempre usa todas.`;
   });
+  $('btn-mezcla').addEventListener('click',()=>{prog.mezcla=!prog.mezcla;guardar(true);pintarMezcla();});
   $('btn-borrar').addEventListener('click',()=>{$('confirmar').hidden=false;});
   $('borrar-no').addEventListener('click',()=>{$('confirmar').hidden=true;});
   $('borrar-si').addEventListener('click',()=>{
-    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,apodo:prog.apodo});
+    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,mezcla:prog.mezcla,apodo:prog.apodo});
     $('confirmar').hidden=true;guardar(true);pintarInicio();
   });
   $('teclado').addEventListener('click',e=>{
