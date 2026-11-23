@@ -504,7 +504,8 @@ body.debug #fps{display:block}
 .int-pill i{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--tenue);transition:transform .2s,background .2s}
 .interruptor[aria-checked="true"] .int-pill{background:var(--purpura);border-color:var(--oro)}
 .interruptor[aria-checked="true"] .int-pill i{transform:translateX(22px);background:var(--oro)}
-.interruptor[aria-checked="false"] .signos i:not([data-op="x"]){opacity:.35}
+.interruptor[aria-checked="false"] .signos i{opacity:.35}
+.interruptor+.interruptor{margin-top:6px}
 .experimental .pista{margin:4px 0 0;font-size:13px}
 [data-op="+"]{color:#6fe3a0}
 [data-op="-"]{color:#ff9bd2}
@@ -539,7 +540,7 @@ body.debug #fps{display:block}
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 5 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
         <dt>Dominio</dt><dd>Cuando aciertas rápido, esa cuenta sube. Si fallas, baja. Con todas arriba, la tabla queda dominada y su camiseta, dorada.</dd>
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
-        <dt>Mezcla</dt><dd>Experimental. Si lo prendes, además de multiplicaciones salen sumas, restas y divisiones, todas con las tablas del 1 al 12. Mira bien el signo: cada uno tiene su color.</dd>
+        <dt>Agregar</dt><dd>Prende «Sumas y restas», «Divisiones» o los dos. Se mezclan con las multiplicaciones, con las tablas del 1 al 20. Mira bien el signo: cada uno tiene su color.</dd>
       </dl>
         <p class="pista">El partido siempre usa todas las tablas. Tu avance se guarda en este navegador.</p>
         <button id="btn-borrar" class="enlace">Borrar mi avance</button>
@@ -562,11 +563,15 @@ body.debug #fps{display:block}
         <p class="pista" id="tablas-aviso">Toca una camiseta para sacarla o meterla al gimnasio.</p>
       </div>
       <div class="experimental">
-        <button id="btn-mezcla" class="interruptor" role="switch" aria-checked="false" aria-describedby="mezcla-txt">
-          <span class="int-txt"><span class="etq">Experimental</span><b>Modo mezcla <span class="signos" aria-hidden="true"><i data-op="+">+</i><i data-op="-">−</i><i data-op="x">×</i><i data-op="/">÷</i></span></b></span>
+        <button id="btn-sumas" class="interruptor" role="switch" aria-checked="false" aria-describedby="mezcla-txt">
+          <span class="int-txt"><span class="etq">Agregar</span><b>Sumas y restas <span class="signos" aria-hidden="true"><i data-op="+">+</i><i data-op="-">−</i></span></b></span>
           <span class="int-pill" aria-hidden="true"><i></i></span>
         </button>
-        <p class="pista" id="mezcla-txt">Apagado: todo es multiplicación.</p>
+        <button id="btn-divisiones" class="interruptor" role="switch" aria-checked="false" aria-describedby="mezcla-txt">
+          <span class="int-txt"><span class="etq">Agregar</span><b>Divisiones <span class="signos" aria-hidden="true"><i data-op="/">÷</i></span></b></span>
+          <span class="int-pill" aria-hidden="true"><i></i></span>
+        </button>
+        <p class="pista" id="mezcla-txt">Todo es multiplicación.</p>
       </div>
       <div class="pie"><span class="barra-der"><button class="enlace btn-musica"></button><button class="enlace btn-sonido"></button></span></div>
       <p class="legal">Homenaje de un fan. Sin relación con la NBA, los Lakers ni la familia Bryant.</p>
@@ -615,14 +620,14 @@ body.debug #fps{display:block}
 <script>
 /*MOTOR*/
 const CUARTOS=4,TIROS_CUARTO=8,SERIE_GYM=24;
-const TODAS_LAS_TABLAS=[1,2,3,4,5,6,7,8,9,10,11,12];
+const TODAS_LAS_TABLAS=Array.from({length:20},(_,i)=>i+1);
 const KOBE_CUARTOS=[14,12,27,28]; // 22-01-2006 contra Toronto, por cuarto
 const T3=3000,T2=7000,T_RELOJ=12000,T_REBOTE=5000;
 const TRIPLES_MAMBA=2,CAJA_MAX=4;
 const PESO=[5,4,2.5,1.5,.6],PESO_NUEVA=3.5,INTERVALO_DIAS=[0,1,2,4,8],DIA=864e5;
 
 // Cada cuenta es una clave de texto: '7x8', y en el modo mezcla también '7+8', '15-7' y '56/7'.
-// La resta y la división son las inversas de la suma y la multiplicación: el resultado siempre va del 1 al 12.
+// La resta y la división son las inversas de la suma y la multiplicación: nunca dan negativos ni decimales.
 const OPS={
   'x':{signo:'×',f:(a,b)=>a*b,dice:'por',nombre:'multiplicación'},
   '+':{signo:'+',f:(a,b)=>a+b,dice:'más',nombre:'suma'},
@@ -637,12 +642,13 @@ const textoCuenta=k=>{const[a,b]=partes(k);return `${a} ${OPS[opDe(k)].signo} ${
 const valorTiro=ms=>ms<=T3?3:ms<=T2?2:1;
 
 const hastaPor=a=>a>=11?12:10;
-// Con la mezcla, la tabla del a también trae a + b, (a + b) − a y (a × b) ÷ a.
+// Con sumas y restas, la tabla del a también trae a + b y (a + b) − a. Con divisiones, (a × b) ÷ a.
 function poolDe(tablas,mezcla){
   const r=[];
   for(const a of tablas)for(let b=1;b<=hastaPor(a);b++){
     r.push(clave(a,b));
-    if(mezcla)r.push(clave(a,b,'+'),clave(a+b,a,'-'),clave(a*b,a,'/'));
+    if(mezcla&&mezcla.sumas)r.push(clave(a,b,'+'),clave(a+b,a,'-'));
+    if(mezcla&&mezcla.divisiones)r.push(clave(a*b,a,'/'));
   }
   return r;
 }
@@ -797,15 +803,19 @@ const reducir=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Avance: se guarda en este navegador */
 const normalizar=o=>{
-  const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,mezcla:false,apodo:'',actualizado:0},o||{});
+  const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,sumas:false,divisiones:false,apodo:'',actualizado:0},o||{});
+  if(o&&o.mezcla){p.sumas=true;p.divisiones=true;}
+  delete p.mezcla;
   p.facts=o&&o.facts?JSON.parse(JSON.stringify(o.facts)):{};
   p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():TODAS_LAS_TABLAS.slice();
   // Quien ya jugaba antes de las tablas del 11 y del 12 también las tiene en el gimnasio.
   if(o&&(o.v||1)<2)p.tablas=[...new Set([...p.tablas,11,12])];
-  p.v=2;
+  if(o&&(o.v||1)<3)p.tablas=[...new Set([...p.tablas,13,14,15,16,17,18,19,20])];
+  p.v=3;
   return p;
 };
 let prog;
+const mezclaDe=p=>p.sumas||p.divisiones?{sumas:!!p.sumas,divisiones:!!p.divisiones}:false;
 function leerLocal(){
   try{
     const a=JSON.parse(localStorage.getItem('mamba81')||'null'),b=JSON.parse(localStorage.getItem('mamba81-3d')||'null');
@@ -999,7 +1009,7 @@ const CAMISETA='M17 3H24Q30 13 36 3H43L45 15Q47 23 54 27V63H6V27Q13 23 15 15Z';
 function pintarTablas(){
   const sel=new Set(prog.tablas);
   let html='';
-  for(let a=1;a<=12;a++){
+  for(const a of TODAS_LAS_TABLAS){
     let suma=0;
     const n=hastaPor(a);
     for(let b=1;b<=n;b++){const f=prog.facts[clave(a,b)];if(f&&f.vistos)suma+=f.caja;}
@@ -1009,8 +1019,10 @@ function pintarTablas(){
   $('tablas').innerHTML=html;
 }
 function pintarMezcla(){
-  $('btn-mezcla').setAttribute('aria-checked',String(!!prog.mezcla));
-  $('mezcla-txt').textContent=prog.mezcla?'Prendido: salen sumas, restas, multiplicaciones y divisiones, del 1 al 12.':'Apagado: todo es multiplicación.';
+  $('btn-sumas').setAttribute('aria-checked',String(!!prog.sumas));
+  $('btn-divisiones').setAttribute('aria-checked',String(!!prog.divisiones));
+  const extra=[prog.sumas&&'sumas y restas',prog.divisiones&&'divisiones'].filter(Boolean);
+  $('mezcla-txt').textContent=extra.length===2?'Salen multiplicaciones, sumas y restas, y divisiones.':extra.length?`Salen multiplicaciones y ${extra[0]}.`:'Todo es multiplicación.';
 }
 function pintarInicio(){
   pintarTablas();pintarSonido();pintarRanking();pintarMambaInicio();pintarMezcla();
@@ -1026,11 +1038,11 @@ let S=null,fase='fuera',entrada='',t0=0,raf=0,vuelo=0,timer=0,ultimoSeg=null,sal
 function iniciar(modo,foco){
   audio();
   salirDeSesion();
-  S=crearSesion(modo,modo==='partido'?TODAS_LAS_TABLAS:prog.tablas,foco,prog.mezcla);
-  vistos=new Set();domInicial=dominadas(prog.facts,prog.tablas,prog.mezcla);
+  S=crearSesion(modo,modo==='partido'?TODAS_LAS_TABLAS:prog.tablas,foco,mezclaDe(prog));
+  vistos=new Set();domInicial=dominadas(prog.facts,prog.tablas,mezclaDe(prog));
   const gym=modo==='gym';
   document.body.classList.toggle('gym',gym);
-  $('modo-label').textContent=(gym?'Gimnasio 4 AM':'Partido')+(prog.mezcla?' · Mezcla':'');
+  $('modo-label').textContent=(gym?'Gimnasio 4 AM':'Partido')+(mezclaDe(prog)?' · Mezcla':'');
   $('lab-a').textContent=gym?'Hora':'Tú';
   $('lab-b').textContent=gym?'Faltan':'Reloj';
   $('lab-c').textContent=gym?'Hechos':'Kobe';
@@ -1779,11 +1791,12 @@ function arrancar(){
     guardar(true);pintarInicio();
     $('tablas-aviso').textContent=`La tabla del ${a} ${i>=0?'salió del':'entró al'} gimnasio. El partido siempre usa todas.`;
   });
-  $('btn-mezcla').addEventListener('click',()=>{prog.mezcla=!prog.mezcla;guardar(true);pintarMezcla();});
+  $('btn-sumas').addEventListener('click',()=>{prog.sumas=!prog.sumas;guardar(true);pintarMezcla();});
+  $('btn-divisiones').addEventListener('click',()=>{prog.divisiones=!prog.divisiones;guardar(true);pintarMezcla();});
   $('btn-borrar').addEventListener('click',()=>{$('confirmar').hidden=false;});
   $('borrar-no').addEventListener('click',()=>{$('confirmar').hidden=true;});
   $('borrar-si').addEventListener('click',()=>{
-    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,mezcla:prog.mezcla,apodo:prog.apodo});
+    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,sumas:prog.sumas,divisiones:prog.divisiones,apodo:prog.apodo,v:3});
     $('confirmar').hidden=true;guardar(true);pintarInicio();
   });
   $('teclado').addEventListener('click',e=>{
