@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Mamba 81 V2</title>
-<meta name="description" content="Aprende las tablas de multiplicar y dividir hasta el 20, tiro a tiro y compite contra los 81 puntos de Kobe Bryant.">
+<meta name="description" content="Aprende sumas, restas, multiplicaciones y divisiones hasta el 20, tiro a tiro y compite contra los 81 puntos de Kobe Bryant.">
 <meta name="robots" content="noindex">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Mamba 81 V2">
-<meta property="og:description" content="Aprende las tablas de multiplicar y dividir hasta el 20, tiro a tiro. ¿Llegas a los 81 de Kobe?">
+<meta property="og:description" content="Aprende sumas, restas, multiplicaciones y divisiones hasta el 20, tiro a tiro. ¿Llegas a los 81 de Kobe?">
 <meta property="og:url" content="https://robertvaliente.com/juegomati/">
 <meta property="og:image" content="https://robertvaliente.com/juegomati/og.png">
 <meta property="og:image:width" content="1200">
@@ -16,7 +16,7 @@
 <meta property="og:image:alt" content="Mamba 81: las tablas de multiplicar, tiro a tiro">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mamba 81 V2">
-<meta name="twitter:description" content="Aprende las tablas de multiplicar y dividir hasta el 20, tiro a tiro. ¿Llegas a los 81 de Kobe?">
+<meta name="twitter:description" content="Aprende sumas, restas, multiplicaciones y divisiones hasta el 20, tiro a tiro. ¿Llegas a los 81 de Kobe?">
 <meta name="twitter:image" content="https://robertvaliente.com/juegomati/og.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-30 -30 60 60'%3E%3Ccircle r='26' fill='%23e8742c' stroke='%235b2a0c' stroke-width='3'/%3E%3Cpath d='M-26 0H26M0 -26V26M-18 -18Q-6 0 -18 18M18 -18Q6 0 18 18' fill='none' stroke='%235b2a0c' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -451,6 +451,16 @@ body.gym .gritando #valor{display:block}
 
 /* Tus tablas: vestuario de camisetas */
 .mis-tablas{margin-top:12px;padding:12px;background:var(--panel-led);border:1px solid var(--linea);border-radius:6px}
+.ops{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:14px}
+.op{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--forum);border:1px solid var(--linea);border-radius:6px;color:var(--texto);font:600 14px/1.1 var(--f-etq);cursor:pointer;touch-action:manipulation;text-align:left}
+.op b{font:900 22px/1 var(--f-display);color:var(--oro);width:18px;text-align:center}
+.op span{flex:1}
+.op i{position:relative;flex:none;width:36px;height:20px;border-radius:10px;background:var(--linea);transition:background .15s}
+.op i::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:var(--crema);transition:transform .15s}
+.op[aria-pressed="true"]{border-color:var(--oro)}
+.op[aria-pressed="true"] i{background:var(--oro)}
+.op[aria-pressed="true"] i::after{transform:translateX(16px)}
+.op[aria-pressed="false"] b,.op[aria-pressed="false"] span{opacity:.5}
 .mis-tablas .mapa-cab{align-items:baseline;margin-bottom:10px}
 .mis-tablas .mapa-cab h2{font:700 13px/1.1 var(--f-etq);letter-spacing:.14em;color:var(--tenue)}
 .mis-tablas .mapa-cab .etq{font-size:12px;color:var(--oro)}
@@ -510,7 +520,7 @@ body.debug #fps{display:block}
         <button id="btn-gym" class="btn">Gimnasio 4 AM</button>
       </div>
       <details class="como" id="como"><summary>Cómo se juega</summary>
-      <p class="sub">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una multiplicación o una división. El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj de las tablas que elijas, enfocados en lo que más te cuesta.</p>
+      <p class="sub">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una cuenta: suma, resta, multiplicación o división. Tú eliges cuáles. El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj de las tablas que elijas, enfocados en lo que más te cuesta.</p>
       <dl class="reglas">
         <dt>3 puntos</dt><dd>Respondes en 3 segundos o menos.</dd>
         <dt>2 puntos</dt><dd>Respondes en 7 segundos o menos.</dd>
@@ -534,6 +544,8 @@ body.debug #fps{display:block}
         <table class="podio" aria-label="Récords"><tbody id="filas-records"></tbody></table>
       </div>
       <div class="mis-tablas">
+        <div class="mapa-cab"><h2>¿Qué cuentas juegas?</h2></div>
+        <div class="ops" id="ops"></div>
         <div class="mapa-cab"><h2>¿Cuánto dominas cada tabla?</h2></div>
         <div class="tablas" id="tablas"></div>
         <p class="pista explica">Se llena cuando aciertas rápido. Para completarla, responde cada cuenta en 3 segundos o menos.</p>
@@ -593,16 +605,18 @@ const TRIPLES_MAMBA=2,CAJA_MAX=4;
 const PESO=[5,4,2.5,1.5,.6],PESO_NUEVA=3.5,INTERVALO_DIAS=[0,1,2,4,8],DIA=864e5;
 
 const clave=(a,b)=>a+'x'+b;
-const claveDiv=(a,b)=>a+':'+b;
-const esDiv=k=>k.includes(':');
-const partes=k=>k.split(/[x:]/).map(Number);
-const producto=k=>{const[a,b]=partes(k);return esDiv(k)?b:a*b;};
-const cuenta=k=>{const[a,b]=partes(k);return esDiv(k)?`${a*b} ÷ ${a}`:`${a} × ${b}`;};
+const OPERACIONES=[['+','Sumas','+'],['-','Restas','−'],['x','Multiplicaciones','×'],[':','Divisiones','÷']];
+const OPS_INICIALES=['x',':'];
+let opsActivas=OPS_INICIALES.slice();
+const opDe=k=>k.match(/[x:+-]/)[0];
+const partes=k=>k.split(/[x:+-]/).map(Number);
+const producto=k=>{const[a,b]=partes(k),o=opDe(k);return o==='x'?a*b:o==='+'?a+b:b;};
+const cuenta=k=>{const[a,b]=partes(k),o=opDe(k);return o==='x'?`${a} × ${b}`:o===':'?`${a*b} ÷ ${a}`:o==='+'?`${a} + ${b}`:`${a+b} − ${a}`;};
 const cuentaCompleta=k=>`${cuenta(k)} = ${producto(k)}`;
 const valorTiro=ms=>ms<=T3?3:ms<=T2?2:1;
 
 const hastaPor=a=>10;
-const cuentasDe=a=>{const r=[];for(let b=1;b<=hastaPor(a);b++)r.push(clave(a,b),claveDiv(a,b));return r;};
+const cuentasDe=a=>{const r=[];for(let b=1;b<=hastaPor(a);b++)for(const o of opsActivas)r.push(a+o+b);return r;};
 function poolDe(tablas){return tablas.flatMap(cuentasDe);}
 function dominadas(facts,tablas){return poolDe(tablas).filter(k=>facts[k]&&facts[k].caja===CAJA_MAX).length;}
 
@@ -733,6 +747,8 @@ const normalizar=o=>{
   p.facts=o&&o.facts?JSON.parse(JSON.stringify(o.facts)):{};
   p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():TODAS_LAS_TABLAS.slice();
   // Quien ya jugaba antes de las tablas del 11 y del 12 también las tiene en el gimnasio.
+  p.ops=o&&Array.isArray(o.ops)&&o.ops.length?o.ops.filter(x=>OPERACIONES.some(([c])=>c===x)):OPS_INICIALES.slice();
+  if(!p.ops.length)p.ops=OPS_INICIALES.slice();
   p.v=2;
   return p;
 };
@@ -927,7 +943,12 @@ function mostrar(id){
   if(id==='inicio')animarMambas($('inicio'));
 }
 const CAMISETA='M17 3H24Q30 13 36 3H43L45 15Q47 23 54 27V63H6V27Q13 23 15 15Z';
+function pintarOps(){
+  opsActivas=prog.ops.slice();
+  $('ops').innerHTML=OPERACIONES.map(([c,n,sim])=>`<button class="op" data-op="${c}" data-nombre="${n}" aria-pressed="${prog.ops.includes(c)}"><b>${sim}</b><span>${n}</span><i aria-hidden="true"></i></button>`).join('');
+}
 function pintarTablas(){
+  pintarOps();
   const sel=new Set(prog.tablas);
   let html='';
   for(const a of TODAS_LAS_TABLAS){
@@ -1611,7 +1632,7 @@ function confeti(){
 }
 
 function pintarMambaInicio(){
-  const m=prog.mejor,txt=!prog.partidos?'¡Hola, Mati! Roberto confía en ti. Cada tiro es una multiplicación o una división. ¿Llegas a los 81 de Kobe?'
+  const m=prog.mejor,txt=!prog.partidos?'¡Hola, Mati! Roberto confía en ti. Cada tiro es una cuenta: suma, resta, multiplicación o división. Tú eliges cuáles. ¿Llegas a los 81 de Kobe?'
     :m>=100?`¡Tu récord es ${m}! Ya pasaste los 100. ¿Puedes superarte?`
     :m>=81?'¡Ya pasaste los 81 de Kobe! ¿Te atreves a llegar a 100?'
     :`Tu récord es ${m}. Te faltan ${81-m} para los 81 de Kobe. ¡Vamos!`;
@@ -1684,7 +1705,7 @@ function terminar(){
 /* Eventos */
 function arrancar(){
   if(/[?&]debug\b/.test(location.search))document.body.classList.add('debug');
-  prog=normalizar(leerLocal());
+  prog=normalizar(leerLocal());opsActivas=prog.ops.slice();
   $('btn-partido').addEventListener('click',()=>iniciar('partido'));
   $('btn-gym').addEventListener('click',()=>iniciar('gym'));
   $('btn-salir').addEventListener('click',()=>{guardar(true);irAInicio();});
@@ -1698,6 +1719,15 @@ function arrancar(){
     if(prog.musica&&fase!=='fuera')musicaIniciar();else musicaParar();
     guardar(true);pintarSonido();
   }));
+  $('ops').addEventListener('click',e=>{
+    const t=e.target.closest('button');if(!t)return;
+    const o=t.dataset.op,i=prog.ops.indexOf(o),nombre=t.dataset.nombre.toLowerCase();
+    if(i>=0&&prog.ops.length===1){$('tablas-aviso').textContent='Deja al menos un tipo de cuenta prendido.';return;}
+    if(i>=0)prog.ops.splice(i,1);else prog.ops.push(o);
+    opsActivas=prog.ops.slice();
+    guardar(true);pintarInicio();
+    $('tablas-aviso').textContent=`${i>=0?'Apagaste':'Prendiste'} las ${nombre}. Vale para el partido y el gimnasio.`;
+  });
   $('tablas').addEventListener('click',e=>{
     const t=e.target.closest('button');if(!t)return;
     const a=Number(t.dataset.tabla),i=prog.tablas.indexOf(a);
@@ -1709,7 +1739,7 @@ function arrancar(){
   $('btn-borrar').addEventListener('click',()=>{$('confirmar').hidden=false;});
   $('borrar-no').addEventListener('click',()=>{$('confirmar').hidden=true;});
   $('borrar-si').addEventListener('click',()=>{
-    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,apodo:prog.apodo});
+    prog=normalizar({tablas:prog.tablas,ops:prog.ops,sonido:prog.sonido,musica:prog.musica,apodo:prog.apodo});
     $('confirmar').hidden=true;guardar(true);pintarInicio();
   });
   $('teclado').addEventListener('click',e=>{
