@@ -9,9 +9,10 @@ index.html              portada — bio, notas, menciones y contacto
 recursos-ia/index.html  nota — ¿Deberíamos tenerle miedo a la IA?
 recursos-ia/mitchell/    redirige a /recursos-ia/#mitchell (la mini nota se integró a la nota como mirada 3)
 recursos-ia/audio/       podcasts en español (mp3 mono 64k; Pages no acepta archivos de más de 25 MB)
-juegomati/index.html    Mamba 81, juego de las tablas del 1 al 20 para Mati, con interruptores para agregar sumas y restas, y divisiones, en 3D con Three.js desde cdnjs (noindex, sin link desde la portada)
+juegomati/index.html    Mamba 81, juego de las tablas del 1 al 12 para Mati, con interruptores para agregar sumas y restas, y divisiones, y un modo Todo vale con su propio ranking, en 3D con Three.js desde cdnjs (noindex, sin link desde la portada)
 _redirects              /mamba, /mamba/*, /juegomativ2 y /juegomativ2/* redirigen a /juegomati/ para que no se rompan los links antiguos
 functions/api/records.js  ranking del juego (Pages Function + KV)
+functions/api/records-todovale.js  ranking del modo Todo vale (misma KV, clave `top-todovale`)
 ```
 
 En español. Cada nota es una carpeta con su `index.html` y repite el

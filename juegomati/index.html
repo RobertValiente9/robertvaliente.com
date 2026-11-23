@@ -392,6 +392,8 @@ body.gym .gritando #valor{display:block}
 .acciones .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #06030c}
 .como summary{justify-content:center;min-height:38px;border:0;font-size:17px;color:var(--tenue)}
 .como[open] summary{margin-bottom:6px}
+.records-tv{margin-top:12px}
+.acciones .btn.todovale{flex-basis:100%}
 .records{padding:12px 12px 6px;background:var(--panel-led);border:1px solid var(--linea);border-radius:6px}
 .records h2{margin:0 0 6px;font-size:13px;font-family:var(--f-etq);font-weight:700;letter-spacing:.14em;color:var(--tenue)}
 .podio{width:100%;border-collapse:collapse}
@@ -530,6 +532,7 @@ body.debug #fps{display:block}
       <div class="acciones">
         <button id="btn-partido" class="btn oro">Jugar partido</button>
         <button id="btn-gym" class="btn">Gimnasio 4 AM</button>
+        <button id="btn-todovale" class="btn todovale">Todo vale <span class="signos" aria-hidden="true"><i data-op="+">+</i><i data-op="-">−</i><i data-op="x">×</i><i data-op="/">÷</i></span></button>
       </div>
       <details class="como" id="como"><summary>Cómo se juega</summary>
       <p class="sub">El 22 de enero de 2006, Kobe Bryant le hizo 81 puntos a Toronto. Acá cada tiro es una multiplicación. El partido son 4 cuartos y 32 tiros contra el ritmo real de Kobe esa noche. El gimnasio son 24 tiros sin reloj de las tablas que elijas, enfocados en lo que más te cuesta.</p>
@@ -540,7 +543,8 @@ body.debug #fps{display:block}
         <dt>Rebote</dt><dd>Si fallas, tienes otra oportunidad con 5 segundos, por 1 punto como máximo. Si fallas de nuevo, escribes la respuesta y esa cuenta vuelve más adelante, también por 1 punto.</dd>
         <dt>Dominio</dt><dd>Cuando aciertas rápido, esa cuenta sube. Si fallas, baja. Con todas arriba, la tabla queda dominada y su camiseta, dorada.</dd>
         <dt>Modo Mamba</dt><dd>Con 2 triples seguidos entras en Modo Mamba: desde el tercero, cada triple vale 4. Se acaba cuando fallas o metes un tiro que no es triple.</dd>
-        <dt>Agregar</dt><dd>Prende «Sumas y restas», «Divisiones» o los dos. Se mezclan con las multiplicaciones, con las tablas del 1 al 20. Mira bien el signo: cada uno tiene su color.</dd>
+        <dt>Agregar</dt><dd>Prende «Sumas y restas», «Divisiones» o los dos. Se mezclan con las multiplicaciones, con las tablas del 1 al 12.</dd>
+        <dt>Todo vale</dt><dd>Un partido con las cuatro operaciones siempre prendidas, sin importar los interruptores. Tiene su propio ranking. Mira bien el signo: cada uno tiene su color.</dd>
       </dl>
         <p class="pista">El partido siempre usa todas las tablas. Tu avance se guarda en este navegador.</p>
         <button id="btn-borrar" class="enlace">Borrar mi avance</button>
@@ -555,6 +559,10 @@ body.debug #fps{display:block}
       <div class="records" id="records">
         <h2>Récords</h2>
         <table class="podio" aria-label="Récords"><tbody id="filas-records"></tbody></table>
+      </div>
+      <div class="records records-tv" id="records-tv">
+        <h2>Récords Todo vale</h2>
+        <table class="podio" aria-label="Récords Todo vale"><tbody id="filas-todovale"></tbody></table>
       </div>
       <div class="mis-tablas">
         <div class="mapa-cab"><h2>¿Cuánto dominas cada tabla?</h2></div>
@@ -620,7 +628,7 @@ body.debug #fps{display:block}
 <script>
 /*MOTOR*/
 const CUARTOS=4,TIROS_CUARTO=8,SERIE_GYM=24;
-const TODAS_LAS_TABLAS=Array.from({length:20},(_,i)=>i+1);
+const TODAS_LAS_TABLAS=[1,2,3,4,5,6,7,8,9,10,11,12];
 const KOBE_CUARTOS=[14,12,27,28]; // 22-01-2006 contra Toronto, por cuarto
 const T3=3000,T2=7000,T_RELOJ=12000,T_REBOTE=5000;
 const TRIPLES_MAMBA=2,CAJA_MAX=4;
@@ -803,15 +811,16 @@ const reducir=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Avance: se guarda en este navegador */
 const normalizar=o=>{
-  const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,sumas:false,divisiones:false,apodo:'',actualizado:0},o||{});
+  const p=Object.assign({v:1,mejor:0,partidos:0,hechos:0,sonido:true,musica:true,sumas:false,divisiones:false,mejorTV:0,partidosTV:0,apodo:'',actualizado:0},o||{});
   if(o&&o.mezcla){p.sumas=true;p.divisiones=true;}
   delete p.mezcla;
   p.facts=o&&o.facts?JSON.parse(JSON.stringify(o.facts)):{};
   p.tablas=o&&Array.isArray(o.tablas)&&o.tablas.length?o.tablas.slice():TODAS_LAS_TABLAS.slice();
   // Quien ya jugaba antes de las tablas del 11 y del 12 también las tiene en el gimnasio.
   if(o&&(o.v||1)<2)p.tablas=[...new Set([...p.tablas,11,12])];
-  if(o&&(o.v||1)<3)p.tablas=[...new Set([...p.tablas,13,14,15,16,17,18,19,20])];
-  p.v=3;
+  p.tablas=p.tablas.filter(a=>TODAS_LAS_TABLAS.includes(a));
+  if(!p.tablas.length)p.tablas=TODAS_LAS_TABLAS.slice();
+  p.v=4;
   return p;
 };
 let prog;
@@ -827,19 +836,26 @@ function guardarLocal(){try{localStorage.setItem('mamba81',JSON.stringify(prog))
 function guardar(){prog.actualizado=Date.now();guardarLocal();}
 
 /* Ranking: si el sitio no tiene el almacenamiento conectado, queda solo el récord personal */
-const API='/api/records';
-let ranking={activo:false,top:[]};
+const TABLEROS={
+  normal:{api:'/api/records',filas:'filas-records',mejor:'mejor',partidos:'partidos'},
+  todovale:{api:'/api/records-todovale',filas:'filas-todovale',mejor:'mejorTV',partidos:'partidosTV'}
+};
+let tableroFin='normal';
+const rankings={normal:{activo:false,top:[]},todovale:{activo:false,top:[]}};
 async function cargarRanking(){
-  try{
-    const r=await fetch(API,{headers:{accept:'application/json'}});
-    if(!r.ok)throw new Error('ranking');
-    const d=await r.json();
-    ranking={activo:!!d.activo,top:Array.isArray(d.top)?d.top:[]};
-  }catch(e){ranking={activo:false,top:[]};}
+  await Promise.all(Object.keys(TABLEROS).map(async t=>{
+    try{
+      const r=await fetch(TABLEROS[t].api,{headers:{accept:'application/json'}});
+      if(!r.ok)throw new Error('ranking');
+      const d=await r.json();
+      rankings[t]={activo:!!d.activo,top:Array.isArray(d.top)?d.top:[]};
+    }catch(e){rankings[t]={activo:false,top:[]};}
+  }));
   pintarRanking();
 }
-function pintarRanking(){
-  const tb=$('filas-records');
+function pintarRanking(){Object.keys(TABLEROS).forEach(pintarTablero);}
+function pintarTablero(t){
+  const T=TABLEROS[t],ranking=rankings[t],tb=$(T.filas);
   tb.textContent='';
   const veces=n=>`${n} ${n===1?'partido':'partidos'}`;
   const fila=(insignia,clase,nombre,detalle,puntos)=>{
@@ -858,10 +874,10 @@ function pintarRanking(){
     if(f.kobe)fila('24','kobe','Kobe Bryant','Toronto, 2006',81);
     else{puesto++;fila(puesto,'p'+puesto,f.apodo,veces(f.partidos||1),f.puntos);}
   });
-  fila('Tú','tu','Tu mejor partido',prog.partidos?veces(prog.partidos):'Todavía sin jugar',prog.partidos?prog.mejor:'');
+  fila('Tú','tu','Tu mejor partido',prog[T.partidos]?veces(prog[T.partidos]):'Todavía sin jugar',prog[T.partidos]?prog[T.mejor]:'');
 }
 function pintarFinRecord(pts){
-  if(!ranking.activo)return;
+  if(!rankings[tableroFin].activo)return;
   if(prog.apodo)guardarEnRanking(prog.apodo,pts);else formApodo(pts);
 }
 function formApodo(pts,aviso){
@@ -875,11 +891,11 @@ async function guardarEnRanking(apodo,pts){
   const c=$('fin-record');
   c.textContent='Guardando tu puntaje…';
   try{
-    const r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({apodo,puntos:pts})});
+    const r=await fetch(TABLEROS[tableroFin].api,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({apodo,puntos:pts})});
     const d=await r.json().catch(()=>({}));
     if(!r.ok)throw new Error(d.error||'No se pudo guardar tu puntaje. Inténtalo de nuevo.');
     prog.apodo=apodo;guardar();
-    ranking={activo:true,top:d.top||[]};
+    rankings[tableroFin]={activo:true,top:d.top||[]};
     c.textContent='';
     const p=document.createElement('p');
     p.textContent=`Guardado como ${apodo}.`+(d.puesto?` Vas ${d.puesto}.º en el ranking.`:'');
@@ -1035,14 +1051,16 @@ function irAInicio(){
 /* Partido y gimnasio */
 let S=null,fase='fuera',entrada='',t0=0,raf=0,vuelo=0,timer=0,ultimoSeg=null,saltable=false,oculto=0,vistos=new Set(),domInicial=0,balonX=985;
 
-function iniciar(modo,foco){
+function iniciar(modo,foco,todoVale=false){
   audio();
   salirDeSesion();
-  S=crearSesion(modo,modo==='partido'?TODAS_LAS_TABLAS:prog.tablas,foco,mezclaDe(prog));
+  todoVale=todoVale&&modo==='partido';
+  S=crearSesion(modo,modo==='partido'?TODAS_LAS_TABLAS:prog.tablas,foco,todoVale?{sumas:true,divisiones:true}:mezclaDe(prog));
+  S.todoVale=todoVale;
   vistos=new Set();domInicial=dominadas(prog.facts,prog.tablas,mezclaDe(prog));
   const gym=modo==='gym';
   document.body.classList.toggle('gym',gym);
-  $('modo-label').textContent=(gym?'Gimnasio 4 AM':'Partido')+(mezclaDe(prog)?' · Mezcla':'');
+  $('modo-label').textContent=(gym?'Gimnasio 4 AM':'Partido')+(todoVale?' · Todo vale':mezclaDe(prog)?' · Mezcla':'');
   $('lab-a').textContent=gym?'Hora':'Tú';
   $('lab-b').textContent=gym?'Faltan':'Reloj';
   $('lab-c').textContent=gym?'Hechos':'Kobe';
@@ -1731,7 +1749,9 @@ function terminar(){
   const modo=S.modo,partido=modo==='partido';
   const hechos=S.triples+S.dobles+S.libres+S.segundas,dom=dominadas(prog.facts,prog.tablas,S.mezcla)-domInicial;
   let record=false;
-  if(partido){prog.partidos++;record=S.puntos>prog.mejor;if(record)prog.mejor=S.puntos;}
+  tableroFin=S.todoVale?'todovale':'normal';
+  const TB=TABLEROS[tableroFin];
+  if(partido){prog[TB.partidos]++;record=S.puntos>prog[TB.mejor];if(record)prog[TB.mejor]=S.puntos;}
   guardar(true);
   const fall=S.falladas,lista=fall.length?`<ul class="falladas">${fall.map(k=>`<li>${textoCuenta(k)} = ${resultado(k)}</li>`).join('')}</ul>`:'';
   const entrenar=fall.length?`<button class="btn oro" id="fin-entrenar">Entrenar las que fallé (${fall.length})</button>`:'';
@@ -1744,7 +1764,7 @@ function terminar(){
     const pct=Math.round(hechos/S.total*100);
     cuerpo=`${mambaHTML(mensajeMamba(p,fall.length),p>=81?'feliz':'normal')}<h2>${p} puntos. ${tit}</h2>${lineaCuartos(CUARTOS)}
       <dl class="caja"><div><dt>Triples</dt><dd>${S.triples}</dd></div><div><dt>Dobles</dt><dd>${S.dobles}</dd></div><div><dt>Libres</dt><dd>${S.libres}</dd></div><div><dt>Rebotes</dt><dd>${S.segundas}</dd></div><div><dt>Fallos</dt><dd>${S.fallos}</dd></div><div><dt>Acierto</dt><dd>${pct}%</dd></div></dl>
-      <p>${record?'Este es tu mejor partido.':`Tu mejor partido sigue en ${prog.mejor} puntos.`}</p><div class="fin-record" id="fin-record"></div>`;
+      <p>${record?'Este es tu mejor partido.':`Tu mejor partido${S.todoVale?' Todo vale':''} sigue en ${prog[TB.mejor]} puntos.`}</p><div class="fin-record" id="fin-record"></div>`;
   }else{
     const hora='4:'+String(S.total).padStart(2,'0');
     const domTxt=dom>0?`Sumaste ${dom} ${dom===1?'dominada':'dominadas'}.`:'Hoy no sumaste dominadas nuevas. Para eso hay que responder en 3 segundos o menos.';
@@ -1760,7 +1780,8 @@ function terminar(){
   if(partido&&S.puntos>=81){sonar('fanfarria');confeti();}
   if($('fin-gym'))$('fin-gym').addEventListener('click',()=>iniciar('gym'));
   if(foco.length)$('fin-entrenar').addEventListener('click',()=>iniciar('gym',foco));
-  $('fin-otra').addEventListener('click',()=>iniciar(modo));
+  const tv=S.todoVale;
+  $('fin-otra').addEventListener('click',()=>iniciar(modo,null,tv));
   $('fin-mapa').addEventListener('click',irAInicio);
   ($('fin-entrenar')||$('fin-gym')||$('fin-otra')).focus({preventScroll:true});
   if(partido)pintarFinRecord(S.puntos);
@@ -1772,6 +1793,7 @@ function arrancar(){
   prog=normalizar(leerLocal());
   $('btn-partido').addEventListener('click',()=>iniciar('partido'));
   $('btn-gym').addEventListener('click',()=>iniciar('gym'));
+  $('btn-todovale').addEventListener('click',()=>iniciar('partido',null,true));
   $('btn-salir').addEventListener('click',()=>{guardar(true);irAInicio();});
   document.querySelectorAll('.btn-sonido').forEach(b=>b.addEventListener('click',()=>{
     const bloqueado=ac&&ac.state!=='running';
@@ -1796,7 +1818,7 @@ function arrancar(){
   $('btn-borrar').addEventListener('click',()=>{$('confirmar').hidden=false;});
   $('borrar-no').addEventListener('click',()=>{$('confirmar').hidden=true;});
   $('borrar-si').addEventListener('click',()=>{
-    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,sumas:prog.sumas,divisiones:prog.divisiones,apodo:prog.apodo,v:3});
+    prog=normalizar({tablas:prog.tablas,sonido:prog.sonido,musica:prog.musica,sumas:prog.sumas,divisiones:prog.divisiones,apodo:prog.apodo,v:4});
     $('confirmar').hidden=true;guardar(true);pintarInicio();
   });
   $('teclado').addEventListener('click',e=>{
